@@ -1,0 +1,49 @@
+
+<div >
+  <mat-card >
+  <mat-card-header>
+     <mat-card-title>Category</mat-card-title>
+  </mat-card-header>
+  <div *ngIf="selectedCategory; else save">
+    <!-- Update UI-->
+    <mat-card-content fxLayout="column">
+        <mat-form-field>
+          <input matInput placeholder="Name" [(ngModel)]="selectedCategory.name"  >
+        </mat-form-field>
+        
+         <mat-slide-toggle [(ngModel)]="selectedCategory.active"> Slide me!</mat-slide-toggle>
+        
+     </mat-card-content>
+     <mat-card-actions >
+        <button mat-raised-button color="primary" (click)="onclick()" >cancel</button>
+     </mat-card-actions>
+     <mat-card-actions align="end">
+        <button mat-raised-button color="primary" (click)="onclick()" >Update</button>
+     </mat-card-actions>
+  </div>
+  <ng-template #save>
+    <!--SAVE UI-->
+  <mat-card-content fxLayout="column">
+     <mat-form-field>
+       <input matInput placeholder="Name" [(ngModel)]="name"  >
+     </mat-form-field>
+     
+      <mat-slide-toggle [(ngModel)]="active"> Slide me!</mat-slide-toggle>
+     
+  </mat-card-content>
+  <mat-card-actions align="end">
+     <button mat-raised-button color="primary" (click)="onclick()" >Save</button>
+  </mat-card-actions>
+</ng-template>
+  <mat-list>
+    <mat-list-item *ngFor="let category of categories" (click)="onSelect(category)">
+      <h3>{{category.name}}</h3>
+      <span></span>
+      <br>
+      <p>{{category.active}}</p>
+    </mat-list-item>
+  </mat-list>
+
+
+  </mat-card>
+  </div>

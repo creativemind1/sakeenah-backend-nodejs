@@ -1,0 +1,37 @@
+"use strict";
+/**
+ * @description This Model is used for Media
+ * @author Ahmed
+ * @since MAR-28-2019
+ *
+ */
+var mongoose = require("mongoose");
+var mediaSchema = mongoose.Schema({
+  mediaId: String,
+  active: { type: Boolean, default: true },
+  categoryId: [{ type: String }],
+  subCategoryId: [{ type: String }],
+  videoUrl: String,
+  companyId: String,
+  title: String,
+  description: String,
+  thumbImageUrl: String,
+  authorImageUrl: String,
+  mediaType: String,
+  narrator: String,
+  author: String,
+  premium: Boolean,
+  createdBy: String,
+  modifiedBy: String,
+  create_date: {
+    type: Date
+  },
+  modify_date: {
+    type: Date
+  }
+});
+
+var media = (module.exports = mongoose.model("media", mediaSchema));
+module.exports.get = function(callback, limit) {
+  media.find(callback).limit(limit);
+};

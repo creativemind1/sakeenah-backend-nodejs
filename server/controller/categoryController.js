@@ -1,0 +1,329 @@
+"use strict";
+/**
+ * @description This API is used to provide services to CMS
+ * @author Ahmed
+ * @since MAR-28-2019
+ *
+ */
+
+let CategoryModel = require("../model/CategoryModel");
+let SubCategoryModel = require("../model/SubCategoryModel");
+let MediaModel = require("../model/MediaModel");
+var randomstring = require("randomstring");
+var async = require("async");
+var bcrypt = require("bcrypt-nodejs");
+var webService = require("../config/webservice");
+var webUrl = webService.webUrl();
+
+// This method is to perform operations for categories.
+
+exports.category = function(req, res) {
+  var type = req.body.type;
+  switch (type) {
+    case "SAVE":
+      {
+        if (req.body.categoryId) {
+          var modify_date = new Date();
+          CategoryModel.findOneAndUpdate(
+            { categoryId: req.body.categoryId },
+            {
+              categoryName: req.body.categoryName,
+              modifiedBy: req.body.userId,
+              description: req.body.description,
+              modify_date: modify_date
+            },
+            { upsert: false },
+            function(err, doc) {
+              if (doc) {
+                res.json({
+                  status: "SUCCESS",
+                  message: "Successfully Updated Category"
+                });
+              } else {
+                res.json({
+                  status: "FAILED",
+                  message: err
+                });
+              }
+            }
+          );
+        } else {
+          var categoryModel = new CategoryModel();
+          categoryModel.categoryId = randomstring.generate(10);
+          categoryModel.createdBy = req.body.userId;
+          categoryModel.categoryName = req.body.categoryName;
+          categoryModel.companyId = req.body.companyId;
+          categoryModel.description = req.body.description;
+          categoryModel.create_date = new Date();
+          categoryModel.save(function(error) {
+            if (error) {
+              res.json({
+                status: "FAILED",
+                message: error
+              });
+            } else {
+              res.json({
+                status: "SUCCESS",
+                message: "Successfully Category Saved"
+              });
+            }
+          });
+        }
+      }
+      break;
+    case "DELETE":
+      {
+        if (req.body.categoryId) {
+          CategoryModel.deleteOne({ categoryId: req.body.categoryId }, function(
+            err,
+            doc
+          ) {
+            if (doc && doc.deletedCount == 1) {
+              res.json({
+                status: "SUCCESS",
+                message: "Successfully Deleted Category"
+              });
+            } else {
+              res.json({
+                status: "FAILED",
+                message: "No Data Available"
+              });
+            }
+          });
+        } else {
+          res.json({
+            status: "FAILED",
+            message: "Category Id Missing in Request "
+          });
+        }
+      }
+      break;
+    case "LOAD":
+      {
+        console.log("=== LOAD ===", req.body);
+        if (req.body.companyId) {
+          CategoryModel.find({ companyId: req.body.companyId }, function(
+            err,
+            doc
+          ) {
+            if (doc) {
+              res.json({
+                status: "SUCCESS",
+                message: doc
+              });
+            } else {
+              res.json({
+                status: "FAILED",
+                message: "No Data Available"
+              });
+            }
+          });
+        } else {
+          res.json({
+            status: "FAILED",
+            message: "Company Id Missing in Request "
+          });
+        }
+      }
+      break;
+
+    default:
+      break;
+  }
+};
+
+// This method is to perform operations for subCategories.
+
+exports.subCategory = function(req, res) {
+  var type = req.body.type;
+  switch (type) {
+    case "SAVE":
+      {
+        if (req.body.categoryId && req.body.subCategoryId) {
+          var modify_date = new Date();
+          SubCategoryModel.findOneAndUpdate(
+            { subCategoryId: req.body.subCategoryId },
+            {
+              subCategoryName: req.body.subCategoryName,
+              modifiedBy: req.body.userId,
+              modify_date: modify_date,
+              categoryId: req.body.categoryId
+            },
+            { upsert: false },
+            function(err, doc) {
+              if (doc) {
+                res.json({
+                  status: "SUCCESS",
+                  message: "Successfully Updated Category"
+                });
+              } else {
+                res.json({
+                  status: "FAILED",
+                  message: err
+                });
+              }
+            }
+          );
+        } else {
+          var subCategoryModel = new SubCategoryModel();
+          subCategoryModel.categoryId = req.body.categoryId;
+          subCategoryModel.subCategoryId = randomstring.generate(10);
+          subCategoryModel.createdBy = req.body.userId;
+          subCategoryModel.subCategoryName = req.body.subCategoryName;
+          subCategoryModel.companyId = req.body.companyId;
+          subCategoryModel.create_date = new Date();
+          subCategoryModel.save(function(error) {
+            if (error) {
+              res.json({
+                status: "FAILED",
+                message: error
+              });
+            } else {
+              res.json({
+                status: "SUCCESS",
+                message: "Successfully Sub Category Saved"
+              });
+            }
+          });
+        }
+      }
+      break;
+    case "DELETE":
+      {
+        if (req.body.subCategoryId) {
+          SubCategoryModel.deleteOne(
+            { subCategoryId: req.body.subCategoryId },
+            function(err, doc) {
+              if (doc && doc.deletedCount == 1) {
+                res.json({
+                  status: "SUCCESS",
+                  message: "Successfully Deleted Sub Category"
+                });
+              } else {
+                res.json({
+                  status: "FAILED",
+                  message: "No Data Available"
+                });
+              }
+            }
+          );
+        } else {
+          res.json({
+            status: "FAILED",
+            message: "SubCategory Id Missing in Request "
+          });
+        }
+      }
+      break;
+
+    default:
+      break;
+  }
+};
+
+// This method is to perform operations for Media
+
+exports.media = function(req, res) {
+  var type = req.body.type;
+  switch (type) {
+    case "SAVE":
+      {
+        if (req.body.mediaId) {
+          var modify_date = new Date();
+          MediaModel.findOneAndUpdate(
+            { mediaId: req.body.mediaId },
+            {
+              title: req.body.title,
+              modifiedBy: req.body.userId,
+              modify_date: modify_date,
+              categoryId: req.body.categoryId,
+              subCategoryId: req.body.subCategoryId,
+              description: req.body.description,
+              thumbImageUrl: req.body.thumbImageUrl,
+              authorImageUrl: req.body.authorImageUrl,
+              mediaType: req.body.mediaType,
+              narrator: req.body.narrator,
+              author: req.body.author,
+              videoUrl: req.body.videoUrl,
+              premium: req.body.premium
+            },
+            { upsert: false },
+            function(err, doc) {
+              if (doc) {
+                res.json({
+                  status: "SUCCESS",
+                  message: "Successfully Updated Media"
+                });
+              } else {
+                res.json({
+                  status: "FAILED",
+                  message: err
+                });
+              }
+            }
+          );
+        } else {
+          var mediaModel = new MediaModel();
+          mediaModel.categoryId = req.body.categoryId;
+          mediaModel.subCategoryId = req.body.subCategoryId;
+          mediaModel.mediaId = randomstring.generate(10);
+          mediaModel.createdBy = req.body.userId;
+          mediaModel.companyId = req.body.companyId;
+          mediaModel.videoUrl = req.body.videoUrl;
+          mediaModel.title = req.body.title;
+          mediaModel.description = req.body.description;
+          mediaModel.thumbImageUrl = req.body.thumbImageUrl;
+          mediaModel.authorImageUrl = req.body.authorImageUrl;
+          mediaModel.mediaType = req.body.mediaType;
+          mediaModel.narrator = req.body.narrator;
+          mediaModel.author = req.body.author;
+          mediaModel.create_date = new Date();
+          mediaModel.premium = req.body.premium;
+          mediaModel.save(function(error) {
+            if (error) {
+              res.json({
+                status: "FAILED",
+                message: error
+              });
+            } else {
+              res.json({
+                status: "SUCCESS",
+                message: "Successfully Saved Media"
+              });
+            }
+          });
+        }
+      }
+      break;
+    case "DELETE":
+      {
+        if (req.body.mediaId) {
+          MediaModel.deleteOne({ mediaId: req.body.mediaId }, function(
+            err,
+            doc
+          ) {
+            if (doc && doc.deletedCount == 1) {
+              res.json({
+                status: "SUCCESS",
+                message: "Successfully Deleted Media"
+              });
+            } else {
+              res.json({
+                status: "FAILED",
+                message: "No Data Available"
+              });
+            }
+          });
+        } else {
+          res.json({
+            status: "FAILED",
+            message: "mediaId Id Missing in Request "
+          });
+        }
+      }
+      break;
+
+    default:
+      break;
+  }
+};
