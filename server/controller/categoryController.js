@@ -18,6 +18,7 @@ var webUrl = webService.webUrl();
 // This method is to perform operations for categories.
 
 exports.category = function(req, res) {
+  console.log("==== category Server====", req.body);
   var type = req.body.type;
   switch (type) {
     case "SAVE":
@@ -100,7 +101,6 @@ exports.category = function(req, res) {
       break;
     case "LOAD":
       {
-        console.log("=== LOAD ===", req.body);
         if (req.body.companyId) {
           CategoryModel.find({ companyId: req.body.companyId }, function(
             err,

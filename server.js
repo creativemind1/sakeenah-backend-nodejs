@@ -1,7 +1,7 @@
 // FileName: index.js
 // Import express
 require("dotenv").config();
-let express = require("express"); 
+let express = require("express");
 let apiRoutes = require("./server/routes/post");
 let bodyParser = require("body-parser");
 // Import Mongoose
@@ -10,10 +10,17 @@ var webService = require("./server/config/webservice");
 var webUrl = webService.webUrl();
 var config = require("./server/config/config-" + process.env.NODE_ENV + ".js");
 const path = require("path");
+var cors = require("cors");
 
 // Initialize the app
 const app = express();
 // Configure bodyparser to handle post requests
+app.use(cors());
+app.all("/*", function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
 app.use(
   bodyParser.urlencoded({
     extended: true
