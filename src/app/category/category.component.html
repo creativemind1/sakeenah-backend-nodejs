@@ -1,3 +1,4 @@
+<app-menu></app-menu>
 
 <div >
   <mat-card >
@@ -9,24 +10,26 @@
     <mat-card-content fxLayout="column">
         <mat-form-field>
           <input matInput placeholder="Name" [(ngModel)]="selectedCategory.categoryName"  >
+        </mat-form-field>
+        <mat-form-field>
           <textarea matInput placeholder="Description" [(ngModel)]="selectedCategory.description" ></textarea>
         </mat-form-field>
-        
          <mat-slide-toggle [(ngModel)]="selectedCategory.active"> Slide me!</mat-slide-toggle>
         
      </mat-card-content>
-     <mat-card-actions >
+     <!-- <mat-card-actions  align="centre" >
         <button mat-raised-button color="primary" (click)="onclick()" >cancel</button>
-     </mat-card-actions>
+     </mat-card-actions> -->
      <mat-card-actions align="end">
-        <button mat-raised-button color="primary" (click)="onclick()" >Update</button>
+        <button mat-raised-button color="primary" (click)="onUpdate()" >Update</button>
      </mat-card-actions>
   </div>
   <ng-template #save>
+
     <!--SAVE UI-->
   <mat-card-content fxLayout="column">
      <mat-form-field>
-       <input matInput placeholder="Name" [(ngModel)]="category.name"  >
+       <input matInput placeholder="Name" [(ngModel)]="category.categoryName"  >
        
      </mat-form-field>
      <mat-form-field>
@@ -36,17 +39,41 @@
      
   </mat-card-content>
   <mat-card-actions align="end">
-     <button mat-raised-button color="primary" (click)="onclick()" >Save</button>
+     <button mat-raised-button color="primary" (click)="onSave()" >Save</button>
   </mat-card-actions>
 </ng-template>
-  <mat-list>
-    <mat-list-item *ngFor="let category of categories">
-      <h3>{{category.categoryName}}</h3>
-      <span></span>
-      <br>
-      <p>{{category.active}}</p>
-    </mat-list-item>
-  </mat-list>
+  
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="categoryName">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.categoryName}} </td>
+    </ng-container>
+  
+    <!-- Weight Column -->
+    <ng-container matColumnDef="active">
+      <th mat-header-cell *matHeaderCellDef> Active </th>
+      <td mat-cell *matCellDef="let element"> {{element.active}} </td>
+    </ng-container>
+  
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="create_date">
+      <th mat-header-cell *matHeaderCellDef> Inserted Date </th>
+      <td mat-cell *matCellDef="let element"> {{element.create_date}} </td>
+    </ng-container>
+    <ng-container matColumnDef="updateAction">
+        <th mat-header-cell *matHeaderCellDef> Update </th>
+          <td mat-cell *matCellDef="let element"><i class="material-icons" (click)="edit(element)">edit</i>
+    </ng-container>
+    <ng-container matColumnDef="deleteAction">
+        <th mat-header-cell *matHeaderCellDef> Delete </th>
+          <td mat-cell *matCellDef="let element"><i class="material-icons" (click)="delete(element)">delete</i>
+    </ng-container> 
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+  </table>
 
 
   </mat-card>

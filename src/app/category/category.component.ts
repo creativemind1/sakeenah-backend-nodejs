@@ -15,32 +15,77 @@ export class CategoryComponent implements OnInit {
 
   constructor(private cmsService:CmsService) { }
   category :Category = new Category();
-  name:string;
-  active=true;
-  description:string;
+  
   selectedCategory:Category;
-  categories:any =[];
+  deletedCategory:Category;
+  dataSource :Category[];
+  displayedColumns:string[]
   
   ngOnInit() {
-    this.cmsService.getCategories().subscribe(response=>{
-   //   console.log('==== get categories in component ===',response.message);
-    // this.categories=response.message;
-    });
+    this.category.active=true;
+   this.loadCategories();
   }
-  onclick(){
+  onSave(){
     
-    this.category.type="SAVE";
-    this.cmsService.saveNewCategory(this.category).subscribe(response=>{
+    this.category['type']="SAVE";
+    this.cmsService.saveOrupdateCategory(this.category).subscribe(response=>{
+      var result=JSON.parse(JSON.stringify(response));
+      if(result.status == 'SUCCESS'){
+        this.loadCategories();
+        
+      }else{
+
+      }
+  });
+  
+  }
+
+  onUpdate(){
+    
+    this.selectedCategory['type']="SAVE";
+    this.cmsService.saveOrupdateCategory(this.selectedCategory).subscribe(response=>{
+      var result=JSON.parse(JSON.stringify(response));
+      if(result.status == 'SUCCESS'){
+        this.loadCategories();
+      }else{
+
+      }
       
+  });
+  
+  }
+
+  edit(row){
+    this.selectedCategory = row;
+    
+  }
+
+  delete(row){
+    // your delete code
+  
+    this.deletedCategory=row;
+    this.deletedCategory['type']="DELETE";
+    console.log('==== Deleted catedory ----',this.deletedCategory);
+    this.cmsService.deleteCategory(this.deletedCategory).subscribe(response=>{
+      var result=JSON.parse(JSON.stringify(response));
+      if(result.status == 'SUCCESS'){
+       console.log('=== delete success ===');
+       this.loadCategories();
+      }else{
+
+      }
   });
   }
 
-  onSelect(selCategory: Category): void {
-    this.selectedCategory = selCategory;
-    
-    console.log('---- Sel Category -----',selCategory);
-  }
 
+  loadCategories(){
+    this.cmsService.getCategories().subscribe(response=>{
+    this.displayedColumns = ['categoryName', 'active', 'create_date','deleteAction','updateAction']; 
+    var result=JSON.parse(JSON.stringify(response));
+     this.dataSource =result.message;
+   
+    });
+  }
  
   
   

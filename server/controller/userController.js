@@ -133,13 +133,15 @@ exports.signUp = function(req, res) {
 
 //This method is to validate the login successfully
 exports.login = function(req, res) {
-  if (req.body.emailId && req.body.pswd) {
+  console.log("==== Login ====", req.body);
+  if (req.body.emailId && req.body.password) {
     UserProfileModel.findOne(
       { emailId: req.body.emailId, type: req.body.type },
       function(err, doc) {
         if (doc) {
+          console.log("==== Login data ====", doc);
           // Comparing the password
-          if (bcrypt.compareSync(req.body.pswd, doc.password)) {
+          if (bcrypt.compareSync(req.body.password, doc.password)) {
             // Payment is Done .Its a premium User
             if (doc.premiumUser) {
               doc.freeTrial = true;

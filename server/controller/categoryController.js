@@ -18,7 +18,6 @@ var webUrl = webService.webUrl();
 // This method is to perform operations for categories.
 
 exports.category = function(req, res) {
-  console.log("==== category Server====", req.body);
   var type = req.body.type;
   switch (type) {
     case "SAVE":
@@ -31,7 +30,8 @@ exports.category = function(req, res) {
               categoryName: req.body.categoryName,
               modifiedBy: req.body.userId,
               description: req.body.description,
-              modify_date: modify_date
+              modify_date: modify_date,
+              active: req.body.active
             },
             { upsert: false },
             function(err, doc) {
@@ -52,6 +52,7 @@ exports.category = function(req, res) {
           var categoryModel = new CategoryModel();
           categoryModel.categoryId = randomstring.generate(10);
           categoryModel.createdBy = req.body.userId;
+          categoryModel.active = req.body.active;
           categoryModel.categoryName = req.body.categoryName;
           categoryModel.companyId = req.body.companyId;
           categoryModel.description = req.body.description;

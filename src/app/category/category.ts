@@ -1,12 +1,14 @@
+
+
 export class Category {
-    id: number;
-    name: string;
+   categoryId: string;
+   categoryName: string;
     active:boolean;
-    created_date:string;
+    create_date:string;
     description:string;
-    userId:string;
-    type: string;
+    createdBy:string;
     companyId:string;
+    
   }
   
   
