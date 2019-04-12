@@ -14,10 +14,18 @@ var async = require("async");
 var bcrypt = require("bcrypt-nodejs");
 var webService = require("../config/webservice");
 var webUrl = webService.webUrl();
+var jwt = require("jsonwebtoken");
+var config = require("../config/config-" + process.env.NODE_ENV + ".js");
 
 // This method is to perform operations for categories.
 
 exports.category = function(req, res) {
+  // console.log('==== verify =====', req.body.token);
+  // var verify=jwt.verify(req.body.token,config.secret(),{
+  //   expiresIn: '12h' // expires in 24 hours
+  // })
+  // console.log('==== verify success ====',verify);
+
   var type = req.body.type;
   switch (type) {
     case "SAVE":
@@ -127,6 +135,34 @@ exports.category = function(req, res) {
         }
       }
       break;
+    case "CATEGORY_NAMES":
+      {
+        if (req.body.companyId) {
+          CategoryModel.find(
+            { companyId: req.body.companyId },
+            "categoryName categoryId",
+            function(err, doc) {
+              if (doc) {
+                res.json({
+                  status: "SUCCESS",
+                  message: doc
+                });
+              } else {
+                res.json({
+                  status: "FAILED",
+                  message: "No Data Available"
+                });
+              }
+            }
+          );
+        } else {
+          res.json({
+            status: "FAILED",
+            message: "Company Id Missing in Request "
+          });
+        }
+      }
+      break;
 
     default:
       break;
@@ -140,7 +176,7 @@ exports.subCategory = function(req, res) {
   switch (type) {
     case "SAVE":
       {
-        if (req.body.categoryId && req.body.subCategoryId) {
+        if (req.body.subCategoryId) {
           var modify_date = new Date();
           SubCategoryModel.findOneAndUpdate(
             { subCategoryId: req.body.subCategoryId },
@@ -148,6 +184,7 @@ exports.subCategory = function(req, res) {
               subCategoryName: req.body.subCategoryName,
               modifiedBy: req.body.userId,
               modify_date: modify_date,
+              description: req.body.description,
               categoryId: req.body.categoryId
             },
             { upsert: false },
@@ -173,6 +210,7 @@ exports.subCategory = function(req, res) {
           subCategoryModel.subCategoryName = req.body.subCategoryName;
           subCategoryModel.companyId = req.body.companyId;
           subCategoryModel.create_date = new Date();
+          subCategoryModel.description = req.body.description;
           subCategoryModel.save(function(error) {
             if (error) {
               res.json({
@@ -212,6 +250,33 @@ exports.subCategory = function(req, res) {
           res.json({
             status: "FAILED",
             message: "SubCategory Id Missing in Request "
+          });
+        }
+      }
+      break;
+    case "LOAD":
+      {
+        if (req.body.companyId) {
+          SubCategoryModel.find({ companyId: req.body.companyId }, function(
+            err,
+            doc
+          ) {
+            if (doc) {
+              res.json({
+                status: "SUCCESS",
+                message: doc
+              });
+            } else {
+              res.json({
+                status: "FAILED",
+                message: "No Data Available"
+              });
+            }
+          });
+        } else {
+          res.json({
+            status: "FAILED",
+            message: "Company Id Missing in Request "
           });
         }
       }

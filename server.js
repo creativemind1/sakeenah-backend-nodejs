@@ -36,6 +36,7 @@ var db = mongoose.connection;
 
 // Setup server port
 var port = process.env.PORT || 8080;
+app.set('superSecret', config.secret()); // secret variable
 
 // Send message for default URL
 //app.get("/", (req, res) => res.send("Hello World with Express"));

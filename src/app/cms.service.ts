@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { map } from 'rxjs/operators';
 import {Category} from './category/category';
+import {SubCategory} from './subcategory/subcategory';
 import {Login} from './login/login';
 
 @Injectable({
@@ -43,5 +44,25 @@ export class CmsService {
           return resp;
         }));
        };  
-   
+   // Load all the Sub categories based on the company Id
+   getAllSubCategories(){
+    return this.http.post(this.baseUrl+'/subcategory',{"type": "LOAD",
+    "companyId":this.companyId}).pipe(map((resp)=>{
+      console.log('==== Loaded ====',resp);
+      return resp;
+    }));
+   };
+   //Save or Update Sub Category
+   saveOrupdateSubCategory(subCategory:SubCategory){
+    subCategory.companyId=this.companyId;
+    return this.http.post(this.baseUrl+'/subcategory',subCategory).pipe(map((resp)=>{
+      return resp;
+    }));
+   };
+      //Delete Sub Category
+    deleteSubCategory(subCategory:SubCategory){
+       return this.http.post(this.baseUrl+'/subcategory',subCategory).pipe(map((resp)=>{
+         return resp;
+       }));
+      };
 }

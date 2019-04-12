@@ -14,6 +14,7 @@ var subCategorySchema = mongoose.Schema({
     required: true
   },
   companyId: String,
+  description: String,
   subCategoryName: String,
   createdBy: String,
   modifiedBy: String,
