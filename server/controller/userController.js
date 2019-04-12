@@ -20,7 +20,7 @@ var path = require("path");
 var handlebars = require("handlebars");
 var webService = require("../config/webservice");
 var webUrl = webService.webUrl();
-var jwt    = require('jsonwebtoken');
+var jwt = require("jsonwebtoken");
 var config = require("../config/config-" + process.env.NODE_ENV + ".js");
 //var config = require("./config/config-" + process.env.NODE_ENV + ".js");
 
@@ -145,17 +145,17 @@ exports.login = function(req, res) {
           // Comparing the password
           if (bcrypt.compareSync(req.body.password, doc.password)) {
             // Payment is Done .Its a premium User
+            const payload = { emailId: req.body.emailId };
+            var token = jwt.sign(payload, config.secret(), {
+              expiresIn: "12h" // expires in 24 hours
+            });
+            console.log("==== Token =====", token);
             if (doc.premiumUser) {
               doc.freeTrial = true;
-
-              // const payload = { emailId: req.body.emailId };
-              //     var token = jwt.sign(payload, config.secret(), {
-              //       expiresIn: '12h' // expires in 24 hours
-              //     });
-            console.log('==== Token =====',token)
               res.json({
                 status: "SUCCESS",
-                message: doc,token:token
+                message: doc,
+                token: token
               });
             } else {
               //validating the free trial period
@@ -169,15 +169,10 @@ exports.login = function(req, res) {
               var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
               if (diffDays < 8) {
-                doc.freeTrial = true;
-                const payload = { emailId: req.body.emailId };
-                var token = jwt.sign(payload, config.secret(), {
-                  expiresIn: '12h' // expires in 24 hours
-                });
-            console.log('==== Token 1=====',token)
                 res.json({
                   status: "SUCCESS",
-                  message: doc,token:token
+                  message: doc,
+                  token: token
                 });
               } else {
                 doc.freeTrial = false;

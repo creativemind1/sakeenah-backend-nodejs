@@ -3,6 +3,7 @@
 require("dotenv").config();
 let express = require("express");
 let apiRoutes = require("./server/routes/post");
+let cmsRoutes = require("./server/routes/cmsRoutes");
 let bodyParser = require("body-parser");
 // Import Mongoose
 let mongoose = require("mongoose");
@@ -11,7 +12,7 @@ var webUrl = webService.webUrl();
 var config = require("./server/config/config-" + process.env.NODE_ENV + ".js");
 const path = require("path");
 var cors = require("cors");
-
+var jwt = require("jsonwebtoken");
 // Initialize the app
 const app = express();
 // Configure bodyparser to handle post requests
@@ -33,15 +34,42 @@ mongoose.connect(config.dbUrl(), {
   useNewUrlParser: true
 });
 var db = mongoose.connection;
-
+function authChecker(req, res, next) {
+  console.log("=== path ===", req.path);
+  if (req.path === "/cms/category") {
+    var verify = jwt.verify(
+      req.body.token,
+      config.secret(),
+      {
+        expiresIn: "12h" // expires in 24 hours
+      },
+      (err, decoded) => {
+        if (err) {
+          return res.json({
+            success: false,
+            message: "Token is not valid"
+          });
+        } else {
+          console.log("=== verify Success ===", decoded);
+          req.decoded = decoded;
+          next();
+        }
+      }
+    );
+  } else {
+    next();
+  }
+}
+app.use(authChecker);
 // Setup server port
 var port = process.env.PORT || 8080;
-app.set('superSecret', config.secret()); // secret variable
+app.set("superSecret", config.secret()); // secret variable
 
 // Send message for default URL
 //app.get("/", (req, res) => res.send("Hello World with Express"));
 // Use Api routes in the App
 app.use("/api", apiRoutes);
+app.use("/cms", cmsRoutes);
 
 // // application -------------------------------------------------------------
 // app.get("*", function(req, res) {

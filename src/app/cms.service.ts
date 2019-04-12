@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import {Category} from './category/category';
 import {SubCategory} from './subcategory/subcategory';
 import {Login} from './login/login';
+import { Media } from './meida/media';
 
 @Injectable({
   providedIn: 'root'
@@ -62,6 +63,27 @@ export class CmsService {
       //Delete Sub Category
     deleteSubCategory(subCategory:SubCategory){
        return this.http.post(this.baseUrl+'/subcategory',subCategory).pipe(map((resp)=>{
+         return resp;
+       }));
+      };
+
+       // Load all the Media based on the company Id
+   getAllMedia(){
+    return this.http.post(this.baseUrl+'/media',{"type": "LOAD",
+    "companyId":this.companyId}).pipe(map((resp)=>{
+      return resp;
+    }));
+   };
+   //Save or Update Sub Category
+   saveOrupdateMedia(media:Media){
+    media.companyId=this.companyId;
+    return this.http.post(this.baseUrl+'/media',media).pipe(map((resp)=>{
+      return resp;
+    }));
+   };
+      //Delete Sub Category
+    deleteMedia(media:Media){
+       return this.http.post(this.baseUrl+'/media',media).pipe(map((resp)=>{
          return resp;
        }));
       };

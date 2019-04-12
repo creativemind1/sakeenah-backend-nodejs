@@ -20,11 +20,7 @@ var config = require("../config/config-" + process.env.NODE_ENV + ".js");
 // This method is to perform operations for categories.
 
 exports.category = function(req, res) {
-  // console.log('==== verify =====', req.body.token);
-  // var verify=jwt.verify(req.body.token,config.secret(),{
-  //   expiresIn: '12h' // expires in 24 hours
-  // })
-  // console.log('==== verify success ====',verify);
+ 
 
   var type = req.body.type;
   switch (type) {
@@ -384,6 +380,33 @@ exports.media = function(req, res) {
           res.json({
             status: "FAILED",
             message: "mediaId Id Missing in Request "
+          });
+        }
+      }
+      break;
+    case "LOAD":
+      {
+        if (req.body.companyId) {
+          MediaModel.find({ companyId: req.body.companyId }, function(
+            err,
+            doc
+          ) {
+            if (doc) {
+              res.json({
+                status: "SUCCESS",
+                message: doc
+              });
+            } else {
+              res.json({
+                status: "FAILED",
+                message: "No Data Available"
+              });
+            }
+          });
+        } else {
+          res.json({
+            status: "FAILED",
+            message: "Company Id Missing in Request "
           });
         }
       }
