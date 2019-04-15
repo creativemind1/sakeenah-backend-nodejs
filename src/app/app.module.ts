@@ -14,6 +14,7 @@ import { MatFormFieldModule,MatInputModule,MatCardModule,MatButtonModule,MatSlid
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule } from '@angular/common/http';
 import { MenuComponent } from './menu/menu.component';
+import { JwtModule } from '@auth0/angular-jwt';
 
 
 
@@ -35,8 +36,17 @@ import { MenuComponent } from './menu/menu.component';
     MatSelectModule,FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: function  tokenGetter() {
+             return     localStorage.getItem('access_token');},
+        whitelistedDomains: ['localhost:4200/subcategory','localhost:4200/category','localhost:4200/media'],
+        blacklistedRoutes: ['http://localhost:4200/login']
+      }
+    })
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  
 })
 export class AppModule { }

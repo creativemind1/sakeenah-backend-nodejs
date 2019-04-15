@@ -20,8 +20,6 @@ var config = require("../config/config-" + process.env.NODE_ENV + ".js");
 // This method is to perform operations for categories.
 
 exports.category = function(req, res) {
- 
-
   var type = req.body.type;
   switch (type) {
     case "SAVE":
@@ -168,6 +166,7 @@ exports.category = function(req, res) {
 // This method is to perform operations for subCategories.
 
 exports.subCategory = function(req, res) {
+  console.log("==== subCategory ====", req.body);
   var type = req.body.type;
   switch (type) {
     case "SAVE":
@@ -286,6 +285,7 @@ exports.subCategory = function(req, res) {
 // This method is to perform operations for Media
 
 exports.media = function(req, res) {
+  console.log("==== media ====", req.body);
   var type = req.body.type;
   switch (type) {
     case "SAVE":

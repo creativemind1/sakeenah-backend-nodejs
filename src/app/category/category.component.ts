@@ -79,6 +79,9 @@ export class CategoryComponent implements OnInit {
 
 
   loadCategories(){
+   
+   
+
     this.cmsService.getCategories().subscribe(response=>{
     this.displayedColumns = ['categoryName', 'active', 'create_date','deleteAction','updateAction']; 
     var result=JSON.parse(JSON.stringify(response));

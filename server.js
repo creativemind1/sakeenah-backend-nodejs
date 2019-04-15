@@ -2,8 +2,9 @@
 // Import express
 require("dotenv").config();
 let express = require("express");
-let apiRoutes = require("./server/routes/post");
+let apiRoutes = require("./server/routes/apiRoutes");
 let cmsRoutes = require("./server/routes/cmsRoutes");
+let authRoutes = require("./server/routes/authRoutes");
 let bodyParser = require("body-parser");
 // Import Mongoose
 let mongoose = require("mongoose");
@@ -36,12 +37,13 @@ mongoose.connect(config.dbUrl(), {
 var db = mongoose.connection;
 function authChecker(req, res, next) {
   console.log("=== path ===", req.path);
-  if (req.path === "/cms/category") {
+  if (req.path.startsWith("/cms") || req.path.startsWith("/api")) {
+    console.log("=== verify Success ===", req.body.token);
     var verify = jwt.verify(
       req.body.token,
       config.secret(),
       {
-        expiresIn: "12h" // expires in 24 hours
+        expiresIn: "24h" // expires in 24 hours
       },
       (err, decoded) => {
         if (err) {
@@ -70,6 +72,7 @@ app.set("superSecret", config.secret()); // secret variable
 // Use Api routes in the App
 app.use("/api", apiRoutes);
 app.use("/cms", cmsRoutes);
+app.use("/auth", authRoutes);
 
 // // application -------------------------------------------------------------
 // app.get("*", function(req, res) {

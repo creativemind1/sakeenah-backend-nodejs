@@ -141,15 +141,13 @@ exports.login = function(req, res) {
       { emailId: req.body.emailId, type: req.body.type },
       function(err, doc) {
         if (doc) {
-          console.log("==== Login data ====", doc);
           // Comparing the password
           if (bcrypt.compareSync(req.body.password, doc.password)) {
             // Payment is Done .Its a premium User
             const payload = { emailId: req.body.emailId };
             var token = jwt.sign(payload, config.secret(), {
-              expiresIn: "12h" // expires in 24 hours
+              expiresIn: "24h" // expires in 24 hours
             });
-            console.log("==== Token =====", token);
             if (doc.premiumUser) {
               doc.freeTrial = true;
               res.json({

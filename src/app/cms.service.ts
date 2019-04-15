@@ -6,6 +6,7 @@ import {Category} from './category/category';
 import {SubCategory} from './subcategory/subcategory';
 import {Login} from './login/login';
 import { Media } from './meida/media';
+import { JwtService } from './jwt.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,19 +15,22 @@ export class CmsService {
   companyId=environment.companyId;
   baseUrl = environment.baseUrl;
  
-  constructor(private http:HttpClient) {
+  constructor(private http:HttpClient,private jwtService:JwtService) {
 
    }
    // Load all the categories based on the company Id
    getCategories(){
+    var token =localStorage.getItem('access_token');
     return this.http.post(this.baseUrl+'/category',{"type": "LOAD",
-    "companyId":this.companyId}).pipe(map((resp)=>{
+    "companyId":this.companyId,'token':token}).pipe(map((resp)=>{
       return resp;
     }));
    };
    //Save or Update Category
    saveOrupdateCategory(category:Category){
+    var token =localStorage.getItem('access_token');
     category.companyId=this.companyId;
+    
     return this.http.post(this.baseUrl+'/category',category).pipe(map((resp)=>{
       return resp;
     }));
@@ -41,12 +45,14 @@ export class CmsService {
       //Delete Category
       loginCMS(login:Login){
         console.log('==== cms ====',login);
-        return this.http.post(this.baseUrl+'/login',login).pipe(map((resp)=>{
+        
+        return this.http.post (this.baseUrl+'/login',login).pipe(map((resp)=>{
           return resp;
         }));
        };  
    // Load all the Sub categories based on the company Id
    getAllSubCategories(){
+
     return this.http.post(this.baseUrl+'/subcategory',{"type": "LOAD",
     "companyId":this.companyId}).pipe(map((resp)=>{
       console.log('==== Loaded ====',resp);
