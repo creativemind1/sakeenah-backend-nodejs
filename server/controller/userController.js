@@ -238,33 +238,31 @@ exports.resetPswd = function(req, res) {
 };
 // This method is to get the media based on catergory ids
 exports.getMedia = function(req, res) {
-  if (req.body.categoryId && req.body.companyId) {
-    var consolidate = [];
-
-    consolidate.push({ companyId: req.body.companyId });
-    consolidate.push({ categoryId: req.body.categoryId });
-    if (
-      req.body.subCategoryId !== null &&
-      req.body.subCategoryId !== "" &&
-      req.body.subCategoryId !== undefined
-    ) {
-      consolidate.push({ subCategoryId: req.body.subCategoryId });
-    }
-
+  if (req.body.categoryId && req.body.companyId && !req.body.subCategoryId) {
     let aggregatorData = [
       // Stage 1
       {
         $match: {
-          $and: consolidate
+          categoryId: req.body.categoryId
         }
       }, // Stage 2
       {
+        $lookup: {
+          from: "subcategories",
+          localField: "subCategoryId",
+          foreignField: "subCategoryId",
+          as: "subcategories"
+        }
+      },
+      // Stage 3
+      {
         $project: {
           mediaId: 1,
-          videoUrl: 1,
           title: 1,
           thumbImageUrl: 1,
-          mediaType: 1
+          author: 1,
+          premium: 1,
+          subcategories: { subCategoryId: 1, subCategoryName: 1 }
         }
       }
     ];
