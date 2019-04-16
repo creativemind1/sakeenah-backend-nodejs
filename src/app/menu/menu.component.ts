@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {JwtService} from '../jwt.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -7,9 +9,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MenuComponent implements OnInit {
 
-  constructor() { }
+  constructor(private jwtService:JwtService,private router:Router) { }
 
   ngOnInit() {
   }
-
+  onLogout(){
+    this.jwtService.logout();
+    console.log('=== Logout Clicked ===',this.jwtService.loggedIn);
+    if(!this.jwtService.loggedIn){
+      this.router.navigate(['/login']);
+    }else{
+      // Invalid Credentials
+    }
+  }
 }

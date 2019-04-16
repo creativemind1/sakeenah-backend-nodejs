@@ -52,7 +52,6 @@ function authChecker(req, res, next) {
             message: "Token is not valid"
           });
         } else {
-          console.log("=== verify Success ===", decoded);
           req.decoded = decoded;
           next();
         }

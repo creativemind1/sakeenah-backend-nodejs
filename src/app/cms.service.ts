@@ -29,7 +29,9 @@ export class CmsService {
    //Save or Update Category
    saveOrupdateCategory(category:Category){
     var token =localStorage.getItem('access_token');
+    category['token']=token;
     category.companyId=this.companyId;
+    
     
     return this.http.post(this.baseUrl+'/category',category).pipe(map((resp)=>{
       return resp;
@@ -37,24 +39,19 @@ export class CmsService {
    };
       //Delete Category
     deleteCategory(category:Category){
+      var token =localStorage.getItem('access_token');
+    category['token']=token;
        return this.http.post(this.baseUrl+'/category',category).pipe(map((resp)=>{
          return resp;
        }));
       };
 
-      //Delete Category
-      loginCMS(login:Login){
-        console.log('==== cms ====',login);
-        
-        return this.http.post (this.baseUrl+'/login',login).pipe(map((resp)=>{
-          return resp;
-        }));
-       };  
+      
    // Load all the Sub categories based on the company Id
    getAllSubCategories(){
-
+    var token =localStorage.getItem('access_token');
     return this.http.post(this.baseUrl+'/subcategory',{"type": "LOAD",
-    "companyId":this.companyId}).pipe(map((resp)=>{
+    "companyId":this.companyId,'token':token}).pipe(map((resp)=>{
       console.log('==== Loaded ====',resp);
       return resp;
     }));
@@ -62,12 +59,16 @@ export class CmsService {
    //Save or Update Sub Category
    saveOrupdateSubCategory(subCategory:SubCategory){
     subCategory.companyId=this.companyId;
+    var token =localStorage.getItem('access_token');
+    subCategory['token']=token;
     return this.http.post(this.baseUrl+'/subcategory',subCategory).pipe(map((resp)=>{
       return resp;
     }));
    };
       //Delete Sub Category
     deleteSubCategory(subCategory:SubCategory){
+      var token =localStorage.getItem('access_token');
+      subCategory['token']=token;
        return this.http.post(this.baseUrl+'/subcategory',subCategory).pipe(map((resp)=>{
          return resp;
        }));
@@ -75,20 +76,25 @@ export class CmsService {
 
        // Load all the Media based on the company Id
    getAllMedia(){
+    var token =localStorage.getItem('access_token');
     return this.http.post(this.baseUrl+'/media',{"type": "LOAD",
-    "companyId":this.companyId}).pipe(map((resp)=>{
+    "companyId":this.companyId,'token':token}).pipe(map((resp)=>{
       return resp;
     }));
    };
    //Save or Update Sub Category
    saveOrupdateMedia(media:Media){
     media.companyId=this.companyId;
+    var token =localStorage.getItem('access_token');
+    media['token']=token;
     return this.http.post(this.baseUrl+'/media',media).pipe(map((resp)=>{
       return resp;
     }));
    };
       //Delete Sub Category
     deleteMedia(media:Media){
+      var token =localStorage.getItem('access_token');
+     media['token']=token;
        return this.http.post(this.baseUrl+'/media',media).pipe(map((resp)=>{
          return resp;
        }));

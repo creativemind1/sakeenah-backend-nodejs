@@ -21,9 +21,13 @@ export class JwtService {
       localStorage.setItem('access_token', result.token);
       return resp;
     }));
-   };  
+   }; 
+   //LogOut
+   logout() {
+    localStorage.removeItem('access_token');
+  }
    public get loggedIn(): boolean{
-     console.log('=== loggedIn ===',localStorage.getItem('access_token') );
+     console.log('=== loggedIn ===',localStorage.getItem('access_token') !==  null );
     return localStorage.getItem('access_token') !==  null;
   }
 //   login(email:string, password:string) {

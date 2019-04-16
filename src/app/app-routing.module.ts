@@ -12,7 +12,8 @@ const routes: Routes = [
   { path: 'category', component: CategoryComponent },
   { path: 'subcategory', component: SubcategoryComponent },
   { path: 'media', component: MeidaComponent },
-  { path: '',   redirectTo: '/login', pathMatch: 'full' }
+  { path: '',   redirectTo: '/login', pathMatch: 'full' },
+ 
   
 ];
 

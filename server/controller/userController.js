@@ -76,12 +76,10 @@ exports.signUp = function(req, res) {
       data
     ) {
       if (err) {
-        console.log("=== file path error===", err);
         return nCallback();
       } else {
         var template = handlebars.compile(data);
         var verfiyEmail = webUrl.verfiyEmail + userId;
-        console.log("=== configuration variable =======", verfiyEmail);
         var replacements = {
           firstName: firstName,
           userlink: verfiyEmail
@@ -135,7 +133,6 @@ exports.signUp = function(req, res) {
 
 //This method is to validate the login successfully
 exports.login = function(req, res) {
-  console.log("==== Login ====", req.body);
   if (req.body.emailId && req.body.password) {
     UserProfileModel.findOne(
       { emailId: req.body.emailId, type: req.body.type },
@@ -165,7 +162,7 @@ exports.login = function(req, res) {
               );
               // days difference
               var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
+              doc.freeTrial = true;
               if (diffDays < 8) {
                 res.json({
                   status: "SUCCESS",
@@ -279,7 +276,6 @@ exports.getMedia = function(req, res) {
           message: err
         });
       } else {
-        console.log("=== response ===", data);
         res.json({
           status: "SUCCESS",
           message: data
