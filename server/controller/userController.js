@@ -280,6 +280,42 @@ exports.getMedia = function(req, res) {
         });
       }
     });
+  } else if (
+    req.body.categoryId &&
+    req.body.companyId &&
+    req.body.subCategoryId
+  ) {
+    let aggregatorData = [
+      // Stage 1
+      {
+        $match: {
+          categoryId: req.body.categoryId,
+          subCategoryId: req.body.subCategoryId
+        }
+      }, // Stage 2
+      {
+        $project: {
+          mediaId: 1,
+          title: 1,
+          thumbImageUrl: 1,
+          author: 1,
+          premium: 1
+        }
+      }
+    ];
+    MediaModel.aggregate(aggregatorData, function(err, data) {
+      if (err) {
+        res.json({
+          status: "FAILED",
+          message: err
+        });
+      } else {
+        res.json({
+          status: "SUCCESS",
+          message: data
+        });
+      }
+    });
   } else {
     res.json({
       status: "FAILED",
