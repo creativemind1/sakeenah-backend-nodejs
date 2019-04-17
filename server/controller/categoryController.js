@@ -166,7 +166,6 @@ exports.category = function(req, res) {
 // This method is to perform operations for subCategories.
 
 exports.subCategory = function(req, res) {
-  console.log("==== subCategory ====", req.body);
   var type = req.body.type;
   switch (type) {
     case "SAVE":
@@ -285,7 +284,6 @@ exports.subCategory = function(req, res) {
 // This method is to perform operations for Media
 
 exports.media = function(req, res) {
-  console.log("==== media ====", req.body);
   var type = req.body.type;
   switch (type) {
     case "SAVE":

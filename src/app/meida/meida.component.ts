@@ -5,6 +5,7 @@ import {CmsService} from '../cms.service';
 import {Media} from './media';
 import {FormControl} from '@angular/forms';
 
+
 @Component({
   selector: 'app-meida',
   templateUrl: './meida.component.html',
@@ -45,7 +46,6 @@ export class MeidaComponent implements OnInit {
   onSave(){
     
     this.media['type']="SAVE";
-    console.log('---- Media  Saved ---',this.media);
     this.cmsService.saveOrupdateMedia(this.media).subscribe(response=>{
       var result=JSON.parse(JSON.stringify(response));
       if(result.status == 'SUCCESS'){
@@ -82,9 +82,7 @@ export class MeidaComponent implements OnInit {
   
    
     this.tempMedia= row;
-    console.log('===== Edit 2=====',this.tempMedia);
     this.selectedMedia=this.tempMedia;
-    console.log('===== Edit 1=====',this.selectedMedia);
     // this.loadCategories();
     // this.loadSubCategories();
     

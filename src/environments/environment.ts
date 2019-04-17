@@ -6,6 +6,7 @@ export const environment = {
   production: false,
   baseUrl: "http://localhost:8080/cms",
   loginUrl: "http://localhost:8080/auth",
+  uploadUrl: "http://localhost:8080/upload",
   companyId:"10000"  
 };
 

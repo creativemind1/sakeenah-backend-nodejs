@@ -15,7 +15,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule } from '@angular/common/http';
 import { MenuComponent } from './menu/menu.component';
 import { JwtModule } from '@auth0/angular-jwt';
-
+import { MatFileUploadModule } from 'angular-material-fileupload';
+import { FileUploadComponent } from './file-upload/file-upload.component';
+import { FileSelectDirective } from 'ng2-file-upload';
 
 
 @NgModule({
@@ -25,7 +27,9 @@ import { JwtModule } from '@auth0/angular-jwt';
     SubcategoryComponent,
     MeidaComponent,
     LoginComponent,
-    MenuComponent
+    MenuComponent,
+    FileUploadComponent,
+    FileSelectDirective
   ],
   imports: [
     BrowserModule,
@@ -33,7 +37,7 @@ import { JwtModule } from '@auth0/angular-jwt';
     BrowserAnimationsModule,
     FlexLayoutModule,
     MatFormFieldModule,MatInputModule,MatCardModule,MatButtonModule,MatSlideToggleModule,MatIconModule,MatTableModule,MatMenuModule,
-    MatSelectModule,FormsModule,
+    MatSelectModule,FormsModule,MatFileUploadModule,
     HttpClientModule,
     ReactiveFormsModule,
     JwtModule.forRoot({

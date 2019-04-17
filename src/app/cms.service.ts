@@ -14,6 +14,7 @@ import { JwtService } from './jwt.service';
 export class CmsService {
   companyId=environment.companyId;
   baseUrl = environment.baseUrl;
+  uploadUrl = environment.uploadUrl;
  
   constructor(private http:HttpClient,private jwtService:JwtService) {
 
@@ -52,7 +53,6 @@ export class CmsService {
     var token =localStorage.getItem('access_token');
     return this.http.post(this.baseUrl+'/subcategory',{"type": "LOAD",
     "companyId":this.companyId,'token':token}).pipe(map((resp)=>{
-      console.log('==== Loaded ====',resp);
       return resp;
     }));
    };
@@ -98,5 +98,13 @@ export class CmsService {
        return this.http.post(this.baseUrl+'/media',media).pipe(map((resp)=>{
          return resp;
        }));
+      };
+
+       //Delete Sub Category
+    upload(formData:FormData){
+         
+      return this.http.post(this.uploadUrl,formData).pipe(map((resp)=>{
+        return resp;
+      }));
       };
 }
