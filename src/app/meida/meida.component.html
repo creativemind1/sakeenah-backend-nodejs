@@ -69,11 +69,26 @@
      <mat-form-field >
        <input matInput placeholder="Name" [(ngModel)]="media.title"  >
      </mat-form-field>
-     <app-file-upload></app-file-upload>
-     
+     <mat-form-field>
+      <textarea matInput placeholder="Description" [(ngModel)]="media.description" ></textarea>
+    </mat-form-field>
+
+    <mat-form-field >
+      <input matInput placeholder="Narrator" [(ngModel)]="media.narrator"  >
+    </mat-form-field>
+    <mat-form-field>
+     <textarea matInput placeholder="Author" [(ngModel)]="media.author" ></textarea>
+   </mat-form-field>
+  
+    <mat-slide-toggle [(ngModel)]="media.premium"> Premium Video</mat-slide-toggle>
      
   </mat-card-content>
-  
+  <input placeholder="Audio/Video">
+  <app-file-upload (messageEvent)="receiveMessage($event)" ></app-file-upload>
+  <br>
+  <br>
+  <input placeholder="ThumbNail Image ">
+  <app-file-upload (messageEvent)="receiveMessage($event)" ></app-file-upload>
   <mat-slide-toggle [(ngModel)]="media.active"> Slide me!</mat-slide-toggle>
   <mat-card-actions align="center">
      <button mat-raised-button color="primary" (click)="onSave()" >Save</button>

@@ -6,7 +6,7 @@ export class Media {
      active: boolean;
      categoryId: [{ type: String }];
      subCategoryId: [{ type: String }];
-     videoUrl: String;
+     videoUrl: String[];
      companyId: String;
      title: String;
      description: String;

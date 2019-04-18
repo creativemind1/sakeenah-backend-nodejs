@@ -21,41 +21,36 @@ export class MeidaComponent implements OnInit {
   subCategory: SubCategory[];
   selSubCategory: SubCategory[];
   toppings = new FormControl();
- 
+  videoUrls:String[];
   selectedMedia:Media;
   deletedMedia:Media;
   dataSource :Media[];
   displayedColumns:string[];
-
+  filesToUpload: Array<String> = [];
   
   ngOnInit() {
     this.media.active=true;
+    this.media.videoUrl;
     this.loadMedia();
    this.loadCategories();
-   //this.loadSubCategories();
   }
 
   loadMedia(){
     this.cmsService.getAllMedia().subscribe(response=>{
-    
     var result=JSON.parse(JSON.stringify(response));
      this.dataSource =result.message;
      this.displayedColumns = ['name', 'active', 'create_date','deleteAction','updateAction']; 
-     
     });
   }
   onSave(){
-    
     this.media['type']="SAVE";
     this.cmsService.saveOrupdateMedia(this.media).subscribe(response=>{
       var result=JSON.parse(JSON.stringify(response));
       if(result.status == 'SUCCESS'){
         this.loadMedia();
       }else{
-
       }
   });
-  
   }
 
   loadCategories(){
@@ -66,7 +61,6 @@ export class MeidaComponent implements OnInit {
   }
 
   onUpdate(){
-    
     this.selectedMedia['type']="SAVE";
     this.cmsService.saveOrupdateMedia(this.selectedMedia).subscribe(response=>{
       var result=JSON.parse(JSON.stringify(response));
@@ -75,26 +69,18 @@ export class MeidaComponent implements OnInit {
       }else{
       }
   });
-  
   }
 
   edit(row){
     this.selectedMedia = row;
-    console.log('==== Selected Media ====',this.selectedMedia);
     this.cmsService.getSubCategories(this.selectedMedia).subscribe(response=>{
-      // this.displayedColumns = ['categoryName', 'active', 'create_date','deleteAction','updateAction']; 
        var result=JSON.parse(JSON.stringify(response));
         this.subCategory =result.message;
-      console.log('=== getSubCategories===',this.subCategory );
        });
-    // this.loadCategories();
-    // this.loadSubCategories();
-    
   }
 
   delete(row){
     // your delete code
-  
     this.deletedMedia=row;
     this.deletedMedia['type']="DELETE";
     this.cmsService.deleteMedia(this.deletedMedia).subscribe(response=>{
@@ -102,37 +88,32 @@ export class MeidaComponent implements OnInit {
       if(result.status == 'SUCCESS'){
        this.loadMedia();
       }else{
-
       }
   });
   }
   categoryClick(){
-    console.log('== category click ===',this.media.categoryId);
     this.cmsService.getSubCategories(this.media).subscribe(response=>{
-      // this.displayedColumns = ['categoryName', 'active', 'create_date','deleteAction','updateAction']; 
        var result=JSON.parse(JSON.stringify(response));
         this.subCategory =result.message;
-      console.log('=== getSubCategories===',this.subCategory );
        });
-
   }
 
   updatecategoryClick(){
-    console.log('== category click ===',this.selectedMedia.categoryId);
     this.cmsService.getSubCategories(this.selectedMedia).subscribe(response=>{
-      // this.displayedColumns = ['categoryName', 'active', 'create_date','deleteAction','updateAction']; 
        var result=JSON.parse(JSON.stringify(response));
         this.subCategory =result.message;
-      console.log('=== getSubCategories===',this.subCategory );
        });
-
   }
+
   loadSubCategories(){
     this.cmsService.getAllSubCategories().subscribe(response=>{
-   // this.displayedColumns = ['categoryName', 'active', 'create_date','deleteAction','updateAction']; 
     var result=JSON.parse(JSON.stringify(response));
      this.subCategory =result.message;
-   console.log('=== Sub category ===',this.subCategory );
     });
+  }
+  receiveMessage($event) {
+    this.filesToUpload = $event
+    this.media.videoUrl=this.filesToUpload;
+    console.log('== Test ===',this.media.videoUrl);
   }
 }

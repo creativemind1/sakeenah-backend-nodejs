@@ -31,18 +31,6 @@ export class LoginComponent implements OnInit {
       }
      
       });
-
-    // this.cmsService.loginCMS(this.login).subscribe(response=>{
-    //   var result=JSON.parse(JSON.stringify(response));
-    //   if(result.status == 'SUCCESS'){
-    //     this.router.navigate(['/category']);
-    //   }else{
-    //     // Invalid Credentials
-    //   }
-     
-    //   });
-
-   
   }
 
 }

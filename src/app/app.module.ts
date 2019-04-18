@@ -18,6 +18,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { MatFileUploadModule } from 'angular-material-fileupload';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { FileSelectDirective } from 'ng2-file-upload';
+import { SingleFileUploadComponent } from './single-file-upload/single-file-upload.component';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { FileSelectDirective } from 'ng2-file-upload';
     LoginComponent,
     MenuComponent,
     FileUploadComponent,
-    FileSelectDirective
+    FileSelectDirective,
+    SingleFileUploadComponent
   ],
   imports: [
     BrowserModule,

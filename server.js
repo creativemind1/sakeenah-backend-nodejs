@@ -38,17 +38,14 @@ mongoose.connect(config.dbUrl());
 var conn = mongoose.connection;
 var multer = require("multer");
 
-const DIR = "./thumbnail/";
+const DIR = "./dist/";
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, DIR);
   },
   filename: (req, file, cb) => {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + "." + path.extname(file.originalname)
-    );
+    cb(null, file.originalname);
   }
 });
 let upload = multer({ storage: storage });
@@ -108,17 +105,28 @@ app.set("superSecret", config.secret()); // secret variable
 //app.get("/", (req, res) => res.send("Hello World with Express"));
 // Use Api routes in the App
 
+// app.post("/upload/img", upload.single(), function(req, res) {
+//   if (!req.files) {
+//     return res.send({
+//       success: false
+//     });
+//   } else {
+//     return res.send({
+//       success: true,
+//       files: req.files
+//     });
+//   }
+// });
+
 app.post("/upload", upload.array("uploads[]", 12), function(req, res) {
-  console.log("==== Server JS ====", req.file, " == resp ===", res);
-  if (!req.file) {
-    console.log("No file received");
+  if (!req.files) {
     return res.send({
       success: false
     });
   } else {
-    console.log("file received");
     return res.send({
-      success: true
+      success: true,
+      files: req.files
     });
   }
 });
