@@ -19,6 +19,7 @@ export class MeidaComponent implements OnInit {
   tempMedia :Media = new Media();
   category: Category[];
   subCategory: SubCategory[];
+  selSubCategory: SubCategory[];
   toppings = new FormControl();
  
   selectedMedia:Media;
@@ -31,7 +32,7 @@ export class MeidaComponent implements OnInit {
     this.media.active=true;
     this.loadMedia();
    this.loadCategories();
-   this.loadSubCategories();
+   //this.loadSubCategories();
   }
 
   loadMedia(){
@@ -78,11 +79,14 @@ export class MeidaComponent implements OnInit {
   }
 
   edit(row){
-    //this.selectedMedia = row;
-  
-   
-    this.tempMedia= row;
-    this.selectedMedia=this.tempMedia;
+    this.selectedMedia = row;
+    console.log('==== Selected Media ====',this.selectedMedia);
+    this.cmsService.getSubCategories(this.selectedMedia).subscribe(response=>{
+      // this.displayedColumns = ['categoryName', 'active', 'create_date','deleteAction','updateAction']; 
+       var result=JSON.parse(JSON.stringify(response));
+        this.subCategory =result.message;
+      console.log('=== getSubCategories===',this.subCategory );
+       });
     // this.loadCategories();
     // this.loadSubCategories();
     
@@ -102,8 +106,27 @@ export class MeidaComponent implements OnInit {
       }
   });
   }
+  categoryClick(){
+    console.log('== category click ===',this.media.categoryId);
+    this.cmsService.getSubCategories(this.media).subscribe(response=>{
+      // this.displayedColumns = ['categoryName', 'active', 'create_date','deleteAction','updateAction']; 
+       var result=JSON.parse(JSON.stringify(response));
+        this.subCategory =result.message;
+      console.log('=== getSubCategories===',this.subCategory );
+       });
 
+  }
 
+  updatecategoryClick(){
+    console.log('== category click ===',this.selectedMedia.categoryId);
+    this.cmsService.getSubCategories(this.selectedMedia).subscribe(response=>{
+      // this.displayedColumns = ['categoryName', 'active', 'create_date','deleteAction','updateAction']; 
+       var result=JSON.parse(JSON.stringify(response));
+        this.subCategory =result.message;
+      console.log('=== getSubCategories===',this.subCategory );
+       });
+
+  }
   loadSubCategories(){
     this.cmsService.getAllSubCategories().subscribe(response=>{
    // this.displayedColumns = ['categoryName', 'active', 'create_date','deleteAction','updateAction']; 

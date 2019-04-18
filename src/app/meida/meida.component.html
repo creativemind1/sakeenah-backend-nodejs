@@ -11,7 +11,7 @@
         
         <mat-form-field>
             <mat-label>Select Category</mat-label>
-            <mat-select [(ngModel)]="selectedMedia.categoryId"   [formControl]="toppings" multiple>
+            <mat-select [(ngModel)]="selectedMedia.categoryId" (selectionChange)="updatecategoryClick ()"  [formControl]="toppings" multiple>
               <mat-option *ngFor="let food of category" [value]="food.categoryId">
                 {{food.categoryName}}
               </mat-option>
@@ -49,7 +49,7 @@
 
       <mat-form-field>
           <mat-label>Select Category</mat-label>
-          <mat-select [(ngModel)]="media.categoryId" [formControl]="toppings" multiple>
+          <mat-select [(ngModel)]="media.categoryId"  (selectionChange)="categoryClick()" [formControl]="toppings" multiple >
             <mat-option *ngFor="let food of category" [value]="food.categoryId">
               {{food.categoryName}}
             </mat-option>
