@@ -11,7 +11,7 @@ var mediaSchema = mongoose.Schema({
   active: { type: Boolean, default: true },
   categoryId: [{ type: String }],
   subCategoryId: [{ type: String }],
-  videoUrl: String,
+  videoUrl: [{ type: String }],
   companyId: String,
   title: String,
   description: String,

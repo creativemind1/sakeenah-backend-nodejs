@@ -109,7 +109,7 @@ app.set("superSecret", config.secret()); // secret variable
 // Use Api routes in the App
 
 app.post("/upload", upload.array("uploads[]", 12), function(req, res) {
-  console.log("==== Server JS ====", req);
+  console.log("==== Server JS ====", req.file, " == resp ===", res);
   if (!req.file) {
     console.log("No file received");
     return res.send({

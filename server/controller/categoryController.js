@@ -275,7 +275,34 @@ exports.subCategory = function(req, res) {
         }
       }
       break;
-
+      case "GET_SUB_CATEGORY":
+      {
+        console.log('===== category id ====',req.body.categoryId);
+        if (req.body.companyId && req.body.categoryId) {
+          SubCategoryModel.find({ companyId: req.body.companyId ,categoryId :{$in:req.body.categoryId}}, function(
+            err,
+            doc
+          ) {
+            if (doc) {
+              res.json({
+                status: "SUCCESS",
+                message: doc
+              });
+            } else {
+              res.json({
+                status: "FAILED",
+                message: "No Data Available"
+              });
+            }
+          });
+        } else {
+          res.json({
+            status: "FAILED",
+            message: "Company Id Missing in Request "
+          });
+        }
+      }
+      break;
     default:
       break;
   }

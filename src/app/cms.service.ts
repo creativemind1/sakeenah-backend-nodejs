@@ -104,7 +104,16 @@ export class CmsService {
     upload(formData:FormData){
          
       return this.http.post(this.uploadUrl,formData).pipe(map((resp)=>{
+        console.log('==== Upload Response === ',resp);
         return resp;
       }));
       };
+          // Load all the Sub categories based on the company Id
+   getSubCategories(media:Media){
+    var token =localStorage.getItem('access_token');
+    return this.http.post(this.baseUrl+'/subcategory',{"type": "GET_SUB_CATEGORY",
+    "companyId":this.companyId,'categoryId':media.categoryId,'token':token}).pipe(map((resp)=>{
+      return resp;
+    }));
+   };
 }
