@@ -10,7 +10,8 @@ import { CategoryComponent } from './category/category.component';
 import { SubcategoryComponent } from './subcategory/subcategory.component';
 import { MeidaComponent } from './meida/meida.component';
 import { LoginComponent } from './login/login.component';
-import { MatFormFieldModule,MatInputModule,MatCardModule,MatButtonModule,MatSlideToggleModule,MatIconModule,MatTableModule,MatMenuModule,MatSelectModule} from '@angular/material';
+import { MatFormFieldModule,MatInputModule,MatCardModule,MatButtonModule,MatSlideToggleModule,MatIconModule,
+  MatTableModule,MatMenuModule,MatSelectModule,MatListModule,MatPaginatorModule,MatSortModule,MatToolbarModule} from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule } from '@angular/common/http';
 import { MenuComponent } from './menu/menu.component';
@@ -39,7 +40,8 @@ import { SingleFileUploadComponent } from './single-file-upload/single-file-uplo
     BrowserAnimationsModule,
     FlexLayoutModule,
     MatFormFieldModule,MatInputModule,MatCardModule,MatButtonModule,MatSlideToggleModule,MatIconModule,MatTableModule,MatMenuModule,
-    MatSelectModule,FormsModule,MatFileUploadModule,
+    MatSelectModule,FormsModule,MatFileUploadModule,MatListModule,MatPaginatorModule,MatSortModule,MatToolbarModule,
+
     HttpClientModule,
     ReactiveFormsModule,
     JwtModule.forRoot({

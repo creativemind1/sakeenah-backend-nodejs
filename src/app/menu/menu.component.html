@@ -1,9 +1,31 @@
-<button mat-button [matMenuTriggerFor]="menu">Menu</button>
-<mat-menu #menu="matMenu"> 
-   
-  <a routerLink="/category" mat-menu-item> Category </a>
-  <a routerLink="/subcategory" mat-menu-item> Sub Category </a>
-  <a routerLink="/media" mat-menu-item> Media </a>
-
-</mat-menu>
-<button mat-raised-button color="primary" (click)="onLogout()" >Logout</button>
+<!-- <mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <a routerLink="/category" mat-menu-item> Category </a>
+    <span class="example-item"></span>
+    <a routerLink="/subcategory" mat-menu-item> Sub Category </a>
+    <a routerLink="/media" mat-menu-item> Media </a>
+    <span class="example-spacer"></span>
+    <mat-icon class="example-icon" aria-hidden="false" (click)="onLogout()" aria-label="Example heart icon">favorite</mat-icon>
+  </mat-toolbar-row>
+</mat-toolbar> -->
+<button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item routerLink="/category">
+      <mat-icon>album</mat-icon>
+      <span>Category</span>
+    </button>
+    <button mat-menu-item routerLink="/subcategory">
+      <mat-icon>art_track</mat-icon>
+      <span>SubCategory</span>
+    </button>
+    <button mat-menu-item routerLink="/media">
+      <mat-icon>theaters</mat-icon>
+      <span>Media</span>
+    </button>
+    <button mat-menu-item (click)="onLogout()">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>Logout</span>
+      </button>
+  </mat-menu>

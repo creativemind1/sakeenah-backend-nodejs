@@ -2,22 +2,27 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { map } from 'rxjs/operators';
+ import { Observable, Subject,BehaviorSubject } from 'rxjs';
 import {Category} from './category/category';
 import {SubCategory} from './subcategory/subcategory';
 import {Login} from './login/login';
 import { Media } from './meida/media';
 import { JwtService } from './jwt.service';
+import{FileUpload} from './file-upload/fileUpload'
 
 @Injectable({
   providedIn: 'root'
 })
 export class CmsService {
+  private subject = new Subject<any>();
   companyId=environment.companyId;
   baseUrl = environment.baseUrl;
   uploadUrl = environment.uploadUrl;
- 
+  singleUploadUrl = environment.singleUploadUrl;
+  serverBaseUrl=environment.serverBaseUrl;
+  thumbImageUrl: FileUpload;
+  updateIBOsNavigationSubject = new BehaviorSubject<any>('');
   constructor(private http:HttpClient,private jwtService:JwtService) {
-
    }
    // Load all the categories based on the company Id
    getCategories(){
@@ -100,11 +105,18 @@ export class CmsService {
        }));
       };
 
+      //Single file
+    singleFileupload(formData:FormData){
+         
+      return this.http.post(this.singleUploadUrl,formData).pipe(map((resp)=>{
+        return resp;
+      }));
+      };
+          // L
        //Delete Sub Category
     upload(formData:FormData){
          
       return this.http.post(this.uploadUrl,formData).pipe(map((resp)=>{
-        console.log('==== Upload Response === ',resp);
         return resp;
       }));
       };
@@ -116,4 +128,23 @@ export class CmsService {
       return resp;
     }));
    };
+
+     //Delete file
+     deleteSingleFile(fileurl:String ){
+      return this.http.post(this.serverBaseUrl+'deleteFile',{"filePath":fileurl}).pipe(map((resp)=>{
+        return resp;
+      }));
+      };
+
+      sendMessage(transportMsg:{img:FileUpload,video:FileUpload[]}) {
+        this.updateIBOsNavigationSubject.next(transportMsg);
+    }
+
+    clearMessages() {
+        this.subject.next();
+    }
+
+    getMessage(): Observable<any> {
+        return this.updateIBOsNavigationSubject.asObservable();
+    }
 }

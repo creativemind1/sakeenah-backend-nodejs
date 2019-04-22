@@ -1,13 +1,10 @@
 import { Component, OnInit, EventEmitter, Output } from "@angular/core";
 import { CmsService } from "../cms.service";
-import {
-  FileUploader,
-  FileSelectDirective
-} from "ng2-file-upload/ng2-file-upload";
+import { Observable, Subject ,BehaviorSubject,Subscription} from 'rxjs';
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs/operators";
-import { forEach } from "@angular/router/src/utils/collection";
+import{FileUpload}from './fileUpload';
+import * as _ from 'lodash';
 
 @Component({
   selector: "app-file-upload",
@@ -15,18 +12,35 @@ import { forEach } from "@angular/router/src/utils/collection";
   styleUrls: ["./file-upload.component.css"]
 })
 export class FileUploadComponent implements OnInit {
-  @Output() messageEvent = new EventEmitter<Array<String>>();
+  @Output() messageEvent = new EventEmitter<FileUpload[]>();
   filesToUpload: Array<File> = [];
-  fileNames: Array<String> = [];
   uploadUrl = environment.uploadUrl;
   serverBaseUrl = environment.serverBaseUrl;
-  constructor(private http: HttpClient, private cmsService: CmsService) {}
+  playlist:FileUpload[]= [];
+  fileupload :FileUpload;
+  subscription: Subscription;
+  messages: any[] = [];
+  constructor(private http: HttpClient, private cmsService: CmsService) {
+      // subscribe to home component messages
+  this.subscription = this.cmsService.getMessage().subscribe(message => {
+    if (message) {
+      this.messages.push(message);
+      this.playlist=this.messages[0].video;
+     
+    } else {
+      // clear messages when empty message received
+      this.messages = [];
+    }
+  });
+  }
   ngOnInit() {}
+
+
+
 
   upload() {
     const formData: any = new FormData();
     const files: Array<File> = this.filesToUpload;
-    console.log(files);
 
     for (let i = 0; i < files.length; i++) {
       formData.append("uploads[]", files[i], files[i]["name"]);
@@ -35,10 +49,12 @@ export class FileUploadComponent implements OnInit {
       var result = JSON.parse(JSON.stringify(response));
       if (result.success) {
         for (let i = 0; i < result.files.length; i++) {
-          this.fileNames.push(this.serverBaseUrl + files[i]["name"]);
+          this.fileupload= new FileUpload();
+          this.fileupload.key=result.files[i].path;
+          this.fileupload.value=result.files[i].originalname;
+          this.playlist.push(this.fileupload);
         }
-        console.log('== names ===', this.fileNames);
-        this.messageEvent.emit(this.fileNames);
+        this.messageEvent.emit(this.playlist);
       } else {
       }
     });
@@ -46,5 +62,18 @@ export class FileUploadComponent implements OnInit {
 
   fileChangeEvent(fileInput: any) {
     this.filesToUpload = <Array<File>>fileInput.target.files;
+  }
+
+  deleteFile(tempfile:FileUpload){
+    this.cmsService.deleteSingleFile(tempfile.key).subscribe(response=>{
+      var result=JSON.parse(JSON.stringify(response));
+      if(result.success){
+        _.pull(this.playlist,tempfile);  
+      
+      }
+      });
+  }
+  receiveMessage($event) {
+    this.playlist = $event
   }
 }

@@ -1,4 +1,4 @@
-
+import {FileUpload} from '../file-upload/fileUpload';
 
 export class Media {
 
@@ -6,11 +6,11 @@ export class Media {
      active: boolean;
      categoryId: [{ type: String }];
      subCategoryId: [{ type: String }];
-     videoUrl: String[];
+     videoUrl: FileUpload[]=[];
      companyId: String;
      title: String;
      description: String;
-     thumbImageUrl: String;
+     thumbImageUrl: FileUpload= new FileUpload();
      authorImageUrl: String;
      mediaType: String;
      narrator: String;
@@ -19,6 +19,7 @@ export class Media {
      modifiedBy: String;
      create_date: String;
      modify_date: String;
+     enableUpdate:boolean;
    }
    
    

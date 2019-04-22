@@ -8,6 +8,7 @@ export class Category {
     description:string;
     createdBy:string;
     companyId:string;
+    enableUpdate:boolean;
     
   }
   

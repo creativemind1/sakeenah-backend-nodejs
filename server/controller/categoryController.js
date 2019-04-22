@@ -277,7 +277,6 @@ exports.subCategory = function(req, res) {
       break;
       case "GET_SUB_CATEGORY":
       {
-        console.log('===== category id ====',req.body.categoryId);
         if (req.body.companyId && req.body.categoryId) {
           SubCategoryModel.find({ companyId: req.body.companyId ,categoryId :{$in:req.body.categoryId}}, function(
             err,
@@ -328,11 +327,11 @@ exports.media = function(req, res) {
               description: req.body.description,
               thumbImageUrl: req.body.thumbImageUrl,
               authorImageUrl: req.body.authorImageUrl,
-              mediaType: req.body.mediaType,
               narrator: req.body.narrator,
               author: req.body.author,
               videoUrl: req.body.videoUrl,
-              premium: req.body.premium
+              premium: req.body.premium,
+              active:req.body.active
             },
             { upsert: false },
             function(err, doc) {
@@ -366,6 +365,7 @@ exports.media = function(req, res) {
           mediaModel.author = req.body.author;
           mediaModel.create_date = new Date();
           mediaModel.premium = req.body.premium;
+          mediaModel.active=req.body.active; 
           mediaModel.save(function(error) {
             if (error) {
               res.json({

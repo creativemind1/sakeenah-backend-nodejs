@@ -5,7 +5,7 @@
   <mat-card-header fxLayoutAlign="center">
      <mat-card-title>Category</mat-card-title>
   </mat-card-header>
-  <div *ngIf="selectedCategory; else save">
+  <div *ngIf="selectedCategory.enableUpdate; else save">
     <!-- Update UI-->
     <mat-card-content  fxLayout="column" fxLayoutAlign="center">
         <mat-form-field>
@@ -22,12 +22,14 @@
      </mat-card-actions> -->
      <mat-card-actions align="center">
         <button mat-raised-button color="primary" (click)="onUpdate()" >Update</button>
+        <button mat-raised-button color="primary" (click)="onClear()" >Clear</button>
      </mat-card-actions>
+     
   </div>
   <ng-template #save>
 
     <!--SAVE UI-->
-  <mat-card-content fxLayout="column" fxLayoutAlign="center">
+  <mat-card-content fxLayout="column" fxLayoutAlign="center ">
 
      
      <mat-form-field >
@@ -45,6 +47,7 @@
   <mat-card-actions align="center">
      <button mat-raised-button color="primary" (click)="onSave()" >Save</button>
   </mat-card-actions>
+  
 </ng-template>
   
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
@@ -78,7 +81,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
   </table>
-
+  <!-- <mat-paginator [pageSizeOptions]="[1, 10, 20]" showFirstLastButtons></mat-paginator> -->
 
   </mat-card>
   </div>

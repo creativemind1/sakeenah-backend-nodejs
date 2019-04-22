@@ -9,6 +9,7 @@ export class SubCategory {
      description:string;
      createdBy:string;
      companyId:string;
+     enableUpdate:boolean;
      
    }
    
