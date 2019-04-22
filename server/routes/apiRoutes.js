@@ -17,6 +17,10 @@ router.get("/", function(req, res) {
 router.route("/getMedia").post(userController.getMedia);
 // getCategories
 router.route("/getCategories").post(userController.getCategories);
+// saveUserProfile
+router.route("/saveUserProfile").post(userController.saveUserProfile);
+// getUserProfile
+router.route("/getUserProfile").post(userController.getUserProfile);
 
 // Export API routes
 module.exports = router;

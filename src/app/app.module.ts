@@ -20,6 +20,7 @@ import { MatFileUploadModule } from 'angular-material-fileupload';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { FileSelectDirective } from 'ng2-file-upload';
 import { SingleFileUploadComponent } from './single-file-upload/single-file-upload.component';
+import { ResetPswdComponent } from './reset-pswd/reset-pswd.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { SingleFileUploadComponent } from './single-file-upload/single-file-uplo
     MenuComponent,
     FileUploadComponent,
     FileSelectDirective,
-    SingleFileUploadComponent
+    SingleFileUploadComponent,
+    ResetPswdComponent
   ],
   imports: [
     BrowserModule,

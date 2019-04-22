@@ -54,6 +54,7 @@ export class FileUploadComponent implements OnInit {
           this.fileupload.value=result.files[i].originalname;
           this.playlist.push(this.fileupload);
         }
+        console.log(' === File1 ===',this.playlist);
         this.messageEvent.emit(this.playlist);
       } else {
       }

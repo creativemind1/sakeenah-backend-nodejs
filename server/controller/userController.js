@@ -135,10 +135,16 @@ exports.signUp = function(req, res) {
 exports.login = function(req, res) {
   if (req.body.emailId && req.body.password) {
     UserProfileModel.findOne(
-      { emailId: req.body.emailId, type: req.body.type },
+      { emailId: req.body.emailId, type: req.body.type, active: true },
       function(err, doc) {
         if (doc) {
           // Comparing the password
+          console.log(
+            "=== login ===",
+            req.body.password,
+            " doc pswd ",
+            doc.password
+          );
           if (bcrypt.compareSync(req.body.password, doc.password)) {
             // Payment is Done .Its a premium User
             const payload = { emailId: req.body.emailId };
@@ -202,11 +208,16 @@ exports.login = function(req, res) {
 // This method is to reset the pasword
 exports.resetPswd = function(req, res) {
   var userProfileModel = new UserProfileModel();
-
+  var userId;
+  var content;
+  var firstName;
   UserProfileModel.findOne(
     { emailId: req.body.emailId, type: req.body.type },
     function(err, doc) {
       if (doc) {
+        userId = doc.userId;
+        firstName = doc.firstName;
+        console.log("--- new pswd ---", req.body.pswd, " doc ", doc.password);
         doc.password = bcrypt.hashSync(
           req.body.pswd,
           bcrypt.genSaltSync(8),
@@ -214,6 +225,7 @@ exports.resetPswd = function(req, res) {
         );
         //Again the customer needs to activate the link from email
         doc.active = false;
+        console.log("--- save pswd ---", doc);
         doc.save(function(error) {
           if (error) {
             res.json({
@@ -221,9 +233,31 @@ exports.resetPswd = function(req, res) {
               message: error
             });
           } else {
-            res.json({
-              status: "SUCCESS",
-              message: "Successfully Updated Password"
+            async.series([readContent.bind()], function(err, response) {
+              if (err) {
+                res.json({
+                  status: "FAILED",
+                  message: err
+                });
+              } else {
+                // send email
+                var emailObj = {
+                  html: content,
+                  recipientEmail: req.body.emailId,
+                  subject: "Reset Password Verificaton Email",
+                  message: userId
+                };
+                email.sendmail(emailObj, function(err, data) {
+                  if (err) console.log("----mail not sent-----" + err);
+                  else {
+                    console.log("----mail sent-----" + data);
+                  }
+                });
+                res.json({
+                  status: "SUCCESS",
+                  message: "Successfully Updated Password"
+                });
+              }
             });
           }
         });
@@ -235,6 +269,28 @@ exports.resetPswd = function(req, res) {
       }
     }
   );
+
+  let readContent = nCallback => {
+    fs.readFile("./server/template/verifyEmail.html", "utf8", function(
+      err,
+      data
+    ) {
+      if (err) {
+        return nCallback();
+      } else {
+        var template = handlebars.compile(data);
+        var verfiyEmail = webUrl.verfiyEmail + userId;
+        var replacements = {
+          firstName: firstName,
+          userlink: verfiyEmail
+          //userlink: "http://localhost:8080/api/verifyEmail?userId=" + userId
+        };
+        var htmlToSend = template(replacements);
+        content = htmlToSend;
+        return nCallback();
+      }
+    });
+  };
 };
 // This method is to get the media based on catergory ids
 exports.getMedia = function(req, res) {
@@ -335,36 +391,14 @@ exports.getCategories = function(req, res) {
           active: true
         }
       },
-
-      // Stage 2
-      {
-        $lookup: {
-          from: "subcategories",
-          localField: "categoryId",
-          foreignField: "categoryId",
-          as: "subcategories"
-        }
-      },
-
-      // Stage 3
+      // // Stage 3
       {
         $project: {
           _id: 0,
           categoryId: 1,
           categoryName: 1,
           description: 1,
-          subCategoryId: { $arrayElemAt: ["$subcategories.subCategoryId", 0] },
-          subCategoryName: {
-            $arrayElemAt: ["$subcategories.subCategoryName", 0]
-          },
-          active: { $arrayElemAt: ["$subcategories.active", 0] }
-        }
-      },
-
-      // Stage 4
-      {
-        $match: {
-          active: true
+          companyId: 1
         }
       }
     ];
@@ -440,5 +474,80 @@ exports.verifyEmail = function(req, res) {
       status: "FAILED",
       message: "User Id Matching Failed"
     });
+  }
+};
+
+exports.getUserProfile = function(req, res) {
+  if (req.body.userId) {
+    let aggregatorData = [
+      // Stage 1
+      {
+        $match: {
+          userId: req.body.userId
+        }
+      },
+
+      // Stage 2
+      {
+        $project: {
+          userId: 1,
+          _id: 0,
+          emailId: 1,
+          type: 1,
+          firstName: 1,
+          age: 1,
+          country: 1,
+          profileUrl: 1
+        }
+      }
+    ];
+
+    UserProfileModel.aggregate(aggregatorData, function(err, data) {
+      if (err) {
+        res.json({
+          status: "FAILED",
+          message: err
+        });
+      } else {
+        res.json({
+          status: "SUCCESS",
+          message: data
+        });
+      }
+    });
+  } else {
+    res.json({
+      status: "FAILED",
+      message: "User Id Not available in Request"
+    });
+  }
+};
+
+exports.saveUserProfile = function(req, res) {
+  if (req.body.userId) {
+    UserProfileModel.findOneAndUpdate(
+      { userId: req.body.userId },
+      {
+        firstName: req.body.firstName,
+        emailId: req.body.emailId,
+        age: req.body.age,
+        country: req.body.country,
+        profileUrl: req.body.profileUrl
+      },
+      { upsert: false },
+      function(err, data) {
+        if (err) {
+          res.json({
+            status: "FAILED",
+            message: err
+          });
+        } else {
+          res.json({
+            status: "SUCCESS",
+            message: data
+          });
+        }
+      }
+    );
   }
 };

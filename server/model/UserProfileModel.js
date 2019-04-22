@@ -24,7 +24,10 @@ var userProfileSchema = mongoose.Schema({
   freeTrial: { type: Boolean, default: false },
   create_date: {
     type: Date
-  }
+  },
+  age: String,
+  country: String,
+  profileUrl: { key: String, value: String }
 });
 // Export Contact model
 var UserProfile = (module.exports = mongoose.model(

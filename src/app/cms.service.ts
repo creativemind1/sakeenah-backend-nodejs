@@ -17,6 +17,7 @@ export class CmsService {
   private subject = new Subject<any>();
   companyId=environment.companyId;
   baseUrl = environment.baseUrl;
+  loginUrl = environment.loginUrl;
   uploadUrl = environment.uploadUrl;
   singleUploadUrl = environment.singleUploadUrl;
   serverBaseUrl=environment.serverBaseUrl;
@@ -117,6 +118,7 @@ export class CmsService {
     upload(formData:FormData){
          
       return this.http.post(this.uploadUrl,formData).pipe(map((resp)=>{
+        console.log('--- upload video ---',resp);
         return resp;
       }));
       };
@@ -147,4 +149,13 @@ export class CmsService {
     getMessage(): Observable<any> {
         return this.updateIBOsNavigationSubject.asObservable();
     }
+
+    // Reset CMS Pswd
+    resetPswd(login:Login){
+      
+      return this.http.post(this.loginUrl+'/resetpswd',login).pipe(map((resp)=>{
+        console.log('== SUccess reset ===',resp);
+        return resp;
+      }));
+     };
 }

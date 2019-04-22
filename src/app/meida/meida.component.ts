@@ -141,6 +141,7 @@ export class MeidaComponent implements OnInit {
   }
   onClear() {
     this.selectedMedia = new Media();
+    this.media= new Media();
     this.transportMsg.img=this.selectedMedia.thumbImageUrl;
     this.transportMsg.video=this.selectedMedia.videoUrl;
     this.cmsService.sendMessage(this.transportMsg);

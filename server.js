@@ -17,7 +17,7 @@ var config = require("./server/config/config-" + process.env.NODE_ENV + ".js");
 const path = require("path");
 var cors = require("cors");
 var jwt = require("jsonwebtoken");
-let fs = require('fs-extra');
+let fs = require("fs-extra");
 var randomstring = require("randomstring");
 // // Create a storage object with a given configuration
 // const storage = require("multer-gridfs-storage")({
@@ -44,36 +44,33 @@ const DIR = "./dist/";
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    if (file.mimetype === 'audio/mp3') {
-      var postId=randomstring.generate(3);
-      let temp = './upload/audio/'+postId;
+    if (file.mimetype === "audio/mp3") {
+      let temp = "./upload/audio/";
       fs.mkdirsSync(temp);
-      cb(null, temp)
-    } 
-    else if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
-      
-      let temp = './upload/img/';
+      cb(null, temp);
+    } else if (
+      file.mimetype === "image/jpeg" ||
+      file.mimetype === "image/jpg" ||
+      file.mimetype === "image/png"
+    ) {
+      let temp = "./upload/img/";
       fs.mkdirsSync(temp);
-      cb(null, temp)
+      cb(null, temp);
+    } else if (file.mimetype === "video/mp4") {
+      let temp = "./upload/video/";
+      fs.mkdirsSync(temp);
+      cb(null, temp);
+    } else {
+      console.log(file.mimetype);
+      cb({ error: "Mime type not supported" });
     }
-    else if (file.mimetype === 'video/mp4') {
-      var postId=randomstring.generate(3);
-      let temp = './upload/video/'+postId;
-      fs.mkdirsSync(temp);
-      cb(null, temp)
-    }else {
-      console.log(file.mimetype)
-      cb({ error: 'Mime type not supported' })
-    }
-   
-    
   },
   filename: (req, file, cb) => {
-    var postId=randomstring.generate(3);
-    cb(null,postId+'_'+file.originalname);
+    var postId = randomstring.generate(3);
+    cb(null, postId + "_" + file.originalname);
   }
 });
-let upload1= multer({ storage: storage });
+let upload1 = multer({ storage: storage });
 
 // Configure bodyparser to handle post requests
 app.use(cors());
@@ -94,8 +91,6 @@ app.use(
 );
 app.use(express.static(path.join(__dirname, "dist")));
 app.use(express.static(path.join(__dirname, "upload")));
-
-
 
 app.use(bodyParser.json());
 
@@ -128,30 +123,28 @@ app.use(authChecker);
 var port = process.env.PORT || 8080;
 app.set("superSecret", config.secret()); // secret variable
 
-
-app.post("/deleteFile", function (req, res) {
-  console.log('File Url',req.body.filePath);
+app.post("/deleteFile", function(req, res) {
+  console.log("File Url", req.body.filePath);
   if (req.body.filePath) {
-    fs.unlink(req.body.filePath, (err) => {
+    fs.unlink(req.body.filePath, err => {
       if (err) {
-        console.log('error',err);
+        console.log("error", err);
         return res.send({
           success: false
         });
-      }else{
-      console.log('File was deleted');
-      return res.send({
-        success: true
-      });
-    }
+      } else {
+        console.log("File was deleted");
+        return res.send({
+          success: true
+        });
+      }
     });
-  } else {    
+  } else {
     return res.send({
       success: false
     });
   }
 });
-
 
 app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
   if (!req.files) {
@@ -166,6 +159,7 @@ app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
   }
 });
 app.post("/upload", upload1.array("uploads[]", 12), function(req, res) {
+  console.log("---- Video ---", req.files);
   if (!req.files) {
     return res.send({
       success: false
@@ -180,8 +174,8 @@ app.post("/upload", upload1.array("uploads[]", 12), function(req, res) {
 app.use("/api", apiRoutes);
 app.use("/cms", cmsRoutes);
 app.use("/auth", authRoutes);
-app.use('/upload', express.static(path.join(__dirname, '/upload')));
-app.use('/deleteFile', express.static(path.join(__dirname, '/upload')));
+app.use("/upload", express.static(path.join(__dirname, "/upload")));
+app.use("/deleteFile", express.static(path.join(__dirname, "/upload")));
 
 // Launch app to listen to specified port
 app.listen(port, function() {
