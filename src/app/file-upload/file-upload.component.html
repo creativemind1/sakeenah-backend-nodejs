@@ -5,7 +5,8 @@
 </button>
     <mat-nav-list>
         <mat-list-item *ngFor="let link of playlist">
-            <h3 matLine> {{link.value}} </h3>
+                <h1 matLine> {{link.position}} </h1>
+            <h1 matLine> {{link.value}} </h1>
            <button mat-icon-button (click)='deleteFile(link)'>
               <mat-icon>delete</mat-icon>
            </button>

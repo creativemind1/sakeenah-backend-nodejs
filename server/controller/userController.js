@@ -9,14 +9,11 @@
 let UserProfileModel = require("../model/UserProfileModel");
 let MediaModel = require("../model/MediaModel");
 let CategoryModel = require("../model/CategoryModel");
-let SubCategoryModel = require("../model/SubCategoryModel");
 var randomstring = require("randomstring");
 var async = require("async");
 var bcrypt = require("bcrypt-nodejs");
 var email = require("../helper/email");
 var fs = require("fs");
-var express = require("express");
-var path = require("path");
 var handlebars = require("handlebars");
 var webService = require("../config/webservice");
 var webUrl = webService.webUrl();
@@ -27,13 +24,13 @@ var config = require("../config/config-" + process.env.NODE_ENV + ".js");
 // This method is to resister new customer through APP.
 exports.signUp = function(req, res) {
   var userProfileModel = new UserProfileModel();
-  var userId = randomstring.generate(10);
+  
   var firstName = req.body.firstName;
-  userProfileModel.userId = userId;
+  
   userProfileModel.firstName = firstName;
   userProfileModel.emailId = req.body.emailId;
   userProfileModel.type = req.body.type;
-  userProfileModel.create_date = new Date();
+  var userId = randomstring.generate(10);
   var content;
 
   let validateLoginData = nCallback => {
@@ -91,6 +88,92 @@ exports.signUp = function(req, res) {
       }
     });
   };
+  if(req.body.socialMedia)
+  {
+    // validate the social media use cases
+    if (req.body.emailId) {
+      UserProfileModel.findOne({ emailId: req.body.emailId ,socialMedia:true,type:'B2C'}, function(
+        err,
+        doc
+      ) {
+        if (doc) {
+          // This is the use case for logged in .
+          //Generate Token 
+          const payload = { emailId: req.body.emailId };
+          var token = jwt.sign(payload, config.secret(), {
+            expiresIn: "24h" // expires in 24 hours
+          });
+          if (doc.premiumUser) {
+            doc.freeTrial = true;
+            res.json({
+              status: "SUCCESS",
+              message: doc,
+              token: token
+            });
+          } else {
+            //validating the free trial period
+            var currentdate = new Date();
+            var logindate = doc.create_date;
+            // time difference
+            var timeDiff = Math.abs(
+              logindate.getTime() - currentdate.getTime()
+            );
+            // days difference
+            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            doc.freeTrial = true;
+            if (diffDays < 8) {
+              res.json({
+                status: "SUCCESS",
+                message: doc,
+                token: token
+              });
+            } else {
+              doc.freeTrial = false;
+              res.json({
+                status: "FAILED",
+                message: doc
+              });
+            }
+          }
+
+        } else {
+          // Continue to register
+          userProfileModel.userId = userId;
+           userProfileModel.create_date = new Date();
+          userProfileModel.socialMedia=true;
+          userProfileModel.active=true;
+          userProfileModel.save(function(error,response) {
+            if (error) {
+              res.json({
+                status: "FAILED",
+                message: error
+              });
+            } else {
+              //Generate Token
+          const payload = { emailId: req.body.emailId };
+          var token = jwt.sign(payload, config.secret(), {
+            expiresIn: "24h" // expires in 24 hours
+          });
+          
+          response.freeTrial = true;
+            res.json({
+              status: "SUCCESS",
+              message: response,
+              token: token
+            });
+
+            }
+          });
+        }
+      });
+    } else{
+      res.json({
+        status: "FAILED",
+        message: "Request is not proper"
+      });
+    }
+
+  }else{
   async.series(
     [validateLoginData.bind(), createHashPassword.bind(), readContent.bind()],
     function(err, response) {
@@ -100,6 +183,9 @@ exports.signUp = function(req, res) {
           message: err
         });
       } else {
+        
+        userProfileModel.userId = userId;
+        userProfileModel.create_date = new Date();
         userProfileModel.save(function(error) {
           if (error) {
             res.json({
@@ -129,6 +215,11 @@ exports.signUp = function(req, res) {
       }
     }
   );
+  }
+
+  
+
+  
 };
 
 //This method is to validate the login successfully
@@ -137,15 +228,8 @@ exports.login = function(req, res) {
     UserProfileModel.findOne(
       { emailId: req.body.emailId, type: req.body.type, active: true },
       function(err, doc) {
-        if (doc) {
-          // Comparing the password
-          console.log(
-            "=== login ===",
-            req.body.password,
-            " doc pswd ",
-            doc.password
-          );
-          if (bcrypt.compareSync(req.body.password, doc.password)) {
+        if (doc && doc.password) {
+          if (bcrypt.compareSync(req.body.password,doc.password)) {
             // Payment is Done .Its a premium User
             const payload = { emailId: req.body.emailId };
             var token = jwt.sign(payload, config.secret(), {
@@ -217,15 +301,13 @@ exports.resetPswd = function(req, res) {
       if (doc) {
         userId = doc.userId;
         firstName = doc.firstName;
-        console.log("--- new pswd ---", req.body.pswd, " doc ", doc.password);
         doc.password = bcrypt.hashSync(
-          req.body.pswd,
+          req.body.password,
           bcrypt.genSaltSync(8),
           null
         );
         //Again the customer needs to activate the link from email
         doc.active = false;
-        console.log("--- save pswd ---", doc);
         doc.save(function(error) {
           if (error) {
             res.json({
@@ -283,7 +365,6 @@ exports.resetPswd = function(req, res) {
         var replacements = {
           firstName: firstName,
           userlink: verfiyEmail
-          //userlink: "http://localhost:8080/api/verifyEmail?userId=" + userId
         };
         var htmlToSend = template(replacements);
         content = htmlToSend;
@@ -316,7 +397,9 @@ exports.getMedia = function(req, res) {
           mediaId: 1,
           title: 1,
           thumbImageUrl: 1,
-          author: 1,
+          narrator:1,
+          author:1,
+          description: 1,
           premium: 1,
           subcategories: { subCategoryId: 1, subCategoryName: 1 }
         }
@@ -549,5 +632,30 @@ exports.saveUserProfile = function(req, res) {
         }
       }
     );
+  }
+};
+
+// This method is to the complete playlists of media 
+exports.getPlayList = function(req, res) {
+  if (req.body.mediaId) {
+
+    MediaModel.findOne({'mediaId':req.body.mediaId},'videoUrl', function(err, data) {
+      if (err) {
+        res.json({
+          status: "FAILED",
+          message: err
+        });
+      } else {
+        res.json({
+          status: "SUCCESS",
+          message: data
+        });
+      }
+    });
+  } else {
+    res.json({
+      status: "FAILED",
+      message: " Request is not proper"
+    });
   }
 };

@@ -44,8 +44,9 @@ const DIR = "./dist/";
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    var postId = randomstring.generate(3);
     if (file.mimetype === "audio/mp3") {
-      let temp = "./upload/audio/";
+      let temp = "./upload/audio/" + postId;
       fs.mkdirsSync(temp);
       cb(null, temp);
     } else if (
@@ -53,11 +54,14 @@ let storage = multer.diskStorage({
       file.mimetype === "image/jpg" ||
       file.mimetype === "image/png"
     ) {
-      let temp = "./upload/img/";
+      let temp = "./upload/img/" + postId;
       fs.mkdirsSync(temp);
       cb(null, temp);
-    } else if (file.mimetype === "video/mp4") {
-      let temp = "./upload/video/";
+    } else if (
+      file.mimetype === "video/mp4" ||
+      file.mimetype === "video/x-ms-wmv"
+    ) {
+      let temp = "./upload/video/" + postId;
       fs.mkdirsSync(temp);
       cb(null, temp);
     } else {
@@ -66,8 +70,7 @@ let storage = multer.diskStorage({
     }
   },
   filename: (req, file, cb) => {
-    var postId = randomstring.generate(3);
-    cb(null, postId + "_" + file.originalname);
+    cb(null, file.originalname);
   }
 });
 let upload1 = multer({ storage: storage });

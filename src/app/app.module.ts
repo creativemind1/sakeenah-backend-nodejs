@@ -50,8 +50,8 @@ import { ResetPswdComponent } from './reset-pswd/reset-pswd.component';
       config: {
         tokenGetter: function  tokenGetter() {
              return     localStorage.getItem('access_token');},
-        whitelistedDomains: ['localhost:4200/subcategory','localhost:4200/category','localhost:4200/media'],
-        blacklistedRoutes: ['http://localhost:4200/login']
+        whitelistedDomains: ['/subcategory','l/category','/media'],
+        blacklistedRoutes: ['/login']
       }
     })
   ],

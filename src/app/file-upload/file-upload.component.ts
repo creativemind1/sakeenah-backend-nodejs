@@ -50,6 +50,9 @@ export class FileUploadComponent implements OnInit {
       if (result.success) {
         for (let i = 0; i < result.files.length; i++) {
           this.fileupload= new FileUpload();
+          console.log('-- position ---',String(i+1),' file data',result.files[i]);
+          this.fileupload.position=String(i+1);
+          this.fileupload.mimetype=result.files[i].mimetype;
           this.fileupload.key=result.files[i].path;
           this.fileupload.value=result.files[i].originalname;
           this.playlist.push(this.fileupload);

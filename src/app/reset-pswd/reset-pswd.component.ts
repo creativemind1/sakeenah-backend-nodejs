@@ -14,10 +14,10 @@ export class ResetPswdComponent implements OnInit {
   login:Login = new Login();
   ngOnInit() {
   }
-  onclick(){
-    this.login['type']='B2E';
-    console.log(' Reset clicked',this.login);
-    this.cmsService.resetPswd(this.login).subscribe(response=>{
+  onReset(resetData :Login){
+    resetData['type']='B2E';
+    console.log(' Reset clicked',resetData);
+    this.cmsService.resetPswd(resetData).subscribe(response=>{
       var result=JSON.parse(JSON.stringify(response));
       if(result.status == 'SUCCESS'){
         this.router.navigate(['/login']);
