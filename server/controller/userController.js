@@ -24,9 +24,9 @@ var config = require("../config/config-" + process.env.NODE_ENV + ".js");
 // This method is to resister new customer through APP.
 exports.signUp = function(req, res) {
   var userProfileModel = new UserProfileModel();
-  
+
   var firstName = req.body.firstName;
-  
+
   userProfileModel.firstName = firstName;
   userProfileModel.emailId = req.body.emailId;
   userProfileModel.type = req.body.type;
@@ -88,138 +88,140 @@ exports.signUp = function(req, res) {
       }
     });
   };
-  if(req.body.socialMedia)
-  {
+  if (req.body.socialMedia) {
     // validate the social media use cases
     if (req.body.emailId) {
-      UserProfileModel.findOne({ emailId: req.body.emailId ,socialMedia:true,type:'B2C'}, function(
-        err,
-        doc
-      ) {
-        if (doc) {
-          // This is the use case for logged in .
-          //Generate Token 
-          const payload = { emailId: req.body.emailId };
-          var token = jwt.sign(payload, config.secret(), {
-            expiresIn: "24h" // expires in 24 hours
-          });
-          if (doc.premiumUser) {
-            doc.freeTrial = true;
-            res.json({
-              status: "SUCCESS",
-              message: doc,
-              token: token
+      UserProfileModel.findOne(
+        { emailId: req.body.emailId, type: "B2C" },
+        function(err, doc) {
+          if (doc) {
+            doc.socialMedia = true;
+            doc.active = true;
+            doc.save(function(error, response) {
+              if (error) {
+                res.json({
+                  status: "FAILED",
+                  message: error
+                });
+              } else {
+                // This is the use case for logged in .
+                //Generate Token
+                const payload = { emailId: req.body.emailId };
+                var token = jwt.sign(payload, config.secret(), {
+                  expiresIn: "24h" // expires in 24 hours
+                });
+                if (doc.premiumUser) {
+                  doc.freeTrial = true;
+                  res.json({
+                    status: "SUCCESS",
+                    message: doc,
+                    token: token
+                  });
+                } else {
+                  //validating the free trial period
+                  var currentdate = new Date();
+                  var logindate = doc.create_date;
+                  // time difference
+                  var timeDiff = Math.abs(
+                    logindate.getTime() - currentdate.getTime()
+                  );
+                  // days difference
+                  var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                  doc.freeTrial = true;
+                  if (diffDays < 8) {
+                    res.json({
+                      status: "SUCCESS",
+                      message: doc,
+                      token: token
+                    });
+                  } else {
+                    doc.freeTrial = false;
+                    res.json({
+                      status: "FAILED",
+                      message: doc
+                    });
+                  }
+                }
+              }
             });
           } else {
-            //validating the free trial period
-            var currentdate = new Date();
-            var logindate = doc.create_date;
-            // time difference
-            var timeDiff = Math.abs(
-              logindate.getTime() - currentdate.getTime()
-            );
-            // days difference
-            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-            doc.freeTrial = true;
-            if (diffDays < 8) {
-              res.json({
-                status: "SUCCESS",
-                message: doc,
-                token: token
-              });
-            } else {
-              doc.freeTrial = false;
-              res.json({
-                status: "FAILED",
-                message: doc
-              });
-            }
-          }
+            // Continue to register
+            userProfileModel.userId = userId;
+            userProfileModel.create_date = new Date();
+            userProfileModel.socialMedia = true;
+            userProfileModel.active = true;
+            userProfileModel.save(function(error, response) {
+              if (error) {
+                res.json({
+                  status: "FAILED",
+                  message: error
+                });
+              } else {
+                //Generate Token
+                const payload = { emailId: req.body.emailId };
+                var token = jwt.sign(payload, config.secret(), {
+                  expiresIn: "24h" // expires in 24 hours
+                });
 
+                response.freeTrial = true;
+                res.json({
+                  status: "SUCCESS",
+                  message: response,
+                  token: token
+                });
+              }
+            });
+          }
+        }
+      );
+    } else {
+      res.json({
+        status: "FAILED",
+        message: "Request is not proper"
+      });
+    }
+  } else {
+    async.series(
+      [validateLoginData.bind(), createHashPassword.bind(), readContent.bind()],
+      function(err, response) {
+        if (err) {
+          res.json({
+            status: "FAILED",
+            message: err
+          });
         } else {
-          // Continue to register
           userProfileModel.userId = userId;
-           userProfileModel.create_date = new Date();
-          userProfileModel.socialMedia=true;
-          userProfileModel.active=true;
-          userProfileModel.save(function(error,response) {
+          userProfileModel.create_date = new Date();
+          userProfileModel.save(function(error) {
             if (error) {
               res.json({
                 status: "FAILED",
                 message: error
               });
             } else {
-              //Generate Token
-          const payload = { emailId: req.body.emailId };
-          var token = jwt.sign(payload, config.secret(), {
-            expiresIn: "24h" // expires in 24 hours
-          });
-          
-          response.freeTrial = true;
-            res.json({
-              status: "SUCCESS",
-              message: response,
-              token: token
-            });
-
+              // send email
+              var emailObj = {
+                html: content,
+                recipientEmail: req.body.emailId,
+                subject: "Verificaton Email",
+                message: userId
+              };
+              email.sendmail(emailObj, function(err, data) {
+                if (err) console.log("----mail not sent-----" + err);
+                else {
+                  console.log("----mail sent-----" + data);
+                }
+              });
+              res.json({
+                status: "SUCCESS",
+                message: "Successfully registered"
+              });
             }
           });
         }
-      });
-    } else{
-      res.json({
-        status: "FAILED",
-        message: "Request is not proper"
-      });
-    }
-
-  }else{
-  async.series(
-    [validateLoginData.bind(), createHashPassword.bind(), readContent.bind()],
-    function(err, response) {
-      if (err) {
-        res.json({
-          status: "FAILED",
-          message: err
-        });
-      } else {
-        
-        userProfileModel.userId = userId;
-        userProfileModel.create_date = new Date();
-        userProfileModel.save(function(error) {
-          if (error) {
-            res.json({
-              status: "FAILED",
-              message: error
-            });
-          } else {
-            // send email
-            var emailObj = {
-              html: content,
-              recipientEmail: req.body.emailId,
-              subject: "Verificaton Email",
-              message: userId
-            };
-            email.sendmail(emailObj, function(err, data) {
-              if (err) console.log("----mail not sent-----" + err);
-              else {
-                console.log("----mail sent-----" + data);
-              }
-            });
-            res.json({
-              status: "SUCCESS",
-              message: "Successfully registered"
-            });
-          }
-        });
       }
-    }
-  );
+    );
   }
-
-  
-
-  
 };
 
 //This method is to validate the login successfully
@@ -229,7 +231,7 @@ exports.login = function(req, res) {
       { emailId: req.body.emailId, type: req.body.type, active: true },
       function(err, doc) {
         if (doc && doc.password) {
-          if (bcrypt.compareSync(req.body.password,doc.password)) {
+          if (bcrypt.compareSync(req.body.password, doc.password)) {
             // Payment is Done .Its a premium User
             const payload = { emailId: req.body.emailId };
             var token = jwt.sign(payload, config.secret(), {
@@ -397,8 +399,8 @@ exports.getMedia = function(req, res) {
           mediaId: 1,
           title: 1,
           thumbImageUrl: 1,
-          narrator:1,
-          author:1,
+          narrator: 1,
+          author: 1,
           description: 1,
           premium: 1,
           subcategories: { subCategoryId: 1, subCategoryName: 1 }
@@ -635,11 +637,13 @@ exports.saveUserProfile = function(req, res) {
   }
 };
 
-// This method is to the complete playlists of media 
+// This method is to the complete playlists of media
 exports.getPlayList = function(req, res) {
   if (req.body.mediaId) {
-
-    MediaModel.findOne({'mediaId':req.body.mediaId},'videoUrl', function(err, data) {
+    MediaModel.findOne({ mediaId: req.body.mediaId }, "videoUrl", function(
+      err,
+      data
+    ) {
       if (err) {
         res.json({
           status: "FAILED",
