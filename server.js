@@ -36,11 +36,11 @@ var randomstring = require("randomstring");
 // var db = mongoose.connection;
 
 var mongoose = require("mongoose");
-mongoose.connect(config.dbUrl());
+mongoose.connect(config.dbUrl(), { useNewUrlParser: true });
 var conn = mongoose.connection;
 var multer = require("multer");
 
-const DIR = "./dist/";
+const DIR = "./public/";
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -92,7 +92,7 @@ app.use(
     extended: true
   })
 );
-app.use(express.static(path.join(__dirname, "dist")));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "upload")));
 
 app.use(bodyParser.json());

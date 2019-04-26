@@ -4,10 +4,10 @@
 
 export const environment = {
   production: false,
-  baseUrl: "http://localhost:8080/cms",
-  loginUrl: "http://localhost:8080/auth",
-  uploadUrl: "http://localhost:8080/upload",
-  singleUploadUrl: "http://localhost:8080/singleUpload",
+  baseUrl: "/cms",
+  loginUrl: "/auth",
+  uploadUrl: "/upload",
+  singleUploadUrl: "/singleUpload",
   serverBaseUrl:"http://localhost:8080/",
   companyId:"10000"  
 };
