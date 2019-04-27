@@ -133,7 +133,7 @@ export class CmsService {
 
      //Delete file
      deleteSingleFile(fileurl:String ){
-      return this.http.post(this.serverBaseUrl+'deleteFile',{"filePath":fileurl}).pipe(map((resp)=>{
+      return this.http.post('/deleteFile',{"filePath":fileurl}).pipe(map((resp)=>{
         return resp;
       }));
       };
