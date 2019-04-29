@@ -9,6 +9,7 @@ import {Login} from './login/login';
 import { Media } from './meida/media';
 import { JwtService } from './jwt.service';
 import{FileUpload} from './file-upload/fileUpload'
+import { PlayList } from './play-list/playlist';
 
 @Injectable({
   providedIn: 'root'
@@ -139,6 +140,7 @@ export class CmsService {
       };
 
       sendMessage(transportMsg:{img:FileUpload,video:FileUpload[]}) {
+        console.log(' =---- cms sendmessage -----',transportMsg);
         this.updateIBOsNavigationSubject.next(transportMsg);
     }
 
@@ -158,4 +160,30 @@ export class CmsService {
         return resp;
       }));
      };
+
+    // Load all the PlayList based on the company Id
+   getAllPlayLists(){
+    var token =localStorage.getItem('access_token');
+    return this.http.post(this.baseUrl+'/playlist',{"type": "LOAD",
+    "companyId":this.companyId,'token':token}).pipe(map((resp)=>{
+      return resp;
+    }));
+   };
+   //Save or Update Sub Category
+   saveOrupdatePlayList(playList:PlayList){
+    playList.companyId=this.companyId;
+    var token =localStorage.getItem('access_token');
+    playList['token']=token;
+    return this.http.post(this.baseUrl+'/playlist',playList).pipe(map((resp)=>{
+      return resp;
+    }));
+   };
+      //Delete Sub Category
+    deletePlayList(playList:PlayList){
+      var token =localStorage.getItem('access_token');
+      playList['token']=token;
+       return this.http.post(this.baseUrl+'/playlist',playList).pipe(map((resp)=>{
+         return resp;
+       }));
+      };
 }

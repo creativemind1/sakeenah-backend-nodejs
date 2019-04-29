@@ -16,8 +16,10 @@ export class JwtService {
 
    //Login 
    loginCMS(login:Login){
+    console.log('=== login CMS  ===',login);
     return this.http.post(this.loginUrl+'/login',login).pipe(map((resp)=>{
       var result=JSON.parse(JSON.stringify(resp));
+      console.log('=== login CMS result ===',result);
       localStorage.setItem('access_token', result.token);
       return resp;
     }));

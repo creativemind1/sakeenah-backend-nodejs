@@ -1,0 +1,119 @@
+<app-menu></app-menu>
+
+<div >
+  <mat-card >
+  <mat-card-header fxLayoutAlign="center">
+     <mat-card-title>Play List </mat-card-title>
+  </mat-card-header>
+  <div *ngIf="selectedPlayList.enableUpdate; else save">
+    <!-- Update UI-->
+    <mat-card-content fxLayout="column" fxLayoutAlign="center">
+        <mat-form-field>
+            <mat-label>Select Media</mat-label>
+            <mat-select [(ngModel)]="selectedPlayList.mediaId" >
+              <mat-option *ngFor="let food of media" [value]="food.mediaId">
+                {{food.title}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Select Day</mat-label>
+            <mat-select [(ngModel)]="selectedPlayList.selectDay" >
+              <mat-option *ngFor="let food of days" [value]="food">
+                {{food.value}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+         
+          <app-single-file-upload (messageEvent)="receiveUpdatePlayListSingleFile($event)"></app-single-file-upload>
+        
+        <mat-form-field>
+          <input matInput placeholder="Name" [(ngModel)]="selectedPlayList.name"  >
+        </mat-form-field>
+        <mat-form-field>
+          <textarea matInput placeholder="Description" [(ngModel)]="selectedPlayList.description" ></textarea>
+        </mat-form-field>
+         <mat-slide-toggle [(ngModel)]="selectedPlayList.active"> Slide me!</mat-slide-toggle>
+     </mat-card-content>
+     <mat-card-actions align="center">
+        <button mat-raised-button color="primary" (click)="onUpdate()" >Update</button>
+        <button mat-raised-button color="primary" (click)="onClear()" >Clear</button>
+     </mat-card-actions>
+  </div>
+  <ng-template #save>
+
+    <!--SAVE UI-->
+  <mat-card-content fxLayout="column" fxLayoutAlign="center">
+
+      <mat-form-field>
+          <mat-label>Select Media</mat-label>
+          <mat-select [(ngModel)]="playList.mediaId" >
+            <mat-option *ngFor="let food of media" [value]="food.mediaId">
+              {{food.title}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        
+        <mat-form-field>
+          <mat-label>Select Day</mat-label>
+          <mat-select [(ngModel)]="playList.selectDay" >
+            <mat-option *ngFor="let food of days" [value]="food">
+              {{food.value}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+     <mat-form-field >
+       <input matInput placeholder="Name" [(ngModel)]="playList.name"  >
+     </mat-form-field>
+      
+     
+     <mat-form-field>
+     <textarea matInput placeholder="Description" [(ngModel)]="playList.description" ></textarea>
+    </mat-form-field>
+
+        <app-single-file-upload (messageEvent)="receivePlayListSingleFile($event)"></app-single-file-upload>
+      
+     
+  </mat-card-content>
+  <mat-slide-toggle [(ngModel)]="playList.active"> Slide me!</mat-slide-toggle>
+  <mat-card-actions align="center">
+     <button mat-raised-button color="primary" (click)="onSave()" >Save</button>
+  </mat-card-actions>
+</ng-template>
+  
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="Name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+  
+    <!-- Weight Column -->
+    <ng-container matColumnDef="active">
+      <th mat-header-cell *matHeaderCellDef> Active </th>
+      <td mat-cell *matCellDef="let element"> {{element.active}} </td>
+    </ng-container>
+  
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="create_date">
+      <th mat-header-cell *matHeaderCellDef> Inserted Date </th>
+      <td mat-cell *matCellDef="let element"> {{element.create_date}} </td>
+    </ng-container>
+    <ng-container matColumnDef="updateAction">
+        <th mat-header-cell *matHeaderCellDef> Update </th>
+          <td mat-cell *matCellDef="let element"><i class="material-icons" (click)="edit(element)">edit</i>
+    </ng-container>
+    <ng-container matColumnDef="deleteAction">
+        <th mat-header-cell *matHeaderCellDef> Delete </th>
+          <td mat-cell *matCellDef="let element"><i class="material-icons" (click)="delete(element)">delete</i>
+    </ng-container> 
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
+  </table>
+
+
+  </mat-card>
+  </div>

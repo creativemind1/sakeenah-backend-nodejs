@@ -7,7 +7,9 @@
  */
 
 let UserProfileModel = require("../model/UserProfileModel");
+let UserPlayListModel = require("../model/UserPlayListModel");
 let MediaModel = require("../model/MediaModel");
+let PlayListModel = require("../model/PlayListModel");
 let CategoryModel = require("../model/CategoryModel");
 var randomstring = require("randomstring");
 var async = require("async");
@@ -639,10 +641,81 @@ exports.saveUserProfile = function(req, res) {
 
 // This method is to the complete playlists of media
 exports.getPlayList = function(req, res) {
-  if (req.body.mediaId) {
-    MediaModel.findOne({ mediaId: req.body.mediaId }, "videoUrl", function(
+  if (req.body.mediaId && req.body.userId) {
+    let dayNo;
+    let finalRespose = {};
+    let validateUserPlaylist = nCallback => {
+      console.log("== validateUserPlaylist ====", req.body);
+      if (req.body.userId) {
+        UserPlayListModel.findOne(
+          { userId: req.body.userId },
+          "dayNo",
+          function(err, doc) {
+            if (doc) {
+              dayNo = doc.dayNo;
+              finalRespose["dayNo"] = dayNo + 1;
+            } else {
+              finalRespose["dayNo"] = 1;
+            }
+          }
+        );
+        return nCallback();
+      } else {
+        return nCallback();
+      }
+    };
+
+    let loadPlaylist = nCallback => {
+      if (req.body.mediaId) {
+        let aggregatorData = [
+          // Stage 1
+          {
+            $match: {
+              mediaId: req.body.mediaId
+            }
+          },
+
+          // Stage 2
+          {
+            $lookup: {
+              from: "media",
+              localField: "mediaId",
+              foreignField: "mediaId",
+              as: "media"
+            }
+          },
+
+          // Stage 3
+          {
+            $project: {
+              _id: 0,
+              thumbImageUrl: 1,
+              selectDay: 1,
+              active: 1,
+              mediaId: 1,
+              playListId: 1,
+              name: 1,
+              mediaTitle: { $arrayElemAt: ["$media.title", 0] },
+              mediaDescription: { $arrayElemAt: ["$media.description", 0] }
+            }
+          }
+        ];
+        PlayListModel.aggregate(aggregatorData, function(err, doc) {
+          if (doc) {
+            finalRespose["data"] = doc;
+            return nCallback();
+          } else {
+            return nCallback();
+          }
+        });
+      } else {
+        return nCallback();
+      }
+    };
+
+    async.parallel([loadPlaylist.bind(), validateUserPlaylist.bind()], function(
       err,
-      data
+      response
     ) {
       if (err) {
         res.json({
@@ -652,7 +725,7 @@ exports.getPlayList = function(req, res) {
       } else {
         res.json({
           status: "SUCCESS",
-          message: data
+          message: finalRespose
         });
       }
     });
@@ -660,6 +733,30 @@ exports.getPlayList = function(req, res) {
     res.json({
       status: "FAILED",
       message: " Request is not proper"
+    });
+  }
+};
+
+// Save User Play List
+exports.saveUserPlayList = function(req, res) {
+  if (req.body.userId && req.body.mediaId) {
+    var userPlayListModel = new UserPlayListModel();
+    userPlayListModel.userId = req.body.userId;
+    userPlayListModel.mediaId = req.body.mediaId;
+    userPlayListModel.dayNo = req.body.dayNo;
+    userPlayListModel.create_date = new Date();
+    userPlayListModel.save(function(error) {
+      if (error) {
+        res.json({
+          status: "FAILED",
+          message: error
+        });
+      } else {
+        res.json({
+          status: "SUCCESS",
+          message: "Successfully  saveUserPlayList "
+        });
+      }
     });
   }
 };

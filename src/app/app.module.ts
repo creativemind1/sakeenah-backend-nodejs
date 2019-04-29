@@ -21,6 +21,7 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
 import { FileSelectDirective } from 'ng2-file-upload';
 import { SingleFileUploadComponent } from './single-file-upload/single-file-upload.component';
 import { ResetPswdComponent } from './reset-pswd/reset-pswd.component';
+import { PlayListComponent } from './play-list/play-list.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { ResetPswdComponent } from './reset-pswd/reset-pswd.component';
     FileUploadComponent,
     FileSelectDirective,
     SingleFileUploadComponent,
-    ResetPswdComponent
+    ResetPswdComponent,
+    PlayListComponent
   ],
   imports: [
     BrowserModule,

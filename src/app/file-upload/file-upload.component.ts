@@ -24,6 +24,7 @@ export class FileUploadComponent implements OnInit {
       // subscribe to home component messages
   this.subscription = this.cmsService.getMessage().subscribe(message => {
     if (message) {
+      console.log('--- Multiple file upload ----',message)
       this.messages.push(message);
       this.playlist=this.messages[0].video;
      

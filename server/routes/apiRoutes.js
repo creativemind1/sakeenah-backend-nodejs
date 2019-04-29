@@ -24,5 +24,7 @@ router.route("/getUserProfile").post(userController.getUserProfile);
 // getMedia
 router.route("/getPlaylist").post(userController.getPlayList);
 
+router.route("/saveUserPlayList").post(userController.saveUserPlayList);
+
 // Export API routes
 module.exports = router;

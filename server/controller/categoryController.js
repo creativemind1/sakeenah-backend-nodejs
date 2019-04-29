@@ -9,6 +9,7 @@
 let CategoryModel = require("../model/CategoryModel");
 let SubCategoryModel = require("../model/SubCategoryModel");
 let MediaModel = require("../model/MediaModel");
+let PlayListModel = require("../model/PlayListModel");
 var randomstring = require("randomstring");
 var async = require("async");
 var bcrypt = require("bcrypt-nodejs");
@@ -179,7 +180,8 @@ exports.subCategory = function(req, res) {
               modifiedBy: req.body.userId,
               modify_date: modify_date,
               description: req.body.description,
-              categoryId: req.body.categoryId
+              categoryId: req.body.categoryId,
+              active: req.body.active
             },
             { upsert: false },
             function(err, doc) {
@@ -205,6 +207,7 @@ exports.subCategory = function(req, res) {
           subCategoryModel.companyId = req.body.companyId;
           subCategoryModel.create_date = new Date();
           subCategoryModel.description = req.body.description;
+          subCategoryModel.active = req.body.active;
           subCategoryModel.save(function(error) {
             if (error) {
               res.json({
@@ -275,25 +278,28 @@ exports.subCategory = function(req, res) {
         }
       }
       break;
-      case "GET_SUB_CATEGORY":
+    case "GET_SUB_CATEGORY":
       {
         if (req.body.companyId && req.body.categoryId) {
-          SubCategoryModel.find({ companyId: req.body.companyId ,categoryId :{$in:req.body.categoryId}}, function(
-            err,
-            doc
-          ) {
-            if (doc) {
-              res.json({
-                status: "SUCCESS",
-                message: doc
-              });
-            } else {
-              res.json({
-                status: "FAILED",
-                message: "No Data Available"
-              });
+          SubCategoryModel.find(
+            {
+              companyId: req.body.companyId,
+              categoryId: { $in: req.body.categoryId }
+            },
+            function(err, doc) {
+              if (doc) {
+                res.json({
+                  status: "SUCCESS",
+                  message: doc
+                });
+              } else {
+                res.json({
+                  status: "FAILED",
+                  message: "No Data Available"
+                });
+              }
             }
-          });
+          );
         } else {
           res.json({
             status: "FAILED",
@@ -331,7 +337,7 @@ exports.media = function(req, res) {
               author: req.body.author,
               videoUrl: req.body.videoUrl,
               premium: req.body.premium,
-              active:req.body.active
+              active: req.body.active
             },
             { upsert: false },
             function(err, doc) {
@@ -365,7 +371,7 @@ exports.media = function(req, res) {
           mediaModel.author = req.body.author;
           mediaModel.create_date = new Date();
           mediaModel.premium = req.body.premium;
-          mediaModel.active=req.body.active; 
+          mediaModel.active = req.body.active;
           mediaModel.save(function(error) {
             if (error) {
               res.json({
@@ -437,6 +443,161 @@ exports.media = function(req, res) {
       }
       break;
 
+    default:
+      break;
+  }
+};
+
+// This method is to perform operations for PlayLists.
+
+exports.playlist = function(req, res) {
+  var type = req.body.type;
+  switch (type) {
+    case "SAVE":
+      {
+        if (req.body.playListId) {
+          var modify_date = new Date();
+          PlayListModel.findOneAndUpdate(
+            { playListId: req.body.playListId },
+            {
+              name: req.body.name,
+              modifiedBy: req.body.userId,
+              modify_date: modify_date,
+              description: req.body.description,
+              mediaId: req.body.mediaId,
+              active: req.body.active,
+              day: req.body.day,
+              selectDay: req.body.selectDay,
+              thumbImageUrl: req.body.thumbImageUrl
+            },
+            { upsert: false },
+            function(err, doc) {
+              if (doc) {
+                res.json({
+                  status: "SUCCESS",
+                  message: "Successfully Updated PlayList"
+                });
+              } else {
+                res.json({
+                  status: "FAILED",
+                  message: err
+                });
+              }
+            }
+          );
+        } else {
+          var playListModel = new PlayListModel();
+          playListModel.mediaId = req.body.mediaId;
+          playListModel.playListId = randomstring.generate(10);
+          playListModel.createdBy = req.body.userId;
+          playListModel.active = req.body.active;
+          playListModel.name = req.body.name;
+          playListModel.authorBy = req.body.authorBy;
+          playListModel.create_date = new Date();
+          playListModel.description = req.body.description;
+          playListModel.companyId = req.body.companyId;
+          playListModel.selectDay = req.body.selectDay;
+          playListModel.thumbImageUrl = req.body.thumbImageUrl;
+          playListModel.save(function(error) {
+            if (error) {
+              res.json({
+                status: "FAILED",
+                message: error
+              });
+            } else {
+              res.json({
+                status: "SUCCESS",
+                message: "Successfully Saved PlayList "
+              });
+            }
+          });
+        }
+      }
+      break;
+    case "DELETE":
+      {
+        if (req.body.playListId) {
+          PlayListModel.deleteOne({ playListId: req.body.playListId }, function(
+            err,
+            doc
+          ) {
+            if (doc && doc.deletedCount == 1) {
+              res.json({
+                status: "SUCCESS",
+                message: "Successfully Deleted PlayList"
+              });
+            } else {
+              res.json({
+                status: "FAILED",
+                message: "No Data Available"
+              });
+            }
+          });
+        } else {
+          res.json({
+            status: "FAILED",
+            message: "playList Id Missing in Request "
+          });
+        }
+      }
+      break;
+    case "LOAD":
+      {
+        if (req.body.companyId) {
+          PlayListModel.find({ companyId: req.body.companyId }, function(
+            err,
+            doc
+          ) {
+            if (doc) {
+              res.json({
+                status: "SUCCESS",
+                message: doc
+              });
+            } else {
+              res.json({
+                status: "FAILED",
+                message: "No Data Available"
+              });
+            }
+          });
+        } else {
+          res.json({
+            status: "FAILED",
+            message: "Company Id Missing in Request "
+          });
+        }
+      }
+      break;
+    case "GET_SUB_CATEGORY":
+      {
+        if (req.body.companyId && req.body.categoryId) {
+          SubCategoryModel.find(
+            {
+              companyId: req.body.companyId,
+              categoryId: { $in: req.body.categoryId }
+            },
+            function(err, doc) {
+              if (doc) {
+                res.json({
+                  status: "SUCCESS",
+                  message: doc
+                });
+              } else {
+                res.json({
+                  status: "FAILED",
+                  message: "No Data Available"
+                });
+              }
+            }
+          );
+        } else {
+          res.json({
+            status: "FAILED",
+            message: "Company Id Missing in Request "
+          });
+        }
+      }
+      break;
     default:
       break;
   }

@@ -45,11 +45,11 @@
           <textarea matInput placeholder="Author" [(ngModel)]="selectedMedia.author"></textarea>
         </mat-form-field>
 
-        <mat-slide-toggle [(ngModel)]="selectedMedia.premium"> Premium Video</mat-slide-toggle>
+        <!-- <mat-slide-toggle [(ngModel)]="selectedMedia.premium"> Premium Video</mat-slide-toggle> -->
       </mat-card-content>
-        <input placeholder="Multiple Audio/Video">
+        <!-- <input placeholder="Multiple Audio/Video">
         <app-file-upload (messageEvent)="receiveUpdateVideoMessage($event)"></app-file-upload>
-        <br>
+        <br> -->
         <br>
         <input placeholder="Single Thumbnail Image ">
         <app-single-file-upload (messageEvent)="receiveUpdateSingleFile($event)"></app-single-file-upload>
@@ -101,12 +101,12 @@
           <textarea matInput placeholder="Author" [(ngModel)]="media.author"></textarea>
         </mat-form-field>
 
-        <mat-slide-toggle [(ngModel)]="media.premium"> Premium Video</mat-slide-toggle>
+        <!-- <mat-slide-toggle [(ngModel)]="media.premium"> Premium Video</mat-slide-toggle> -->
 
       </mat-card-content>
-      <input placeholder="Audio/Video">
+      <!-- <input placeholder="Audio/Video">
       <app-file-upload (messageEvent)="receiveMessage($event)"></app-file-upload>
-      <br>
+      <br> -->
       <br>
       <input placeholder="ThumbNail Image ">
       <app-single-file-upload (messageEvent)="receiveSingleFile($event)"></app-single-file-upload>

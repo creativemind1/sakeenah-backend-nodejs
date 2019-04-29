@@ -26,6 +26,7 @@ export class SingleFileUploadComponent implements OnInit {
   constructor(private http: HttpClient, private cmsService: CmsService,private ref: ChangeDetectorRef) {
     // subscribe to home component messages
     this.subscription = this.cmsService.getMessage().subscribe(message => {
+      console.log('--- Single File Upload ---',message);
       if (message) {
         this.messages.push(message);
         this.imgUrl=this.messages[0].img;
@@ -73,6 +74,8 @@ export class SingleFileUploadComponent implements OnInit {
       });
   }
   receiveMessage($event) {
-    this.imgUrl = $event
+    console.log('=== single file upload ===', $event);
+    this.imgUrl = $event;
+    
   }
 }
