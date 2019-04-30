@@ -47,7 +47,11 @@ let storage = multer.diskStorage({
     var postId = randomstring.generate(3);
     if (file.mimetype === "audio/mp3") {
       let temp = "./upload/audio/" + postId;
-      fs.mkdirsSync(temp);
+        fs.mkdir(temp, { recursive: true }, (err) => {
+        if (err) throw err;
+        console.log('--- audio ----',temp);
+      });
+     // fs.mkdirsSync(temp);
       cb(null, temp);
     } else if (
       file.mimetype === "image/jpeg" ||
@@ -62,7 +66,11 @@ let storage = multer.diskStorage({
       file.mimetype === "video/x-ms-wmv"
     ) {
       let temp = "./upload/video/" + postId;
-      fs.mkdirsSync(temp);
+        fs.mkdirsSync(temp, { recursive: true }, (err) => {
+        if (err) throw err;
+        console.log('--- video ----',temp);
+      });
+     // fs.mkdirsSync(temp);
       cb(null, temp);
     } else {
       console.log(file.mimetype);
