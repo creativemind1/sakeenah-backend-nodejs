@@ -55,7 +55,7 @@ let storage = multer.diskStorage({
       file.mimetype === "image/png"
     ) {
       let temp = "./upload/img/" + postId;
-      fs.mkdirsSync(temp);
+      fs.mkdirsSync(temp, { recursive: true });
       cb(null, temp);
     } else if (
       file.mimetype === "video/mp4" ||
