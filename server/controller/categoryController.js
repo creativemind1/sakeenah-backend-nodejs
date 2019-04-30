@@ -465,7 +465,7 @@ exports.playlist = function(req, res) {
               modify_date: modify_date,
               description: req.body.description,
               mediaId: req.body.mediaId,
-              active: req.body.active,
+              premium: req.body.premium,
               day: req.body.day,
               selectDay: req.body.selectDay,
               thumbImageUrl: req.body.thumbImageUrl
@@ -490,7 +490,7 @@ exports.playlist = function(req, res) {
           playListModel.mediaId = req.body.mediaId;
           playListModel.playListId = randomstring.generate(10);
           playListModel.createdBy = req.body.userId;
-          playListModel.active = req.body.active;
+          playListModel.premium = req.body.premium;
           playListModel.name = req.body.name;
           playListModel.authorBy = req.body.authorBy;
           playListModel.create_date = new Date();

@@ -20,7 +20,7 @@
           <mat-form-field>
             <mat-label>Select Day</mat-label>
             <mat-select [(ngModel)]="selectedPlayList.selectDay" >
-              <mat-option *ngFor="let food of days" [value]="food">
+              <mat-option *ngFor="let food of days" [value]="food.key">
                 {{food.value}}
               </mat-option>
             </mat-select>
@@ -34,7 +34,7 @@
         <mat-form-field>
           <textarea matInput placeholder="Description" [(ngModel)]="selectedPlayList.description" ></textarea>
         </mat-form-field>
-         <mat-slide-toggle [(ngModel)]="selectedPlayList.active"> Slide me!</mat-slide-toggle>
+         <mat-slide-toggle [(ngModel)]="selectedPlayList.premium">Premium</mat-slide-toggle>
      </mat-card-content>
      <mat-card-actions align="center">
         <button mat-raised-button color="primary" (click)="onUpdate()" >Update</button>
@@ -58,7 +58,7 @@
         <mat-form-field>
           <mat-label>Select Day</mat-label>
           <mat-select [(ngModel)]="playList.selectDay" >
-            <mat-option *ngFor="let food of days" [value]="food">
+            <mat-option *ngFor="let food of days" [value]="food.key">
               {{food.value}}
             </mat-option>
           </mat-select>
@@ -76,7 +76,7 @@
       
      
   </mat-card-content>
-  <mat-slide-toggle [(ngModel)]="playList.active"> Slide me!</mat-slide-toggle>
+  <mat-slide-toggle [(ngModel)]="playList.premium">Premium</mat-slide-toggle>
   <mat-card-actions align="center">
      <button mat-raised-button color="primary" (click)="onSave()" >Save</button>
   </mat-card-actions>
@@ -92,8 +92,8 @@
   
     <!-- Weight Column -->
     <ng-container matColumnDef="active">
-      <th mat-header-cell *matHeaderCellDef> Active </th>
-      <td mat-cell *matCellDef="let element"> {{element.active}} </td>
+      <th mat-header-cell *matHeaderCellDef> Premium </th>
+      <td mat-cell *matCellDef="let element"> {{element.premium}} </td>
     </ng-container>
   
     <!-- Symbol Column -->

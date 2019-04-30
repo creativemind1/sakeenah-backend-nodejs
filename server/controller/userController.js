@@ -642,10 +642,9 @@ exports.saveUserProfile = function(req, res) {
 // This method is to the complete playlists of media
 exports.getPlayList = function(req, res) {
   if (req.body.mediaId && req.body.userId) {
-    let dayNo;
+    let dayNo = 0;
     let finalRespose = {};
     let validateUserPlaylist = nCallback => {
-      console.log("== validateUserPlaylist ====", req.body);
       if (req.body.userId) {
         UserPlayListModel.findOne(
           { userId: req.body.userId },
@@ -653,9 +652,9 @@ exports.getPlayList = function(req, res) {
           function(err, doc) {
             if (doc) {
               dayNo = doc.dayNo;
-              finalRespose["dayNo"] = dayNo + 1;
+              //   finalRespose["dayNo"] = dayNo;
             } else {
-              finalRespose["dayNo"] = 1;
+              //  finalRespose["dayNo"] = dayNo;
             }
           }
         );
@@ -691,7 +690,7 @@ exports.getPlayList = function(req, res) {
               _id: 0,
               thumbImageUrl: 1,
               selectDay: 1,
-              active: 1,
+              premium: 1,
               mediaId: 1,
               playListId: 1,
               name: 1,
@@ -702,6 +701,22 @@ exports.getPlayList = function(req, res) {
         ];
         PlayListModel.aggregate(aggregatorData, function(err, doc) {
           if (doc) {
+            doc.forEach(element => {
+              console.log(
+                "== element ===",
+                element.selectDay,
+                " day no ",
+                dayNo,
+                " cond ",
+                element.selectDay <= dayNo
+              );
+
+              if (element.selectDay <= dayNo) {
+                element["finish"] = true;
+              } else {
+                element["finish"] = false;
+              }
+            });
             finalRespose["data"] = doc;
             return nCallback();
           } else {
@@ -740,23 +755,45 @@ exports.getPlayList = function(req, res) {
 // Save User Play List
 exports.saveUserPlayList = function(req, res) {
   if (req.body.userId && req.body.mediaId) {
-    var userPlayListModel = new UserPlayListModel();
-    userPlayListModel.userId = req.body.userId;
-    userPlayListModel.mediaId = req.body.mediaId;
-    userPlayListModel.dayNo = req.body.dayNo;
-    userPlayListModel.create_date = new Date();
-    userPlayListModel.save(function(error) {
-      if (error) {
-        res.json({
-          status: "FAILED",
-          message: error
-        });
-      } else {
-        res.json({
-          status: "SUCCESS",
-          message: "Successfully  saveUserPlayList "
-        });
+    //Existing playlist
+
+    UserPlayListModel.findOneAndUpdate(
+      { userId: req.body.userId },
+      { dayNo: req.body.dayNo },
+      { upsert: false },
+      function(err, doc) {
+        if (err) {
+          console.log("----err--- ", err);
+        } else {
+          console.log("---doc--- ", doc);
+          if (doc) {
+            res.json({
+              status: "SUCCESS",
+              message: "Successfully  Updated PlayList "
+            });
+          } else {
+            var userPlayListModel = new UserPlayListModel();
+            userPlayListModel.userId = req.body.userId;
+            userPlayListModel.mediaId = req.body.mediaId;
+            userPlayListModel.dayNo = req.body.dayNo;
+            userPlayListModel.create_date = new Date();
+            userPlayListModel.save(function(error) {
+              if (error) {
+                res.json({
+                  status: "FAILED",
+                  message: error
+                });
+              } else {
+                res.json({
+                  status: "SUCCESS",
+                  message: "Successfully  saveUserPlayList "
+                });
+              }
+            });
+          }
+        }
       }
-    });
+    );
+  } else {
   }
 };

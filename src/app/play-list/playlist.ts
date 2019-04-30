@@ -5,14 +5,15 @@ export class PlayList {
     playListId: string;
      mediaId:string
      name: string;
-     active:boolean; 
+     premium:boolean; 
      create_date:string;
      description:string;
      createdBy:string;
      authorBy:string;
      companyId: string;
      enableUpdate:boolean;
-     selectDay:DayWise;
+     //selectDay:DayWise;
+     selectDay:Number;
      thumbImageUrl: FileUpload= new FileUpload();
      videoUrl: FileUpload[]=[];
      

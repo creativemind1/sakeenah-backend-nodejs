@@ -29,7 +29,7 @@ export class PlayListComponent implements OnInit {
   @Output() messageEvent = new EventEmitter<FileUpload>();
 
   ngOnInit() {
-    this.playList.active=true;
+    this.playList.premium=true;
   this.loadMedia();
    this.loadPlaylist();
    this.loadDayslist();
@@ -37,7 +37,7 @@ export class PlayListComponent implements OnInit {
   onSave(){
     
     this.playList['type']="SAVE";
-    console.log(' daywise ',this.playList);
+    console.log(' daywise ',this.playList.selectDay);
     this.cmsService.saveOrupdatePlayList(this.playList).subscribe(response=>{
       var result=JSON.parse(JSON.stringify(response));
       if(result.status == 'SUCCESS'){
@@ -70,6 +70,7 @@ export class PlayListComponent implements OnInit {
   onUpdate(){
     
     this.selectedPlayList['type']="SAVE";
+    console.log('Update --- selec Day ',this.selectedPlayList.selectDay);
     this.cmsService.saveOrupdatePlayList(this.selectedPlayList).subscribe(response=>{
       var result=JSON.parse(JSON.stringify(response));
       if(result.status == 'SUCCESS'){
@@ -89,7 +90,7 @@ export class PlayListComponent implements OnInit {
     this.selectedPlayList = row;
     this.selectedPlayList.enableUpdate=true;
     
-    console.log('--- sel PlayList ---',row,' selec ',this.selectedPlayList);
+    console.log('edit --- selec Day ',this.selectedPlayList.selectDay);
 
     this.transportMsg.img=this.selectedPlayList.thumbImageUrl;
     this.cmsService.sendMessage(this.transportMsg);
