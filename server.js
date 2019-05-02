@@ -47,7 +47,7 @@ let storage = multer.diskStorage({
     var postId = randomstring.generate(3);
     if (file.mimetype === "audio/mp3") {
       let temp = "./upload/audio/" + postId;
-         fs.mkdirsSync(temp, { recursive: true }, (err) => {
+      fs.mkdirsSync(temp, { recursive: true }, err => {
         if (err) throw err;
       });
       cb(null, temp);
@@ -57,7 +57,7 @@ let storage = multer.diskStorage({
       file.mimetype === "image/png"
     ) {
       let temp = "./upload/img/" + postId;
-      fs.mkdirsSync(temp, { recursive: true }, (err) => {
+      fs.mkdirsSync(temp, { recursive: true }, err => {
         if (err) throw err;
       });
       cb(null, temp);
@@ -66,10 +66,10 @@ let storage = multer.diskStorage({
       file.mimetype === "video/x-ms-wmv"
     ) {
       let temp = "./upload/video/" + postId;
-        fs.mkdirsSync(temp, { recursive: true }, (err) => {
+      fs.mkdirsSync(temp, { recursive: true }, err => {
         if (err) throw err;
       });
-     // fs.mkdirsSync(temp);
+      // fs.mkdirsSync(temp);
       cb(null, temp);
     } else {
       console.log(file.mimetype);
@@ -156,6 +156,14 @@ app.post("/deleteFile", function(req, res) {
   }
 });
 
+app.get("/(|login|reset|category|subcategory|media|playlist)", function(
+  req,
+  res
+) {
+  res
+    .set("Content-Type", "text/html")
+    .sendFile(__dirname + "/public/index.html");
+});
 app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
   if (!req.files) {
     return res.send({
