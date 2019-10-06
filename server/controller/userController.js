@@ -690,16 +690,45 @@ exports.getUserProfile = function(req, res) {
 
 exports.saveUserProfile = function(req, res) {
   if (req.body.userId) {
+    console.log(req.body.firstName, "-SSHSHSHSHS");
+    // UserProfileModel.findOneAndUpdate(
+    //   { userId: req.body.userId },
+    //   {
+    //     $set: {
+    //       firstName: req.body.firstName,
+    //       emailId: req.body.emailId,
+    //       age: req.body.age,
+    //       country: req.body.country,
+    //       profileUrl: req.body.profileUrl
+    //     }
+    //   },
+    //   { new: true, upsert: false },
+    //   (err, doc) => {
+    //     if (err) {
+    //       res.json({
+    //         status: "FAILED",
+    //         message: err
+    //       });
+    //     }
+    //     console.log(doc)
+    //     res.json({
+    //       status: "SUCCESS",
+    //       message: doc
+    //     });
+    //   }
+    // );
     UserProfileModel.findOneAndUpdate(
       { userId: req.body.userId },
       {
-        firstName: req.body.firstName,
-        emailId: req.body.emailId,
-        age: req.body.age,
-        country: req.body.country,
-        profileUrl: req.body.profileUrl
-      },
-      { upsert: false },
+        $set: {
+          firstName: req.body.firstName,
+          emailId: req.body.emailId,
+          age: req.body.age,
+          country: req.body.country,
+          profileUrl: req.body.profileUrl
+        }
+      }, 
+      { new: true, upsert: false },
       function(err, data) {
         if (err) {
           res.json({

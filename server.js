@@ -37,6 +37,7 @@ var randomstring = require("randomstring");
 
 var mongoose = require("mongoose");
 mongoose.connect(config.dbUrl(), { useNewUrlParser: true });
+mongoose.set('useFindAndModify', false);
 var conn = mongoose.connection;
 var multer = require("multer");
 
@@ -131,6 +132,7 @@ function authChecker(req, res, next) {
 app.use(authChecker);
 // Setup server port
 var port = process.env.PORT || 8080;
+console.log(port, '===port==')
 app.set("superSecret", config.secret()); // secret variable
 
 app.post("/deleteFile", function(req, res) {
