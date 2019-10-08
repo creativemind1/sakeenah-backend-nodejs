@@ -129,7 +129,7 @@ exports.signUp = function(req, res) {
                 // days difference
                 var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
                 doc.freeTrial = true;
-                if (diffDays < 8) {
+                if (diffDays < 888888888888888888) {
                   res.json({
                     status: "SUCCESS",
                     message: doc,
@@ -335,7 +335,7 @@ exports.login = function(req, res) {
               // days difference
               var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
               doc.freeTrial = true;
-              if (diffDays < 8) {
+              if (diffDays < 8888888888888888888) {
                 res.json({
                   status: "SUCCESS",
                   message: doc,
