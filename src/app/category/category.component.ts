@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Category } from './category';
 import { CmsService } from '../cms.service';
-import {MatPaginator,MatTableDataSource,MatSortModule} from '@angular/material'
+import { MatPaginator, MatTableDataSource, MatSortModule } from '@angular/material'
 @Component({
   selector: 'app-category',
   templateUrl: './category.component.html',
@@ -15,9 +15,9 @@ export class CategoryComponent implements OnInit {
 
   selectedCategory: Category = new Category();
   deletedCategory: Category;
-  dataSource=new MatTableDataSource<Category>([]);
+  dataSource = new MatTableDataSource<Category>([]);
   displayedColumns: string[];
-  @ViewChild (MatPaginator)paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
 
   ngOnInit() {
@@ -80,20 +80,16 @@ export class CategoryComponent implements OnInit {
 
 
   loadCategories() {
-
     this.cmsService.getCategories().subscribe(response => {
       this.displayedColumns = ['categoryName', 'active', 'create_date', 'updateAction'];
       var result = JSON.parse(JSON.stringify(response));
       this.dataSource = result.message;
-      this.dataSource.paginator=this.paginator;
-      console.log('--- Load Category ---',this.dataSource.paginator);
-
+      this.dataSource.paginator = this.paginator;
     });
   }
-
   onClear() {
-    this.category= new Category();
-    this.selectedCategory= new Category();
+    this.category = new Category();
+    this.selectedCategory = new Category();
   }
 
 

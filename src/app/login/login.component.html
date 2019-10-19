@@ -1,16 +1,16 @@
 <div fxLayout="row" fxLayoutAlign="center center" class="login-main">
-  <mat-card >
-  <mat-card-content fxLayout="column">
-     <mat-form-field>
-       <input matInput placeholder="Enter Email" [(ngModel)]="login.emailId"  >
-     </mat-form-field>
-     <mat-form-field>
-       <input type="password"  matInput placeholder="Enter password" [(ngModel)]="login.password" >
-     </mat-form-field>
-  </mat-card-content>
-  <mat-card-actions align="end">
-     <button mat-raised-button color="primary" (click)="onclick()" >Login</button>
-     <button mat-raised-button color="primary" routerLink="/reset" >Reset</button>
-  </mat-card-actions>
+  <mat-card>
+    <mat-card-content fxLayout="column">
+      <mat-form-field>
+        <input matInput required placeholder="Enter Email" [(ngModel)]="login.emailId">
+      </mat-form-field>
+      <mat-form-field>
+        <input type="password" required matInput placeholder="Enter password" [(ngModel)]="login.password">
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-raised-button color="primary" (click)="onclick()">Login</button>
+      <button mat-raised-button color="primary" routerLink="/reset">Reset</button>
+    </mat-card-actions>
   </mat-card>
-  </div>
+</div>

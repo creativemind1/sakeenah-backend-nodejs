@@ -18,6 +18,7 @@ const path = require("path");
 var cors = require("cors");
 var jwt = require("jsonwebtoken");
 let fs = require("fs-extra");
+var fsRead = require('fs');
 var randomstring = require("randomstring");
 // // Create a storage object with a given configuration
 // const storage = require("multer-gridfs-storage")({
@@ -42,6 +43,21 @@ var conn = mongoose.connection;
 var multer = require("multer");
 
 const DIR = "./public/";
+
+/*
+* Configuring AWS For Uploading Image and mp3
+*/
+const AWS = require('aws-sdk');
+const ID = 'AKIAJK3LEEXLZPIJXE3Q';
+const SECRET = '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';
+const BUCKET_NAME = 'muzmind';
+const s3 = new AWS.S3({
+  accessKeyId: ID,
+  secretAccessKey: SECRET
+});
+
+
+
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -166,17 +182,32 @@ app.get("/(|login|reset|category|subcategory|media|playlist)", function(
     .set("Content-Type", "text/html")
     .sendFile(__dirname + "/public/index.html");
 });
+
+
+
 app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
-  if (!req.files) {
-    return res.send({
-      success: false
+  console.log(upload1, 'upload1.array("uploads[]", 12........')
+  var filestream = fs.createReadStream(req.files[0].path);
+  filestream.on("open", function() {
+    const randomNumber = Math.random() * 1000;
+    const params = {
+      Bucket: BUCKET_NAME,
+      Key: "audios/anxiety/day1/" + randomNumber.toFixed(0) + ".mp3",
+      Body: filestream
+    };  
+    s3.upload(params, (err, data) => {
+      if (err) throw err;
+      const reqFrame = req.files
+      for (i in reqFrame) {
+        reqFrame[i].path = data.Location
+      }
+      console.log(`File uploaded successfully at ${data.Location}`);
+      return res.send({
+        success: true,
+        files: reqFrame
+      });
     });
-  } else {
-    return res.send({
-      success: true,
-      files: req.files
-    });
-  }
+  });
 });
 app.post("/upload", upload1.array("uploads[]", 12), function(req, res) {
   console.log("---- Video ---", req.files);

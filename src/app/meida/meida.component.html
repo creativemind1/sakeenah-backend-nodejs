@@ -3,16 +3,14 @@
 <div>
   <mat-card>
     <mat-card-header fxLayoutAlign="center">
-      <mat-card-title>Media</mat-card-title>
+      <mat-card-title>Medias</mat-card-title> 
     </mat-card-header>
     <div *ngIf="selectedMedia.enableUpdate; else save">
       <!-- Update UI-->
       <mat-card-content fxLayout="column" fxLayoutAlign="center">
-
         <mat-form-field>
           <mat-label>Select Category</mat-label>
-          <mat-select [(ngModel)]="selectedMedia.categoryId" (selectionChange)="updatecategoryClick ()" 
-            multiple>
+          <mat-select [(ngModel)]="selectedMedia.categoryId" (selectionChange)="updatecategoryClick ()" multiple>
             <mat-option *ngFor="let food of category" [value]="food.categoryId">
               {{food.categoryName}}
             </mat-option>
@@ -20,8 +18,9 @@
         </mat-form-field>
 
         <mat-form-field>
+          <p>{{selectedMedia.subCategoryId}}</p>
           <mat-label>Select Sub Category</mat-label>
-          <mat-select [(ngModel)]="selectedMedia.subCategoryId"  multiple>
+          <mat-select [(ngModel)]="selectedMedia.subCategoryId" [(value)]="selected">
             <mat-option *ngFor="let food of subCategory" [value]="food.subCategoryId">
               {{food.subCategoryName}}
             </mat-option>
@@ -47,20 +46,20 @@
 
         <!-- <mat-slide-toggle [(ngModel)]="selectedMedia.premium"> Premium Video</mat-slide-toggle> -->
       </mat-card-content>
-        <!-- <input placeholder="Multiple Audio/Video">
+      <!-- <input placeholder="Multiple Audio/Video">
         <app-file-upload (messageEvent)="receiveUpdateVideoMessage($event)"></app-file-upload>
         <br> -->
-        <br>
-        <input placeholder="Single Thumbnail Image ">
-        <app-single-file-upload (messageEvent)="receiveUpdateSingleFile($event)"></app-single-file-upload>
-        <span></span>
+      <br>
+      <input placeholder="Single Thumbnail Image ">
+      <app-single-file-upload (messageEvent)="receiveUpdateSingleFile($event)"></app-single-file-upload>
+      <span></span>
 
-        <mat-slide-toggle [(ngModel)]="selectedMedia.active"> Active</mat-slide-toggle>
-     
-        
+      <mat-slide-toggle [(ngModel)]="selectedMedia.active"> Active</mat-slide-toggle>
+
+
       <mat-card-actions align="center">
         <button mat-raised-button color="primary" (click)="onUpdate()">Update</button>
-        <button mat-raised-button color="primary" (click)="onClear()" >Clear</button>
+        <button mat-raised-button color="primary" (click)="onClear()">Clear</button>
       </mat-card-actions>
     </div>
     <ng-template #save>
@@ -69,8 +68,7 @@
 
         <mat-form-field>
           <mat-label>Select Category</mat-label>
-          <mat-select [(ngModel)]="media.categoryId" (selectionChange)="categoryClick()" 
-            multiple>
+          <mat-select [(ngModel)]="media.categoryId" (selectionChange)="categoryClick()" multiple>
             <mat-option *ngFor="let food of category" [value]="food.categoryId">
               {{food.categoryName}}
             </mat-option>
@@ -79,7 +77,7 @@
 
         <mat-form-field>
           <mat-label>Select Sub Category</mat-label>
-          <mat-select [(ngModel)]="media.subCategoryId"  multiple>
+          <mat-select [(ngModel)]="media.subCategoryId" multiple>
             <mat-option *ngFor="let food of subCategory" [value]="food.subCategoryId">
               {{food.subCategoryName}}
             </mat-option>
@@ -112,7 +110,7 @@
       <app-single-file-upload (messageEvent)="receiveSingleFile($event)"></app-single-file-upload>
       <span></span>
 
-      <mat-slide-toggle [(ngModel)]="media.active"> Slide me!</mat-slide-toggle>
+      <mat-slide-toggle [(ngModel)]="media.active"> Active/Inactive</mat-slide-toggle>
 
       <mat-card-actions align="center">
         <button mat-raised-button color="primary" (click)="onSave()">Save</button>

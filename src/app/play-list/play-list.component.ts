@@ -37,7 +37,7 @@ export class PlayListComponent implements OnInit {
   onSave(){
     
     this.playList['type']="SAVE";
-    console.log(' daywise ',this.playList.selectDay);
+    console.log(' daywise ',this.playList);
     this.cmsService.saveOrupdatePlayList(this.playList).subscribe(response=>{
       var result=JSON.parse(JSON.stringify(response));
       if(result.status == 'SUCCESS'){
@@ -70,6 +70,7 @@ export class PlayListComponent implements OnInit {
   onUpdate(){
     
     this.selectedPlayList['type']="SAVE";
+    console.log(this.selectedPlayList, '=====this.selectedPlayList=====')
     console.log('Update --- selec Day ',this.selectedPlayList.selectDay);
     this.cmsService.saveOrupdatePlayList(this.selectedPlayList).subscribe(response=>{
       var result=JSON.parse(JSON.stringify(response));
@@ -100,7 +101,7 @@ export class PlayListComponent implements OnInit {
   }
   receivePlayListSingleFile($event) {
     this.playList.thumbImageUrl = $event
-    console.log('=== receivePlayListSingleFile ===',this.playList.thumbImageUrl);
+    console.log('=== receivePlayListSingleFile ===',this.playList);
   }
   delete(row){
     // your delete code

@@ -42,12 +42,14 @@ export class FileUploadComponent implements OnInit {
   upload() {
     const formData: any = new FormData();
     const files: Array<File> = this.filesToUpload;
-
+    console.log(files, '===files....')
     for (let i = 0; i < files.length; i++) {
       formData.append("uploads[]", files[i], files[i]["name"]);
     }
+    console.log(formData, '040404040')
     this.cmsService.upload(formData).subscribe(response => {
       var result = JSON.parse(JSON.stringify(response));
+      console.log(result, 'result......') 
       if (result.success) {
         for (let i = 0; i < result.files.length; i++) {
           this.fileupload= new FileUpload();
