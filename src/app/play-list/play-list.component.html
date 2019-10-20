@@ -3,13 +3,13 @@
 <div >
   <mat-card >
   <mat-card-header fxLayoutAlign="center">
-     <mat-card-title>Play List </mat-card-title>
+     <mat-card-title>Playlist </mat-card-title>
   </mat-card-header>
   <div *ngIf="selectedPlayList.enableUpdate; else save">
     <!-- Update UI-->
     <mat-card-content fxLayout="column" fxLayoutAlign="center">
         <mat-form-field>
-            <mat-label>Select Media</mat-label>
+            <mat-label>Select Category</mat-label>
             <mat-select [(ngModel)]="selectedPlayList.mediaId" >
               <mat-option *ngFor="let food of media" [value]="food.mediaId">
                 {{food.title}}
@@ -32,7 +32,7 @@
           <input matInput placeholder="Name" [(ngModel)]="selectedPlayList.name"  >
         </mat-form-field>
         <mat-form-field>
-          <textarea matInput placeholder="Description" [(ngModel)]="selectedPlayList.description" ></textarea>
+          <textarea matInput placeholder="Author" [(ngModel)]="selectedPlayList.description" ></textarea>
         </mat-form-field>
          <mat-slide-toggle [(ngModel)]="selectedPlayList.premium">Premium</mat-slide-toggle>
      </mat-card-content>
@@ -47,7 +47,7 @@
   <mat-card-content fxLayout="column" fxLayoutAlign="center">
 
       <mat-form-field>
-          <mat-label>Select Media</mat-label>
+          <mat-label>Select Category</mat-label>
           <mat-select [(ngModel)]="playList.mediaId" >
             <mat-option *ngFor="let food of media" [value]="food.mediaId">
               {{food.title}}
@@ -69,10 +69,12 @@
       
      
      <mat-form-field>
-     <textarea matInput placeholder="Description" [(ngModel)]="playList.description" ></textarea>
+     <textarea matInput placeholder="Author" [(ngModel)]="playList.description" ></textarea>
     </mat-form-field>
 
-        <app-single-file-upload (messageEvent)="receivePlayListSingleFile($event)"></app-single-file-upload>
+      <div>
+          <app-single-file-upload (messageEvent)="receivePlayListSingleFile($event)"></app-single-file-upload>
+      </div>
       
      
   </mat-card-content>
@@ -100,16 +102,15 @@
     <ng-container matColumnDef="create_date">
       <th mat-header-cell *matHeaderCellDef> Inserted Date </th>
       <td mat-cell *matCellDef="let element"> {{element.create_date}} </td>
-    </ng-container>
+    </ng-container>    
+    <ng-container matColumnDef="deleteAction">
+        <th mat-header-cell *matHeaderCellDef> Delete </th>
+        <td mat-cell *matCellDef="let element"><i class="material-icons"  (click)="delete(element)">delete</i>
+    </ng-container> 
     <ng-container matColumnDef="updateAction">
         <th mat-header-cell *matHeaderCellDef> Update </th>
           <td mat-cell *matCellDef="let element"><i class="material-icons" (click)="edit(element)">edit</i>
     </ng-container>
-    <ng-container matColumnDef="deleteAction">
-        <th mat-header-cell *matHeaderCellDef> Delete </th>
-          <td mat-cell *matCellDef="let element"><i class="material-icons" (click)="delete(element)">delete</i>
-    </ng-container> 
-  
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr> 
   </table>

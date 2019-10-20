@@ -2,6 +2,7 @@ import { DayWise} from './daywise';
 import {FileUpload} from '../file-upload/fileUpload';
 
 export class PlayList {
+  [x: string]: any;
     playListId: string;
      mediaId:string
      name: string;

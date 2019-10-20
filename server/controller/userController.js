@@ -801,6 +801,7 @@ exports.getPlayList = function(req, res) {
               mediaId: 1,
               playListId: 1,
               name: 1,
+              description: 1, //using temporarily for author name..
               mediaTitle: { $arrayElemAt: ["$media.title", 0] },
               mediaDescription: { $arrayElemAt: ["$media.description", 0] }
             }
@@ -825,6 +826,7 @@ exports.getPlayList = function(req, res) {
               }
             });
             finalRespose["data"] = doc;
+            console.log(doc, '===DOC======')
             return nCallback();
           } else {
             return nCallback();

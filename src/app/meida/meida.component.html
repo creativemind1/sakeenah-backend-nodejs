@@ -3,7 +3,7 @@
 <div>
   <mat-card>
     <mat-card-header fxLayoutAlign="center">
-      <mat-card-title>Medias</mat-card-title> 
+      <mat-card-title>Categories</mat-card-title> 
     </mat-card-header>
     <div *ngIf="selectedMedia.enableUpdate; else save">
       <!-- Update UI-->
@@ -69,7 +69,7 @@
         <mat-form-field>
           <mat-label>Select Category</mat-label>
           <mat-select [(ngModel)]="media.categoryId" (selectionChange)="categoryClick()" multiple>
-            <mat-option *ngFor="let food of category" [value]="food.categoryId">
+            <mat-option *ngFor="let food of category" [value]="food.categoryId" selected>
               {{food.categoryName}}
             </mat-option>
           </mat-select>

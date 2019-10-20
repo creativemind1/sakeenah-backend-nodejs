@@ -186,20 +186,24 @@ app.get("/(|login|reset|category|subcategory|media|playlist)", function(
 
 
 app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
-  console.log(upload1, 'upload1.array("uploads[]", 12........')
   var filestream = fs.createReadStream(req.files[0].path);
   filestream.on("open", function() {
     const randomNumber = Math.random() * 1000;
+    const category  = 'anxiety';
+    const day = "day1";
     const params = {
       Bucket: BUCKET_NAME,
-      Key: "audios/anxiety/day1/" + randomNumber.toFixed(0) + ".mp3",
-      Body: filestream
-    };  
+      Key: "audios/"+category+"/"+day+"/"+randomNumber.toFixed(0) + ".mp3",
+      Body: filestream,
+      ACL: "public-read"
+    }; 
     s3.upload(params, (err, data) => {
       if (err) throw err;
       const reqFrame = req.files
+      const URL = '.us-east-2.' ? '.us-east-2.' : '.'
+      const newPath = data.Location.split('https://muzmind.s3'+URL+'amazonaws.com/audios')[1];
       for (i in reqFrame) {
-        reqFrame[i].path = data.Location
+        reqFrame[i].path = newPath
       }
       console.log(`File uploaded successfully at ${data.Location}`);
       return res.send({

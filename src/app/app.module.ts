@@ -10,7 +10,7 @@ import { CategoryComponent } from './category/category.component';
 import { SubcategoryComponent } from './subcategory/subcategory.component';
 import { MeidaComponent } from './meida/meida.component';
 import { LoginComponent } from './login/login.component';
-import { MatFormFieldModule,MatInputModule,MatCardModule,MatButtonModule,MatSlideToggleModule,MatIconModule,
+import { MatDialogModule, MatFormFieldModule,MatInputModule,MatCardModule,MatButtonModule,MatSlideToggleModule,MatIconModule,
   MatTableModule,MatMenuModule,MatSelectModule,MatListModule,MatPaginatorModule,MatSortModule,MatToolbarModule} from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule } from '@angular/common/http';
@@ -22,9 +22,11 @@ import { FileSelectDirective } from 'ng2-file-upload';
 import { SingleFileUploadComponent } from './single-file-upload/single-file-upload.component';
 import { ResetPswdComponent } from './reset-pswd/reset-pswd.component';
 import { PlayListComponent } from './play-list/play-list.component';
-
+import { MyDialogComponent } from './my-dialog/my-dialog.component';
+import { MyDialogComponentComponent } from './my-dialog-component/my-dialog-component.component'
 
 @NgModule({
+  entryComponents: [MyDialogComponent],
   declarations: [
     AppComponent,
     CategoryComponent,
@@ -36,7 +38,9 @@ import { PlayListComponent } from './play-list/play-list.component';
     FileSelectDirective,
     SingleFileUploadComponent,
     ResetPswdComponent,
-    PlayListComponent
+    PlayListComponent,
+    MyDialogComponent,
+    MyDialogComponentComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +49,7 @@ import { PlayListComponent } from './play-list/play-list.component';
     FlexLayoutModule,
     MatFormFieldModule,MatInputModule,MatCardModule,MatButtonModule,MatSlideToggleModule,MatIconModule,MatTableModule,MatMenuModule,
     MatSelectModule,FormsModule,MatFileUploadModule,MatListModule,MatPaginatorModule,MatSortModule,MatToolbarModule,
-
+    MatDialogModule,
     HttpClientModule,
     ReactiveFormsModule,
     JwtModule.forRoot({
