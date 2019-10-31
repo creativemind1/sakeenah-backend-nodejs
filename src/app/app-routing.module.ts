@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { CategoryComponent } from './category/category.component';
 import { SubcategoryComponent } from './subcategory/subcategory.component';
-import { MeidaComponent } from './meida/meida.component';
+import { MediaComponent } from './media/media.component';
 import { PlayListComponent } from './play-list/play-list.component';
 import {AppComponent} from './app.component';
 import { ResetPswdComponent } from './reset-pswd/reset-pswd.component';
@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: 'reset', component: ResetPswdComponent },
   { path: 'category', component: CategoryComponent },
   { path: 'subcategory', component: SubcategoryComponent },
-  { path: 'media', component: MeidaComponent },
+  { path: 'media', component: MediaComponent },
   { path: 'playlist', component: PlayListComponent },
   { path: '',   redirectTo: '/login', pathMatch: 'full' },
  

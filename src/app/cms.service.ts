@@ -6,7 +6,7 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { Category } from './category/category';
 import { SubCategory } from './subcategory/subcategory';
 import { Login } from './login/login';
-import { Media } from './meida/media';
+import { Media } from './media/media';
 import { JwtService } from './jwt.service';
 import { FileUpload } from './file-upload/fileUpload'
 import { PlayList } from './play-list/playlist';
@@ -98,6 +98,7 @@ export class CmsService {
   //Save or Update Sub Category
   saveOrupdateMedia(media: Media) {
     media.companyId = this.companyId;
+    console.log(media, '====media===')
     var token = localStorage.getItem('access_token');
     media['token'] = token;
     return this.http.post(this.baseUrl + '/media', media).pipe(map((resp) => {
@@ -124,7 +125,6 @@ export class CmsService {
   // L
   //Delete Sub Category
   upload(formData: FormData) {
-
     return this.http.post(this.uploadUrl, formData).pipe(map((resp) => {
       console.log('--- upload video ---', resp);
       return resp;
@@ -142,8 +142,8 @@ export class CmsService {
   };
 
   //Delete file
-  deleteSingleFile(fileurl: String) {
-    return this.http.post('/deleteFile', { "filePath": fileurl }).pipe(map((resp) => {
+  deleteSingleFile(fileurl: String) {    
+    return this.http.post(this.serverBaseUrl + 'deleteFile', { "filePath": fileurl }).pipe(map((resp) => {
       return resp;
     }));
   };

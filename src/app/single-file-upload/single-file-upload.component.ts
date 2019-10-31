@@ -46,27 +46,26 @@ export class SingleFileUploadComponent implements OnInit {
   upload() {
     const formData: any = new FormData();
     const files: Array<File> = this.filesToUpload;
-    console.log(this.filesToUpload, '===this.filesToUpload===')
-    for (let i = 0; i < files.length; i++) {
-      formData.append("uploads[]", files[i], files[i]["name"]);
-    }
-    console.log(formData, 'formData.....')
-    this.cmsService.singleFileupload(formData).subscribe(response => {
-      var result = JSON.parse(JSON.stringify(response));
-      if (result.success) {
-        this.imgUrl= new FileUpload();
-        this.imgUrl.key=result.files[0].path;
-        this.imgUrl.value=result.files[0].originalname;
-        this.messageEvent.emit(this.imgUrl);
-      } else {
+    if (files.length) {
+      for (let i = 0; i < files.length; i++) {
+        formData.append("uploads[]", files[i], files[i]["name"]);
       }
-    });
+      this.cmsService.singleFileupload(formData).subscribe(response => {
+        var result = JSON.parse(JSON.stringify(response));
+        if (result.success) {
+          this.imgUrl = new FileUpload();
+          this.imgUrl.key = result.files[0].path;
+          this.imgUrl.value = result.files[0].originalname;
+          this.messageEvent.emit(this.imgUrl);
+        }
+      });
+    }
   }
 
   fileChangeEvent(fileInput: any) {
     this.filesToUpload = <Array<File>>fileInput.target.files;
   }
-  onSigleDelete(tempfile:FileUpload){
+  onSingleDelete(tempfile:FileUpload){
     this.cmsService.deleteSingleFile(tempfile.key).subscribe(response=>{
       var result=JSON.parse(JSON.stringify(response));
       if(result.success){

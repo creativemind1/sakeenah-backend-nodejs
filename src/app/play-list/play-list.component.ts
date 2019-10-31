@@ -1,13 +1,12 @@
-import { Component, OnInit, EventEmitter, Output, Inject } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { PlayList } from './playlist';
 import { DayWise } from './daywise';
-import { Media } from '../meida/media';
+import { Media } from '../media/media';
 import { CmsService } from '../cms.service';
 import { FileUpload } from '../file-upload/fileUpload';
 import { FormControl } from '@angular/forms';
-import { Transporter } from '../meida/transporter';
-import { Alert } from 'selenium-webdriver';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { Transporter } from '../media/transporter';
+import { MatDialog } from '@angular/material/dialog';
 import { MyDialogComponent } from './../my-dialog/my-dialog.component'
 
 @Component({
@@ -37,16 +36,16 @@ export class PlayListComponent implements OnInit {
     this.loadPlaylist();
     this.loadDayslist();
   }
-  
+
   onSave() {
     this.playList['type'] = "SAVE";
-      this.cmsService.saveOrupdatePlayList(this.playList).subscribe(response => {
-        var result = JSON.parse(JSON.stringify(response));
-        if (result.status == 'SUCCESS') {
-          this.loadPlaylist();
-          this.onClear();
-        }
-      });
+    this.cmsService.saveOrupdatePlayList(this.playList).subscribe(response => {
+      var result = JSON.parse(JSON.stringify(response));
+      if (result.status == 'SUCCESS') {
+        this.loadPlaylist();
+        this.onClear();
+      }
+    });
   }
 
   loadDayslist() {
@@ -91,7 +90,7 @@ export class PlayListComponent implements OnInit {
   delete(row) {
     const dialogRef = this.dialog.open(MyDialogComponent, {
       width: '500px',
-      data: [row, this]      
+      data: [row, this, 'deletePlayList']
     });
   }
 
@@ -114,6 +113,4 @@ export class PlayListComponent implements OnInit {
   receiveUpdatePlayListSingleFile($event) {
     this.selectedPlayList.thumbImageUrl = $event
   }
-
 }
-

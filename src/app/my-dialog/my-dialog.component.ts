@@ -13,11 +13,11 @@ export class MyDialogComponent implements OnInit {
     }
     onYesClick(data) {
         data[0]['type'] = "DELETE";
-        this.cmsService.deletePlayList(data[0]).subscribe(response => {
+        this.cmsService[data[2]](data[0]).subscribe(response => {
             var result = JSON.parse(JSON.stringify(response));
             if (result.status == 'SUCCESS') {
                 data[1].loadPlaylist();
-                data[2].onClear();
+                data[1].onClear();
             }
             this.dialogRef.close();
         });

@@ -186,14 +186,27 @@ app.get("/(|login|reset|category|subcategory|media|playlist)", function(
 
 
 app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
-  var filestream = fs.createReadStream(req.files[0].path);
+  const fileType = req.files[0]
+  var filestream = fs.createReadStream(fileType.path);
+  const makeid = () => {
+    var result = '';
+    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 3; i++) {
+      result += characters.charAt(Math.floor(Math.random() * 3));
+    }
+    return result;
+  };
   filestream.on("open", function() {
-    const randomNumber = Math.random() * 1000;
+    const randomNumber = Math.random() * 10000;
     const category  = 'anxiety';
+    const randomChar = makeid() + randomNumber.toFixed(0);
     const day = "day1";
+    const keyMp3 = "audios/"+category+"/"+day+"/"+randomChar+".mp3";
+    const keyImg = "images/"+randomChar + ".png";
+    const key = fileType.mimetype == 'image/jpeg' || 'image/png' ? keyImg : keyMp3;
     const params = {
       Bucket: BUCKET_NAME,
-      Key: "audios/"+category+"/"+day+"/"+randomNumber.toFixed(0) + ".mp3",
+      Key: key,
       Body: filestream,
       ACL: "public-read"
     }; 
@@ -201,9 +214,10 @@ app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
       if (err) throw err;
       const reqFrame = req.files
       const URL = '.us-east-2.' ? '.us-east-2.' : '.'
-      const newPath = data.Location.split('https://muzmind.s3'+URL+'amazonaws.com/audios')[1];
+      const newPath = data.Location.split('/images/');
+      console.log(newPath[1], '====newPath[0] + newPath[1]======')
       for (i in reqFrame) {
-        reqFrame[i].path = newPath
+        reqFrame[i].path = newPath[1]
       }
       console.log(`File uploaded successfully at ${data.Location}`);
       return res.send({

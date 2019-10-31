@@ -8,7 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { CategoryComponent } from './category/category.component';
 import { SubcategoryComponent } from './subcategory/subcategory.component';
-import { MeidaComponent } from './meida/meida.component';
+import { MediaComponent } from './media/media.component';
 import { LoginComponent } from './login/login.component';
 import { MatDialogModule, MatFormFieldModule,MatInputModule,MatCardModule,MatButtonModule,MatSlideToggleModule,MatIconModule,
   MatTableModule,MatMenuModule,MatSelectModule,MatListModule,MatPaginatorModule,MatSortModule,MatToolbarModule} from '@angular/material';
@@ -31,7 +31,7 @@ import { MyDialogComponentComponent } from './my-dialog-component/my-dialog-comp
     AppComponent,
     CategoryComponent,
     SubcategoryComponent,
-    MeidaComponent,
+    MediaComponent,
     LoginComponent,
     MenuComponent,
     FileUploadComponent,
