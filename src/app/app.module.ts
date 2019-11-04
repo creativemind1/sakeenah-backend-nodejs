@@ -54,9 +54,10 @@ import { MyDialogComponentComponent } from './my-dialog-component/my-dialog-comp
     ReactiveFormsModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: function  tokenGetter() {
-             return     localStorage.getItem('access_token');},
-        whitelistedDomains: ['/subcategory','l/category','/media'],
+        tokenGetter: function tokenGetter() {
+          return localStorage.getItem('access_token');
+        },
+        whitelistedDomains: ['/subcategory', 'l/category', '/media'],
         blacklistedRoutes: ['/login']
       }
     })

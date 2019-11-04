@@ -17,7 +17,8 @@ export class PlayList {
      selectDay:Number;
      thumbImageUrl: FileUpload= new FileUpload();
      videoUrl: FileUpload[]=[];
-     
+     paginator: [];
+     typeFile: string
    }
    
    

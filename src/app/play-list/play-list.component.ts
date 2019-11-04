@@ -4,10 +4,11 @@ import { DayWise } from './daywise';
 import { Media } from '../media/media';
 import { CmsService } from '../cms.service';
 import { FileUpload } from '../file-upload/fileUpload';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Transporter } from '../media/transporter';
 import { MatDialog } from '@angular/material/dialog';
-import { MyDialogComponent } from './../my-dialog/my-dialog.component'
+import { MyDialogComponent } from './../my-dialog/my-dialog.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-play-list',
@@ -17,6 +18,7 @@ import { MyDialogComponent } from './../my-dialog/my-dialog.component'
 
 export class PlayListComponent implements OnInit {
   constructor(private cmsService: CmsService, public dialog: MatDialog) { }
+  
   DialogData: [];
   media: Media[];
   toppings = new FormControl();
@@ -26,6 +28,7 @@ export class PlayListComponent implements OnInit {
   dataSource: PlayList[];
   displayedColumns: string[];
   days: DayWise[];
+  myForm: FormGroup;
   transportMsg: Transporter = new Transporter();
   @Output() parentEvent = new EventEmitter<FileUpload[]>();
   @Output() messageEvent = new EventEmitter<FileUpload>();
@@ -34,18 +37,30 @@ export class PlayListComponent implements OnInit {
     this.playList.premium = false;
     this.loadMedia();
     this.loadPlaylist();
-    this.loadDayslist();
+    this.loadDayslist();    
+    this.myForm = new FormGroup({
+      mediaId: new FormControl({ value: '' }, Validators.compose([Validators.required])),
+      selectDay: new FormControl({ value: '' }, Validators.compose([Validators.required])),
+      playListName: new FormControl({ value: '' }, Validators.compose([Validators.required])),
+      description: new FormControl({ value: '' }),
+      // the rest of inputs with the same approach
+    });
   }
 
   onSave() {
     this.playList['type'] = "SAVE";
-    this.cmsService.saveOrupdatePlayList(this.playList).subscribe(response => {
-      var result = JSON.parse(JSON.stringify(response));
-      if (result.status == 'SUCCESS') {
-        this.loadPlaylist();
-        this.onClear();
-      }
-    });
+    if (this.myForm.status === 'VALID') {
+      console.log('All fields valid...')
+      this.cmsService.saveOrupdatePlayList(this.playList).subscribe(response => {
+        var result = JSON.parse(JSON.stringify(response));
+        if (result.status == 'SUCCESS') {
+          this.loadPlaylist();
+          this.onClear();
+        }
+      });
+    } else {
+      alert("Error")!
+    }
   }
 
   loadDayslist() {
@@ -96,9 +111,13 @@ export class PlayListComponent implements OnInit {
 
   loadPlaylist() {
     this.cmsService.getAllPlayLists().subscribe(response => {
-      this.displayedColumns = ['Name', 'active', 'create_date', 'deleteAction', 'updateAction'];
+      this.displayedColumns = ['Name', 'active', 'create_date', 'mediaId', 'deleteAction', 'updateAction'];
       var result = JSON.parse(JSON.stringify(response));
       this.dataSource = result.message;
+      var myArray = this.dataSource
+      for (var i in myArray) {
+        myArray[i].create_date = moment(myArray[i].create_date).format('DD-MMM-YYYY')
+      }
     });
   }
 

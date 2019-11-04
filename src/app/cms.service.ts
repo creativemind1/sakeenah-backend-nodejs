@@ -10,7 +10,7 @@ import { Media } from './media/media';
 import { JwtService } from './jwt.service';
 import { FileUpload } from './file-upload/fileUpload'
 import { PlayList } from './play-list/playlist';
-
+import { AuthService } from './auth.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -24,11 +24,12 @@ export class CmsService {
   serverBaseUrl = environment.serverBaseUrl;
   thumbImageUrl: FileUpload;
   updateIBOsNavigationSubject = new BehaviorSubject<any>('');
-  constructor(private http: HttpClient, private jwtService: JwtService) {
+  constructor(private http: HttpClient, private jwtService: JwtService, private auth: AuthService) {
   }
+
   // Load all the categories based on the company Id
   getCategories() {
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken();
     return this.http.post(this.baseUrl + '/category', {
       "type": "LOAD",
       "companyId": this.companyId, 'token': token
@@ -36,30 +37,28 @@ export class CmsService {
       return resp;
     }));
   };
+
   //Save or Update Category
   saveOrupdateCategory(category: Category) {
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken();
     category['token'] = token;
     category.companyId = this.companyId;
-
-
     return this.http.post(this.baseUrl + '/category', category).pipe(map((resp) => {
       return resp;
     }));
   };
   //Delete Category
   deleteCategory(category: Category) {
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken();
     category['token'] = token;
     return this.http.post(this.baseUrl + '/category', category).pipe(map((resp) => {
       return resp;
     }));
   };
 
-
   // Load all the Sub categories based on the company Id
   getAllSubCategories() {
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken();
     return this.http.post(this.baseUrl + '/subcategory', {
       "type": "LOAD",
       "companyId": this.companyId, 'token': token
@@ -67,18 +66,20 @@ export class CmsService {
       return resp;
     }));
   };
+
   //Save or Update Sub Category
   saveOrupdateSubCategory(subCategory: SubCategory) {
     subCategory.companyId = this.companyId;
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken();
     subCategory['token'] = token;
     return this.http.post(this.baseUrl + '/subcategory', subCategory).pipe(map((resp) => {
       return resp;
     }));
   };
+
   //Delete Sub Category
   deleteSubCategory(subCategory: SubCategory) {
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken();
     subCategory['token'] = token;
     return this.http.post(this.baseUrl + '/subcategory', subCategory).pipe(map((resp) => {
       return resp;
@@ -87,7 +88,7 @@ export class CmsService {
 
   // Load all the Media based on the company Id
   getAllMedia() {
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken();
     return this.http.post(this.baseUrl + '/media', {
       "type": "LOAD",
       "companyId": this.companyId, 'token': token
@@ -95,19 +96,20 @@ export class CmsService {
       return resp;
     }));
   };
+
   //Save or Update Sub Category
   saveOrupdateMedia(media: Media) {
     media.companyId = this.companyId;
-    console.log(media, '====media===')
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken();
     media['token'] = token;
     return this.http.post(this.baseUrl + '/media', media).pipe(map((resp) => {
       return resp;
     }));
   };
+
   //Delete Sub Category
   deleteMedia(media: Media) {
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken();
     media['token'] = token;
     return this.http.post(this.baseUrl + '/media', media).pipe(map((resp) => {
       return resp;
@@ -116,23 +118,21 @@ export class CmsService {
 
   //Single file
   singleFileupload(formData: FormData) {
-    console.log(formData, '===formData....')
     return this.http.post(this.singleUploadUrl, formData).pipe(map((resp) => {
-      console.log(resp, '===respo=====')
       return resp;
     }));
   };
-  // L
-  //Delete Sub Category
+ 
+    //Delete Sub Category
   upload(formData: FormData) {
     return this.http.post(this.uploadUrl, formData).pipe(map((resp) => {
-      console.log('--- upload video ---', resp);
       return resp;
     }));
   };
+
   // Load all the Sub categories based on the company Id
   getSubCategories(media: Media) {
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken();
     return this.http.post(this.baseUrl + '/subcategory', {
       "type": "GET_SUB_CATEGORY",
       "companyId": this.companyId, 'categoryId': media.categoryId, 'token': token
@@ -142,14 +142,13 @@ export class CmsService {
   };
 
   //Delete file
-  deleteSingleFile(fileurl: String) {    
+  deleteSingleFile(fileurl: String) {
     return this.http.post(this.serverBaseUrl + 'deleteFile', { "filePath": fileurl }).pipe(map((resp) => {
       return resp;
     }));
   };
 
   sendMessage(transportMsg: { img: FileUpload, video: FileUpload[] }) {
-    console.log(' =---- cms sendmessage -----', transportMsg);
     this.updateIBOsNavigationSubject.next(transportMsg);
   }
 
@@ -163,38 +162,38 @@ export class CmsService {
 
   // Reset CMS Pswd
   resetPswd(login: Login) {
-
     return this.http.post(this.loginUrl + '/resetpswd', login).pipe(map((resp) => {
-      console.log('== SUccess reset ===', resp);
       return resp;
     }));
-  };
+  }
 
   // Load all the PlayList based on the company Id
   getAllPlayLists() {
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken();
     return this.http.post(this.baseUrl + '/playlist', {
       "type": "LOAD",
       "companyId": this.companyId, 'token': token
     }).pipe(map((resp) => {
       return resp;
     }));
-  };
+  }
+
   //Save or Update Sub Category
   saveOrupdatePlayList(playList: PlayList) {
     playList.companyId = this.companyId;
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken()
     playList['token'] = token;
     return this.http.post(this.baseUrl + '/playlist', playList).pipe(map((resp) => {
       return resp;
     }));
-  };
+  }
+
   //Delete Sub Category
   deletePlayList(playList: PlayList) {
-    var token = localStorage.getItem('access_token');
+    var token = this.auth.getToken();
     playList['token'] = token;
     return this.http.post(this.baseUrl + '/playlist', playList).pipe(map((resp) => {
       return resp;
     }));
-  };
+  }
 }

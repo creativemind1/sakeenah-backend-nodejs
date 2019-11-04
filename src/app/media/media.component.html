@@ -46,7 +46,7 @@
       <!-- <input placeholder="Multiple Audio/Video">
         <app-file-upload (messageEvent)="receiveUpdateVideoMessage($event)"></app-file-upload>
         <br> -->
-      <app-single-file-upload (messageEvent)="receiveUpdateSingleFile($event)"></app-single-file-upload>
+      <app-single-file-upload (messageEvent)="receiveUpdateSingleFile($event)" ></app-single-file-upload>
       <span></span>
       <mat-slide-toggle [(ngModel)]="selectedMedia.active"> Active/InActive</mat-slide-toggle>
       <mat-card-actions align="center">

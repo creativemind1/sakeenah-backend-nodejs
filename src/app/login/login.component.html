@@ -1,16 +1,18 @@
+<form class="loginForm" #loginForm="ngForm" action="" (submit)="onclick()" autocomplete="off" method="POST">
 <div fxLayout="row" fxLayoutAlign="center center" class="login-main">
   <mat-card>
     <mat-card-content fxLayout="column">
       <mat-form-field>
-        <input matInput required placeholder="Enter Email" [(ngModel)]="login.emailId">
+        <input name='email' matInput required placeholder="Enter Email" [(ngModel)]="login.emailId">
       </mat-form-field>
       <mat-form-field>
-        <input type="password" required matInput placeholder="Enter password" [(ngModel)]="login.password">
+        <input name='password' type="password"  required matInput placeholder="Enter password" [(ngModel)]="login.password">
       </mat-form-field>
     </mat-card-content>
     <mat-card-actions align="end">
       <button mat-raised-button color="primary" (click)="onclick()">Login</button>
-      <button mat-raised-button color="primary" routerLink="/reset">Reset</button>
+      <button mat-raised-button color="primary" routerLink="/reset">Reset Password</button>
     </mat-card-actions>
   </mat-card>
 </div>
+</form>

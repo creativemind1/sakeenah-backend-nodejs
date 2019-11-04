@@ -1,9 +1,9 @@
-import { Component, OnInit, EventEmitter, Output,Input,OnDestroy,ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, EventEmitter, Output, Input, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { CmsService } from "../cms.service";
-import { Observable, Subject ,BehaviorSubject,Subscription} from 'rxjs';
+import { Observable, Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
-import{FileUpload}from '../file-upload/fileUpload';
+import { FileUpload } from '../file-upload/fileUpload';
 
 
 
@@ -17,20 +17,19 @@ export class SingleFileUploadComponent implements OnInit {
   messages: any[] = [];
   subscription: Subscription;
   @Output() messageEvent = new EventEmitter<FileUpload>();
+  @Input() myType = String;
   filesToUpload: Array<File> = [];
   fileNames: Array<String> = [];
   uploadUrl = environment.singleUploadUrl;
   serverBaseUrl = environment.serverBaseUrl;
-   imgUrl:FileUpload = new FileUpload;
-  
-  constructor(private http: HttpClient, private cmsService: CmsService,private ref: ChangeDetectorRef) {
+  imgUrl: FileUpload = new FileUpload;
+
+  constructor(private http: HttpClient, private cmsService: CmsService, private ref: ChangeDetectorRef) {
     // subscribe to home component messages
     this.subscription = this.cmsService.getMessage().subscribe(message => {
-      console.log('--- Single File Upload ---',message);
       if (message) {
         this.messages.push(message);
-        this.imgUrl=this.messages[0].img;
-       
+        this.imgUrl = this.messages[0].img;
       } else {
         // clear messages when empty message received
         this.messages = [];
@@ -40,8 +39,10 @@ export class SingleFileUploadComponent implements OnInit {
   ngOnDestroy() {
     // unsubscribe to ensure no memory leaks
     this.subscription.unsubscribe();
-}
-  ngOnInit() {}
+  }
+  ngOnInit() {
+
+  }
 
   upload() {
     const formData: any = new FormData();
@@ -63,19 +64,38 @@ export class SingleFileUploadComponent implements OnInit {
   }
 
   fileChangeEvent(fileInput: any) {
-    this.filesToUpload = <Array<File>>fileInput.target.files;
-  }
-  onSingleDelete(tempfile:FileUpload){
-    this.cmsService.deleteSingleFile(tempfile.key).subscribe(response=>{
-      var result=JSON.parse(JSON.stringify(response));
-      if(result.success){
-        this.imgUrl=new FileUpload;
+    if (fileInput && fileInput.target.files.length) {
+      var inputValue = (<HTMLInputElement>document.getElementById("cin"));
+      var imageVal = ['image/png', 'image/jpg', 'image/jpeg'];
+      var typeOfFile = String(this.myType) === 'mp3' ? 'audio/mp3' : typeOfFile2;
+      var typeOfFile2 = String(this.myType) !== 'mp3' && fileInput && fileInput.target.files.length && imageVal.indexOf(fileInput.target.files[0].type) > -1 ? true : false;
+      if (fileInput.target.files[0].type === typeOfFile || typeOfFile2) {
+        if (!typeOfFile2 && fileInput.target.files[0].size < 2010667) {
+          this.filesToUpload = <Array<File>>fileInput.target.files;
+        } else {
+          if (typeOfFile) {
+            inputValue.value = '';
+            alert('mp3 size should not exceed 2MB');
+          } else {
+            this.filesToUpload = <Array<File>>fileInput.target.files;
+          }
+        }
+      } else {
+        inputValue.value = '';
+        alert(typeOfFile ? 'Only mp3 is accepted' : 'Only image of type jpg/jpeg/png accepted');
+        return false
       }
-      });
+    }
+  }
+  onSingleDelete(tempfile: FileUpload) {
+    this.cmsService.deleteSingleFile(tempfile.key).subscribe(response => {
+      var result = JSON.parse(JSON.stringify(response));
+      if (result.success) {
+        this.imgUrl = new FileUpload;
+      }
+    });
   }
   receiveMessage($event) {
-    console.log('=== single file upload ===', $event);
     this.imgUrl = $event;
-    
   }
 }

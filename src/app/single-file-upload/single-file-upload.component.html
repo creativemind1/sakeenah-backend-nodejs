@@ -1,11 +1,12 @@
 <div style="display:block; margin-bottom:20px">
-    <input id="cin" name="cin" type="file" (change)="fileChangeEvent($event)" placeholder="Upload a file..." />
+    <input id="cin" name="cin" type="file" accept="{{myType === 'mp3' ? 'audio/mp3' : 'image/png, image/jpg, image/jpeg'}}" 
+    (change)="fileChangeEvent($event)" placeholder="Upload a file..." />
     <button type="button" class="btn btn-success btn-s" (click)="upload()">
         <i class="glyphicon glyphicon-open-file"></i>&nbsp;Upload
     </button>
     <mat-nav-list *ngIf="imgUrl && imgUrl.value">
         <mat-list-item >
-            <h3 matLine> {{imgUrl.value}} </h3>            
+            <h3 matLine> {{imgUrl.value}}  </h3>            
             <!-- <button mat-icon-button (click)='onSingleDelete(imgUrl)'>
                 <mat-icon>delete</mat-icon>
             </button> -->

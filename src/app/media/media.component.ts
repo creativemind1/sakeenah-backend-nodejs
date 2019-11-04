@@ -8,6 +8,7 @@ import { FileUpload } from '../file-upload/fileUpload';
 import { Transporter } from './transporter';
 import {MatDialog } from '@angular/material/dialog';
 import { MyDialogComponent } from './../my-dialog/my-dialog.component'
+import * as moment from 'moment';
 
 @Component({
   selector: "[app-media],[app-single-file-upload]",
@@ -46,6 +47,10 @@ export class MediaComponent implements OnInit {
     this.cmsService.getAllMedia().subscribe(response => {
       var result = JSON.parse(JSON.stringify(response));
       this.dataSource = result.message;
+      var myArray = this.dataSource
+      for (var i in myArray) {
+        myArray[i].create_date = moment(myArray[i].create_date).format('DD-MMM-YYYY')
+      }
       this.displayedColumns = ['name', 'active', 'create_date', 'deleteAction', 'updateAction'];
     });
   }
@@ -81,7 +86,6 @@ export class MediaComponent implements OnInit {
         if (result.status == 'SUCCESS') {
           this.loadMedia();
           this.onClear()
-        } else {
         }
       });
     } else {
