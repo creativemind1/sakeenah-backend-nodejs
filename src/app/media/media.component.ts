@@ -49,7 +49,7 @@ export class MediaComponent implements OnInit {
       this.dataSource = result.message;
       var myArray = this.dataSource
       for (var i in myArray) {
-        myArray[i].create_date = moment(myArray[i].create_date).format('DD-MMM-YYYY')
+        myArray[i].create_date = moment(String(myArray[i].create_date)).format('DD-MMM-YYYY')
       }
       this.displayedColumns = ['name', 'active', 'create_date', 'deleteAction', 'updateAction'];
     });
