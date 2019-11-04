@@ -70,12 +70,12 @@ export class SingleFileUploadComponent implements OnInit {
       var typeOfFile = String(this.myType) === 'mp3' ? 'audio/mp3' : typeOfFile2;
       var typeOfFile2 = String(this.myType) !== 'mp3' && fileInput && fileInput.target.files.length && imageVal.indexOf(fileInput.target.files[0].type) > -1 ? true : false;
       if (fileInput.target.files[0].type === typeOfFile || typeOfFile2) {
-        if (!typeOfFile2 && fileInput.target.files[0].size < 2010667) {
+        if (!typeOfFile2 && fileInput.target.files[0].size < 310667) {
           this.filesToUpload = <Array<File>>fileInput.target.files;
         } else {
           if (typeOfFile) {
             inputValue.value = '';
-            alert('mp3 size should not exceed 2MB');
+            alert('mp3 size should not exceed 3MB');
           } else {
             this.filesToUpload = <Array<File>>fileInput.target.files;
           }
