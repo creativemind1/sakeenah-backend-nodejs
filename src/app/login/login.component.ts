@@ -18,12 +18,16 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
   onclick() {
-    this.login['type'] = 'B2E';
-    this.auth.loginCMS(this.login).subscribe(response => {
-      var result = JSON.parse(JSON.stringify(response));
-      if (result.status == 'SUCCESS') {
-        this.router.navigate(['/media']);
-      }
-    });
+    if (this.login.emailId && this.login.password) {
+      this.login['type'] = 'B2E';
+      this.auth.loginCMS(this.login).subscribe(response => {
+        var result = JSON.parse(JSON.stringify(response));
+        if (result.status == 'SUCCESS') {
+          this.router.navigate(['/media']);
+        }
+      });
+    } else {
+      alert('Error');
+    }
   }
 }

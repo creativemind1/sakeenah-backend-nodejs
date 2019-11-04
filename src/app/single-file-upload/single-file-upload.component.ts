@@ -17,7 +17,7 @@ export class SingleFileUploadComponent implements OnInit {
   messages: any[] = [];
   subscription: Subscription;
   @Output() messageEvent = new EventEmitter<FileUpload>();
-  @Input() myType = String;
+  @Input() myType : String = '';
   filesToUpload: Array<File> = [];
   fileNames: Array<String> = [];
   uploadUrl = environment.singleUploadUrl;
@@ -41,7 +41,7 @@ export class SingleFileUploadComponent implements OnInit {
     this.subscription.unsubscribe();
   }
   ngOnInit() {
-
+    
   }
 
   upload() {

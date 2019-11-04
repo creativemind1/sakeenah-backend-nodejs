@@ -18,7 +18,8 @@ import { MenuComponent } from './menu/menu.component';
 import { JwtModule } from '@auth0/angular-jwt';
 import { MatFileUploadModule } from 'angular-material-fileupload';
 import { FileUploadComponent } from './file-upload/file-upload.component';
-import { FileSelectDirective } from 'ng2-file-upload';
+import { FileUploadModule } from 'ng2-file-upload';
+
 import { SingleFileUploadComponent } from './single-file-upload/single-file-upload.component';
 import { ResetPswdComponent } from './reset-pswd/reset-pswd.component';
 import { PlayListComponent } from './play-list/play-list.component';
@@ -35,7 +36,7 @@ import { MyDialogComponentComponent } from './my-dialog-component/my-dialog-comp
     LoginComponent,
     MenuComponent,
     FileUploadComponent,
-    FileSelectDirective,
+    
     SingleFileUploadComponent,
     ResetPswdComponent,
     PlayListComponent,
@@ -45,6 +46,7 @@ import { MyDialogComponentComponent } from './my-dialog-component/my-dialog-comp
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FileUploadModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
     MatFormFieldModule,MatInputModule,MatCardModule,MatButtonModule,MatSlideToggleModule,MatIconModule,MatTableModule,MatMenuModule,
@@ -54,9 +56,7 @@ import { MyDialogComponentComponent } from './my-dialog-component/my-dialog-comp
     ReactiveFormsModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: function tokenGetter() {
-          return localStorage.getItem('access_token');
-        },
+        tokenGetter: jwtTokenGetter,
         whitelistedDomains: ['/subcategory', 'l/category', '/media'],
         blacklistedRoutes: ['/login']
       }
@@ -67,3 +67,6 @@ import { MyDialogComponentComponent } from './my-dialog-component/my-dialog-comp
   
 })
 export class AppModule { }
+export function jwtTokenGetter() {
+  return localStorage.getItem('access_token');
+}
