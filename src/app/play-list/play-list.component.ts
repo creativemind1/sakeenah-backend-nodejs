@@ -111,7 +111,7 @@ export class PlayListComponent implements OnInit {
 
   loadPlaylist() {
     this.cmsService.getAllPlayLists().subscribe(response => {
-      this.displayedColumns = ['Name', 'active', 'create_date', 'mediaId', 'deleteAction', 'updateAction'];
+      this.displayedColumns = ['Name', 'active', 'create_date', 'mediaId','day', 'deleteAction', 'updateAction' ];
       var result = JSON.parse(JSON.stringify(response));
       this.dataSource = result.message;
       var myArray = this.dataSource

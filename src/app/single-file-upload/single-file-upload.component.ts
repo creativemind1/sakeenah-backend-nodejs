@@ -23,7 +23,7 @@ export class SingleFileUploadComponent implements OnInit {
   uploadUrl = environment.singleUploadUrl;
   serverBaseUrl = environment.serverBaseUrl;
   imgUrl: FileUpload = new FileUpload;
-
+  loader: Boolean;
   constructor(private http: HttpClient, private cmsService: CmsService, private ref: ChangeDetectorRef) {
     // subscribe to home component messages
     this.subscription = this.cmsService.getMessage().subscribe(message => {
@@ -40,10 +40,8 @@ export class SingleFileUploadComponent implements OnInit {
     // unsubscribe to ensure no memory leaks
     this.subscription.unsubscribe();
   }
-  ngOnInit() {
-    
+  ngOnInit() {    
   }
-
   upload() {
     const formData: any = new FormData();
     const files: Array<File> = this.filesToUpload;
@@ -51,6 +49,7 @@ export class SingleFileUploadComponent implements OnInit {
       for (let i = 0; i < files.length; i++) {
         formData.append("uploads[]", files[i], files[i]["name"]);
       }
+      this.loader = true;
       this.cmsService.singleFileupload(formData).subscribe(response => {
         var result = JSON.parse(JSON.stringify(response));
         if (result.success) {
@@ -58,11 +57,11 @@ export class SingleFileUploadComponent implements OnInit {
           this.imgUrl.key = result.files[0].path;
           this.imgUrl.value = result.files[0].originalname;
           this.messageEvent.emit(this.imgUrl);
+          this.loader = false;
         }
       });
     }
   }
-
   fileChangeEvent(fileInput: any) {
     if (fileInput && fileInput.target.files.length) {
       var inputValue = (<HTMLInputElement>document.getElementById("cin"));
