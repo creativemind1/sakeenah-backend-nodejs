@@ -74,7 +74,7 @@ export class SingleFileUploadComponent implements OnInit {
         } else {
           if (typeOfFile) {
             inputValue.value = '';
-            alert('mp3 size should not exceed 3MB');
+            alert('mp3 size should not exceed 3MB'); 
           } else {
             this.filesToUpload = <Array<File>>fileInput.target.files;
           }
