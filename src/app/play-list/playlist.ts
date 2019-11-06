@@ -1,5 +1,5 @@
-import { DayWise} from './daywise';
-import {FileUpload} from '../file-upload/fileUpload';
+import { DayWise } from './daywise';
+import { FileUpload } from '../file-upload/fileUpload';
 
 export class PlayList {
   [x: string]: any;
@@ -15,7 +15,7 @@ export class PlayList {
      enableUpdate:boolean;
      //selectDay:DayWise;
      selectDay:Number;
-     thumbImageUrl: FileUpload= new FileUpload();
+     thumbImageUrl: [];
      videoUrl: FileUpload[]=[];
      paginator: [];
      typeFile: string

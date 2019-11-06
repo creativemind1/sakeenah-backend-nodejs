@@ -117,8 +117,12 @@ export class CmsService {
   };
 
   //Single file
-  singleFileupload(formData: FormData) {
-    return this.http.post(this.singleUploadUrl, formData).pipe(map((resp) => {
+  singleFileupload(playList) {
+    const formDataA = new FormData();
+    for (let i = 0; i < playList.thumbImageUrl.length; i++) {
+      formDataA.append("uploads[]", playList.thumbImageUrl[i], playList.thumbImageUrl[i]["name"]);
+    }
+    return this.http.post(this.singleUploadUrl, formDataA).pipe(map((resp) => {
       return resp;
     }));
   };

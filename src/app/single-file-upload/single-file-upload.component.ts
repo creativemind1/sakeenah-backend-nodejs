@@ -16,7 +16,7 @@ export class SingleFileUploadComponent implements OnInit {
 
   messages: any[] = [];
   subscription: Subscription;
-  @Output() messageEvent = new EventEmitter<FileUpload>();
+  @Output() messageEvent = new EventEmitter<File[]>();
   @Input() myType : String = '';
   filesToUpload: Array<File> = [];
   fileNames: Array<String> = [];
@@ -49,17 +49,18 @@ export class SingleFileUploadComponent implements OnInit {
       for (let i = 0; i < files.length; i++) {
         formData.append("uploads[]", files[i], files[i]["name"]);
       }
+      console.log(typeof formData,formData, '===formData===')
       this.loader = true;
-      this.cmsService.singleFileupload(formData).subscribe(response => {
-        var result = JSON.parse(JSON.stringify(response));
-        if (result.success) {
-          this.imgUrl = new FileUpload();
-          this.imgUrl.key = result.files[0].path;
-          this.imgUrl.value = result.files[0].originalname;
-          this.messageEvent.emit(this.imgUrl);
-          this.loader = false;
-        }
-      });
+      // this.cmsService.singleFileupload(formData).subscribe(response => {
+      //   var result = JSON.parse(JSON.stringify(response));
+      //   if (result.success) {
+      //     this.imgUrl = new FileUpload();
+      //     this.imgUrl.key = result.files[0].path;
+      //     this.imgUrl.value = result.files[0].originalname;
+      //     this.messageEvent.emit(this.imgUrl);
+      //     this.loader = false;
+      //   }
+      // });
     }
   }
   fileChangeEvent(fileInput: any) {
@@ -67,14 +68,15 @@ export class SingleFileUploadComponent implements OnInit {
       var inputValue = (<HTMLInputElement>document.getElementById("cin"));
       var imageVal = ['image/png', 'image/jpg', 'image/jpeg'];
       var typeOfFile = String(this.myType) === 'mp3' ? 'audio/mp3' : typeOfFile2;
-      var typeOfFile2 = String(this.myType) !== 'mp3' && fileInput && fileInput.target.files.length && imageVal.indexOf(fileInput.target.files[0].type) > -1 ? true : false;
+      var typeOfFile2 = String(this.myType) !== 'mp3' && fileInput && fileInput.target.files.length && imageVal.indexOf(fileInput.target.files[0].type) > -1 ? true : false;      
       if (fileInput.target.files[0].type === typeOfFile || typeOfFile2) {
         if (!typeOfFile2 && fileInput.target.files[0].size < 3106670) {
-          this.filesToUpload = <Array<File>>fileInput.target.files;
+          this.filesToUpload = <Array<File>>fileInput.target.files;          
         } else {
           if (typeOfFile) {
             inputValue.value = '';
-            alert('mp3 size should not exceed 3MB'); 
+            alert('mp3 size should not exceed 3MB');
+            return false
           } else {
             this.filesToUpload = <Array<File>>fileInput.target.files;
           }
@@ -84,6 +86,16 @@ export class SingleFileUploadComponent implements OnInit {
         alert(typeOfFile ? 'Only mp3 is accepted' : 'Only image of type jpg/jpeg/png accepted');
         return false
       }
+      const files: Array<File> = this.filesToUpload;
+      // const formData: any = new FormData();
+      // const files: Array<File> = this.filesToUpload;
+      // for (let i = 0; i < files.length; i++) {
+      //   formData.append("uploads[]", files[i], files[i]["name"]);
+      // }
+      // this.imgUrl = new FileUpload();
+      // this.imgUrl.key = 'result.files[0].path';
+      // this.imgUrl.value = 'mydata';
+      this.messageEvent.emit(files);
     }
   }
   onSingleDelete(tempfile: FileUpload) {

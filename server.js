@@ -62,6 +62,7 @@ const s3 = new AWS.S3({
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
     var postId = randomstring.generate(3);
+    console.log(file, 'STORAGE FILE=====')
     if (file.mimetype === "audio/mp3") {
       let temp = "./upload/audio/" + postId;
       fs.mkdirsSync(temp, { recursive: true }, err => {
@@ -186,11 +187,12 @@ app.get("/(|login|reset|category|subcategory|media|playlist)", function(
 
 
 app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
-  const fileType = req.files[0]
+  const fileType = req.files[0];
   var filestream = fs.createReadStream(fileType.path);
   const makeid = () => {
-    var result = '';
-    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var result = "";
+    var characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (var i = 0; i < 3; i++) {
       result += characters.charAt(Math.floor(Math.random() * 3));
     }
@@ -198,26 +200,26 @@ app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
   };
   filestream.on("open", function() {
     const randomNumber = Math.random() * 10000;
-    const category  = 'anxiety';
+    const category = "anxiety";
     const randomChar = makeid() + randomNumber.toFixed(0);
     const day = "day1";
-    const keyMp3 = "audios/"+category+"/"+day+"/"+randomChar+".mp3";
-    const keyImg = "images/"+randomChar + ".png";
-    const key = fileType.mimetype == 'image/jpeg' || 'image/png' ? keyImg : keyMp3;
+    const keyMp3 = "audios/" + category + "/" + day + "/" + randomChar + ".mp3";
+    const keyImg = "images/" + randomChar + ".png";
+    const key =
+      fileType.mimetype == "image/jpeg" || "image/png" ? keyImg : keyMp3;
     const params = {
       Bucket: BUCKET_NAME,
       Key: key,
       Body: filestream,
       ACL: "public-read"
-    }; 
+    };
     s3.upload(params, (err, data) => {
       if (err) throw err;
-      const reqFrame = req.files
-      const URL = '.us-east-2.' ? '.us-east-2.' : '.'
-      const newPath = data.Location.split('/images/');
-      console.log(newPath[1], '====newPath[0] + newPath[1]======')
+      const reqFrame = req.files;
+      const URL = ".us-east-2." ? ".us-east-2." : ".";
+      const newPath = data.Location.split("/images/");      
       for (i in reqFrame) {
-        reqFrame[i].path = newPath[1]
+        reqFrame[i].path = newPath[1];
       }
       console.log(`File uploaded successfully at ${data.Location}`);
       return res.send({

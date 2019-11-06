@@ -9,6 +9,7 @@ import { Transporter } from '../media/transporter';
 import { MatDialog } from '@angular/material/dialog';
 import { MyDialogComponent } from './../my-dialog/my-dialog.component';
 import * as moment from 'moment';
+import { ReturnStatement } from '@angular/compiler';
 
 @Component({
   selector: 'app-play-list',
@@ -32,6 +33,7 @@ export class PlayListComponent implements OnInit {
   transportMsg: Transporter = new Transporter();
   @Output() parentEvent = new EventEmitter<FileUpload[]>();
   @Output() messageEvent = new EventEmitter<FileUpload>();
+  loader: Boolean;
 
   ngOnInit() {
     this.playList.premium = false;
@@ -47,21 +49,30 @@ export class PlayListComponent implements OnInit {
     });
   }
 
-  onSave() {
-    this.playList['type'] = "SAVE";
+  onSave(status) {
+    var object = status === 'save' ? 'playList' : 'selectedPlayList'
+    this[object]['type'] = "SAVE";
     if (this.myForm.status === 'VALID') {
-      console.log('All fields valid...')
-      this.cmsService.saveOrupdatePlayList(this.playList).subscribe(response => {
-        var result = JSON.parse(JSON.stringify(response));
-        if (result.status == 'SUCCESS') {
-          this.loadPlaylist();
-          this.onClear();
-        }
-      });
-    } else {
+      if (this[object] && this[object].thumbImageUrl.length) {
+        this.loader = true
+        this.cmsService.singleFileupload(this[object]).subscribe(response => {
+          this[object].thumbImageUrl['value'] = response.files[0].path
+          this.cmsService.saveOrupdatePlayList(this[object]).subscribe(result => {
+            if (result.status == 'SUCCESS') {
+              this.loader = false;
+              this.loadPlaylist();
+              this.onClear();
+            }
+          })
+        });
+      } else {
+        alert('Upload mp3 before saving')
+      }
+    }
+    else {
       alert("Error")!
     }
-  }
+  } 
 
   loadDayslist() {
     this.days = [];
@@ -79,6 +90,7 @@ export class PlayListComponent implements OnInit {
   }
 
   onUpdate() {
+    console.log(this.selectedPlayList, '===this.selectedPlayList===')
     this.selectedPlayList['type'] = "SAVE";
     this.cmsService.saveOrupdatePlayList(this.selectedPlayList).subscribe(response => {
       var result = JSON.parse(JSON.stringify(response));
@@ -100,7 +112,22 @@ export class PlayListComponent implements OnInit {
     this.loadDayslist();
   }
   receivePlayListSingleFile($event) {
-    this.playList.thumbImageUrl = $event
+    const files = $event;
+    if (files.length) {
+      this.playList.thumbImageUrl = files
+      // console.log(formData)
+      // this.cmsService.singleFileupload(formData).subscribe(response => {
+      //   var result = JSON.parse(JSON.stringify(response));
+      //   // if (result.success) {
+      //   //   this.imgUrl = new FileUpload();
+      //   //   this.imgUrl.key = result.files[0].path;
+      //   //   this.imgUrl.value = result.files[0].originalname;
+      //   //   this.messageEvent.emit(this.imgUrl);
+      //   //   this.loader = false;
+      //   // }
+      // });
+    }
+    
   }
   delete(row) {
     const dialogRef = this.dialog.open(MyDialogComponent, {
@@ -130,6 +157,9 @@ export class PlayListComponent implements OnInit {
   }
 
   receiveUpdatePlayListSingleFile($event) {
-    this.selectedPlayList.thumbImageUrl = $event
+    const files = $event;
+    if (files.length) {
+      this.selectedPlayList.thumbImageUrl = files
+    }
   }
 }

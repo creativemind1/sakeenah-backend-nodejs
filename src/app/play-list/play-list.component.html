@@ -73,9 +73,10 @@
             <small> * File type support <strong>mp3</strong> only and below <strong>3 MB</strong></small>
           </div>          
         </mat-card-content>
+        <img *ngIf="loader" src="./../../assets/uploading.gif" width="50" style="position: absolute; left: 50%; transform: translateX(-50%);z-index: 999"/>
        <!-- <mat-slide-toggle [(ngModel)]="playList.premium" name="premium" >Premium</mat-slide-toggle> -->
         <mat-card-actions align="center">
-          <button mat-raised-button color="primary" (click)="onSave()">Save</button>
+          <button mat-raised-button color="primary" (click)="onSave('save')">Save</button>
         </mat-card-actions>
       </form>
     </ng-template>
