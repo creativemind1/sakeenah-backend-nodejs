@@ -53,7 +53,7 @@ export class PlayListComponent implements OnInit {
   onSave() {
     this.playList['type'] = "SAVE";
     if (this.myForm.status === 'VALID') {
-      if (this.playList && this.playList.thumbImageUrl.length) {
+      if (this.playList && this.playList.thumbImageUrl && this.playList.thumbImageUrl.length) {
         this.loader = true
         this.cmsService.singleFileupload(this.playList).subscribe(response => {
           this.playList.thumbImageUrl['value'] = response.files[0].path
