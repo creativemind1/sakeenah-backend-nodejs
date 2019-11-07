@@ -122,6 +122,7 @@ export class PlayListComponent implements OnInit {
   }
 
   edit(row) {
+    window.scrollTo(0, 0);
     this.onClear();
     this.selectedPlayList = new PlayList();
     this.selectedPlayList = row;
