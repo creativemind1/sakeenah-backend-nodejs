@@ -45,19 +45,19 @@ export class PlayListComponent implements OnInit {
       selectDay: new FormControl({ value: '' }, Validators.compose([Validators.required])),
       playListName: new FormControl({ value: '' }, Validators.compose([Validators.required])),
       description: new FormControl({ value: '' }),
+      premium: new FormControl({ value: '' }),
       // the rest of inputs with the same approach
     });
   }
 
-  onSave(status) {
-    var object = status === 'save' ? 'playList' : 'selectedPlayList'
-    this[object]['type'] = "SAVE";
+  onSave() {
+    this.playList['type'] = "SAVE";
     if (this.myForm.status === 'VALID') {
-      if (this[object] && this[object].thumbImageUrl.length) {
+      if (this.playList && this.playList.thumbImageUrl.length) {
         this.loader = true
-        this.cmsService.singleFileupload(this[object]).subscribe(response => {
-          this[object].thumbImageUrl['value'] = response.files[0].path
-          this.cmsService.saveOrupdatePlayList(this[object]).subscribe(result => {
+        this.cmsService.singleFileupload(this.playList).subscribe(response => {
+          this.playList.thumbImageUrl['value'] = response.files[0].path
+          this.cmsService.saveOrupdatePlayList(this.playList).subscribe(result => {
             if (result.status == 'SUCCESS') {
               this.loader = false;
               this.loadPlaylist();
@@ -90,15 +90,35 @@ export class PlayListComponent implements OnInit {
   }
 
   onUpdate() {
-    console.log(this.selectedPlayList, '===this.selectedPlayList===')
-    this.selectedPlayList['type'] = "SAVE";
-    this.cmsService.saveOrupdatePlayList(this.selectedPlayList).subscribe(response => {
-      var result = JSON.parse(JSON.stringify(response));
-      if (result.status == 'SUCCESS') {
-        this.loadPlaylist();
-        this.onClear();
+    console.log(this.selectedPlayList)
+    this.selectedPlayList['type'] = "SAVE";    
+    if (this.myForm.status === 'VALID') {
+      this.loader = true
+      if (this.selectedPlayList && this.selectedPlayList.thumbImageUrl && this.selectedPlayList.thumbImageUrl.length) {
+        this.cmsService.singleFileupload(this.selectedPlayList).subscribe(response => {
+          this.selectedPlayList.thumbImageUrl['value'] = ''
+          this.selectedPlayList.thumbImageUrl['value'] = response.files[0].path
+          this.cmsService.saveOrupdatePlayList(this.selectedPlayList).subscribe(result => {
+            if (result.status == 'SUCCESS') {
+              this.loader = false;
+              this.loadPlaylist();
+              this.onClear();
+            }
+          })
+        });
+      } else if (this.selectedPlayList) {
+        this.cmsService.saveOrupdatePlayList(this.selectedPlayList).subscribe(result => {
+          if (result.status == 'SUCCESS') {
+            this.loader = false;
+            this.loadPlaylist();
+            this.onClear();
+          }
+        })
       }
-    });
+    }
+    else {
+      alert("Error")!
+    }
   }
 
   edit(row) {

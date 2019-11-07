@@ -122,7 +122,7 @@ export class CmsService {
     for (let i = 0; i < playList.thumbImageUrl.length; i++) {
       formDataA.append("uploads[]", playList.thumbImageUrl[i], playList.thumbImageUrl[i]["name"]);
     }
-    return this.http.post(this.singleUploadUrl, formDataA).pipe(map((resp) => {
+    return this.http.post<any>(this.singleUploadUrl, formDataA).pipe(map((resp) => {
       return resp;
     }));
   };
@@ -152,7 +152,7 @@ export class CmsService {
     }));
   };
 
-  sendMessage(transportMsg: { img: FileUpload, video: FileUpload[] }) {
+  sendMessage(transportMsg: { img: [], video: FileUpload[] }) {
     this.updateIBOsNavigationSubject.next(transportMsg);
   }
 
@@ -187,7 +187,7 @@ export class CmsService {
     playList.companyId = this.companyId;
     var token = this.auth.getToken()
     playList['token'] = token;
-    return this.http.post(this.baseUrl + '/playlist', playList).pipe(map((resp) => {
+    return this.http.post<any>(this.baseUrl + '/playlist', playList).pipe(map((resp) => {
       return resp;
     }));
   }

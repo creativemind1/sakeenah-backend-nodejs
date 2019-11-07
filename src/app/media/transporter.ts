@@ -1,6 +1,6 @@
 import {FileUpload} from '../file-upload/fileUpload'
 export class Transporter {
-    img: FileUpload;
+    img: any;
     video: FileUpload[];
    }
    

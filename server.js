@@ -203,7 +203,7 @@ app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
     const category = "anxiety";
     const randomChar = makeid() + randomNumber.toFixed(0);
     const day = "day1";
-    const keyMp3 = "audios/" + category + "/" + day + "/" + randomChar + ".mp3";
+    const keyMp3 = "audios/" + randomChar + ".mp3";
     const keyImg = "images/" + randomChar + ".png";
     const key =
       fileType.mimetype == "image/jpeg" || "image/png" ? keyImg : keyMp3;

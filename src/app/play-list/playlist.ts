@@ -15,7 +15,7 @@ export class PlayList {
      enableUpdate:boolean;
      //selectDay:DayWise;
      selectDay:Number;
-     thumbImageUrl: [];
+     thumbImageUrl: [{}];
      videoUrl: FileUpload[]=[];
      paginator: [];
      typeFile: string
