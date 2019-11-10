@@ -61,8 +61,7 @@ const s3 = new AWS.S3({
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    var postId = randomstring.generate(3);
-    console.log(file, 'STORAGE FILE=====')
+    var postId = randomstring.generate(3);    
     if (file.mimetype === "audio/mp3") {
       let temp = "./upload/audio/" + postId;
       fs.mkdirsSync(temp, { recursive: true }, err => {
@@ -191,8 +190,7 @@ app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
   var filestream = fs.createReadStream(fileType.path);
   const makeid = () => {
     var result = "";
-    var characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (var i = 0; i < 3; i++) {
       result += characters.charAt(Math.floor(Math.random() * 3));
     }
@@ -205,8 +203,7 @@ app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
     const day = "day1";
     const keyMp3 = "audios/" + randomChar + ".mp3";
     const keyImg = "images/" + randomChar + ".png";
-    const key =
-      fileType.mimetype == "image/jpeg" || "image/png" ? keyImg : keyMp3;
+    const key = fileType.mimetype == "audio/mp3" ? keyMp3 : keyImg;
     const params = {
       Bucket: BUCKET_NAME,
       Key: key,
@@ -215,11 +212,12 @@ app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
     };
     s3.upload(params, (err, data) => {
       if (err) throw err;
-      const reqFrame = req.files;
-      const URL = ".us-east-2." ? ".us-east-2." : ".";
-      const newPath = data.Location.split("/images/");      
+      var reqFrame = req.files;
+      var audioPath = data.Location.split('/audios/');
+      var newPath = data.Location.split('/images/');
+      var status = newPath === true ? newPath[1] : audioPath[1];
       for (i in reqFrame) {
-        reqFrame[i].path = newPath[1];
+        reqFrame[i].path = status;
       }
       console.log(`File uploaded successfully at ${data.Location}`);
       return res.send({
