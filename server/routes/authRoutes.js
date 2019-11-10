@@ -15,6 +15,7 @@ router.route("/resetpswd").post(userController.resetPswd);
 
 // confirm Email
 router.route("/verifyEmail").get(userController.verifyEmail);
+router.route("/resetPassword").get(userController.verifyResetPassword);
 
 // Export API routes
 module.exports = router;

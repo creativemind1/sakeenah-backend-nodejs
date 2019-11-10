@@ -377,8 +377,10 @@ exports.resetPswd = function(req, res) {
   var userId;
   var content;
   var firstName;
-  UserProfileModel.findOne(
-    { emailId: req.body.emailId, type: req.body.type },
+  UserProfileModel.findOne({
+    emailId: req.body.emailId,
+    type: req.body.type
+  },
     function(err, doc) {
       if (doc) {
         userId = doc.userId;
@@ -389,7 +391,7 @@ exports.resetPswd = function(req, res) {
           null
         );
         //Again the customer needs to activate the link from email
-        doc.active = false;
+        //doc.active = false;
         doc.save(function(error) {
           if (error) {
             res.json({
@@ -404,12 +406,14 @@ exports.resetPswd = function(req, res) {
                   message: err
                 });
               } else {
+                console.log(content, '===content==')
                 // send email
                 var emailObj = {
                   html: content,
                   recipientEmail: req.body.emailId,
                   subject: "Reset Password Verificaton Email",
-                  message: userId
+                  message: userId,
+                  type: 'RESET_PASSWORD'
                 };
                 email.sendmail(emailObj, function(err, data) {
                   if (err) console.log("----mail not sent-----" + err);
@@ -435,15 +439,16 @@ exports.resetPswd = function(req, res) {
   );
 
   let readContent = nCallback => {
-    fs.readFile("./server/template/verifyEmail.html", "utf8", function(
+    fs.readFile("./server/template/resetPassword.html", "utf8", function(
       err,
       data
     ) {
       if (err) {
         return nCallback();
       } else {
+        console.log('reset email hitting.........')
         var template = handlebars.compile(data);
-        var verfiyEmail = webUrl.verfiyEmail + userId;
+        var verfiyEmail = webUrl.resetPassword + userId;
         var replacements = {
           firstName: firstName,
           userlink: verfiyEmail
@@ -589,6 +594,58 @@ exports.getCategories = function(req, res) {
   }
 };
 
+// This method is to reset Password
+exports.verifyResetPassword = function(req, res) {
+  var reqParams = req.query;
+  console;
+  if (reqParams && reqParams.userId) {
+    UserProfileModel.findOneAndUpdate(
+      { userId: reqParams.userId },
+      { active: true },
+      { upsert: false },
+      function(err, doc) {
+        if (doc) {
+          res.writeHead(200, {
+            "Content-Type": "text/html"
+          });
+          fs.readFile("./server/template/thanks-reset.html", null, function(
+            error,
+            data
+          ) {
+            if (error) {
+              res.writeHead(404);
+              res.write("Whoops! File not found!");
+            } else {
+              res.write(data);
+            }
+            res.end();
+          });
+        } else {
+          res.writeHead(200, {
+            "Content-Type": "text/html"
+          });
+          fs.readFile("./server/template/error.html", null, function(
+            error,
+            data
+          ) {
+            if (error) {
+              res.writeHead(404);
+              res.write("Whoops! File not found!");
+            } else {
+              res.write(data);
+            }
+            res.end();
+          });
+        }
+      }
+    );
+  } else {
+    res.json({
+      status: "FAILED",
+      message: "User Id Matching Failed"
+    });
+  }
+};
 //This method is to validate the Email from the activate link
 exports.verifyEmail = function(req, res) {
   var reqParams = req.query;
@@ -826,7 +883,6 @@ exports.getPlayList = function(req, res) {
               }
             });
             finalRespose["data"] = doc;
-            console.log(doc, '===DOC======')
             return nCallback();
           } else {
             return nCallback();
