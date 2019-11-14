@@ -27,6 +27,7 @@ var userProfileSchema = mongoose.Schema({
   },
   age: String,
   country: String,
+  gender: String,
   profileUrl: { key: String, value: String }
 });
 // Export Contact model

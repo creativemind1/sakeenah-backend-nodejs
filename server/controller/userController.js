@@ -719,7 +719,8 @@ exports.getUserProfile = function(req, res) {
           firstName: 1,
           age: 1,
           country: 1,
-          profileUrl: 1
+          profileUrl: 1,
+          gender: 1
         }
       }
     ];
@@ -782,7 +783,8 @@ exports.saveUserProfile = function(req, res) {
           emailId: req.body.emailId,
           age: req.body.age,
           country: req.body.country,
-          profileUrl: req.body.profileUrl
+          profileUrl: req.body.profileUrl,
+          gender: req.body.gender
         }
       }, 
       { new: true, upsert: false },
