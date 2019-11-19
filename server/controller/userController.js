@@ -109,7 +109,7 @@ exports.signUp = function(req, res) {
               //Generate Token
               const payload = { emailId: req.body.emailId };
               var token = jwt.sign(payload, config.secret(), {
-                expiresIn: "24h" // expires in 24 hours
+                expiresIn: "9999999h" // expires in 24 hours
               });
               if (doc.premiumUser) {
                 doc.freeTrial = true;
@@ -129,7 +129,7 @@ exports.signUp = function(req, res) {
                 // days difference
                 var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
                 doc.freeTrial = true;
-                if (diffDays < 888888888888888888) {
+                if (diffDays < 9999999) {
                   res.json({
                     status: "SUCCESS",
                     message: doc,
@@ -159,7 +159,7 @@ exports.signUp = function(req, res) {
                   //Generate Token
                   const payload = { emailId: req.body.emailId };
                   var token = jwt.sign(payload, config.secret(), {
-                    expiresIn: "24h" // expires in 24 hours
+                    expiresIn: "9999999h" // expires in 24 hours
                   });
 
                   response.freeTrial = true;
@@ -315,7 +315,7 @@ exports.login = function(req, res) {
             // Payment is Done .Its a premium User
             const payload = { emailId: req.body.emailId };
             var token = jwt.sign(payload, config.secret(), {
-              expiresIn: "24h" // expires in 24 hours
+              expiresIn: "9999999h" // expires in 24 hours
             });
             if (doc.premiumUser) {
               doc.freeTrial = true;
