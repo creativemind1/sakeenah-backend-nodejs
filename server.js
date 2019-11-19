@@ -127,7 +127,7 @@ function authChecker(req, res, next) {
       req.body.token,
       config.secret(),
       {
-        expiresIn: "9999999h" // expires in 24 hours
+        expiresIn: "4d" // expires in 24 hours
       },
       (err, decoded) => {
         if (err) {
