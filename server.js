@@ -48,9 +48,9 @@ const DIR = "./public/";
 * Configuring AWS For Uploading Image and mp3
 */
 const AWS = require('aws-sdk');
-const ID = 'AKIAJK3LEEXLZPIJXE3Q';
-const SECRET = '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';
-const BUCKET_NAME = 'muzmind';
+const ID = 'AKIAITETVYAOCLETVZZA'; //client AWS API sakeenah
+const SECRET = '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'; ////client AWS API sakeenah
+const BUCKET_NAME = 'sakeenah';
 const s3 = new AWS.S3({
   accessKeyId: ID,
   secretAccessKey: SECRET
