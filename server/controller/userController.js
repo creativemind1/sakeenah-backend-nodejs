@@ -283,7 +283,7 @@ exports.signUp = function(req, res) {
               var emailObj = {
                 html: content,
                 recipientEmail: req.body.emailId,
-                subject: "Verificaton Email",
+                subject: "Verification Email for Sakeenah /tranquility/ app",
                 message: userId
               };
               email.sendmail(emailObj, function(err, data) {

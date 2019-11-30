@@ -15,10 +15,13 @@ export class AuthService {
   loginCMS(login: Login) {
     return this.http.post(this.loginUrl + '/login', login).pipe(map((resp) => {
       var result = JSON.parse(JSON.stringify(resp));
-      var timestamp = new Date().getTime();
-      var token = result.token + '/##/' + timestamp;
-      this.sendToken(token)
-      return resp;
+      if (result.status == 'FAILED') return resp;
+      else {
+        var timestamp = new Date().getTime();
+        var token = result.token + '/##/' + timestamp;
+        this.sendToken(token)
+        return resp;
+      }
     }));
   };
   sendToken(token: string) {

@@ -24,6 +24,8 @@ export class LoginComponent implements OnInit {
         var result = JSON.parse(JSON.stringify(response));
         if (result.status == 'SUCCESS') {
           this.router.navigate(['/media']);
+        } else {
+          alert('Something is wrong with your credentials')
         }
       });
     } else {

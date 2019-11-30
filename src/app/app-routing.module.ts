@@ -19,7 +19,7 @@ const routes: Routes = [
   { 
     path: 'reset',
     component: ResetPswdComponent,
-    canActivate: [AuthGuard]
+    //canActivate: [AuthGuard]
   },
   {
     path: 'category',
