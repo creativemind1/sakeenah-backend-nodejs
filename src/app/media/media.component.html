@@ -3,9 +3,8 @@
 <div>
   <mat-card>
     <mat-card-header fxLayoutAlign="center">
-      <mat-card-title>Categories</mat-card-title> 
-    </mat-card-header>
-   
+      <mat-card-title>Albums</mat-card-title> 
+    </mat-card-header>   
     <div *ngIf="selectedMedia.enableUpdate; else save">
       <!-- Update UI-->
       <mat-card-content fxLayout="column" fxLayoutAlign="center">
@@ -16,32 +15,36 @@
               {{food.categoryName}}
             </mat-option>
           </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
+
+        
 
         <mat-form-field>
-          <p>{{selectedMedia.subCategoryId}}</p>
-          <mat-label>Select Sub Category</mat-label>
+          <input  matInput placeholder="Name" [(ngModel)]="selectedMedia.title">
+        </mat-form-field>
+        <mat-form-field>
+          <textarea matInput placeholder="Duration" [(ngModel)]="selectedMedia.duration"></textarea>
+        </mat-form-field>  
+        <!-- <mat-form-field>
+          <textarea matInput placeholder="Description" [(ngModel)]="selectedMedia.description"></textarea>
+        </mat-form-field>   -->
+        <mat-form-field>
+          <!-- <p>{{selectedMedia.subCategoryId}}</p> -->
+          <mat-label>Assign to</mat-label>
           <mat-select [(ngModel)]="selectedMedia.subCategoryId" [(value)]="selected">
             <mat-option *ngFor="let food of subCategory" [value]="food.subCategoryId">
               {{food.subCategoryName}}
             </mat-option>
           </mat-select>
-        </mat-form-field> -->
-
-        <mat-form-field>
-          <input  matInput placeholder="Name" [(ngModel)]="selectedMedia.title">
-        </mat-form-field>
-        <!-- <mat-form-field>
-          <textarea matInput placeholder="Description" [(ngModel)]="selectedMedia.description"></textarea>
-        </mat-form-field>        
-        <mat-form-field>
+        </mat-form-field>      
+       <!-- <mat-form-field>
           <input matInput placeholder="Narrator" [(ngModel)]="selectedMedia.narrator">
         </mat-form-field>
         <mat-form-field>
           <textarea matInput placeholder="Author" [(ngModel)]="selectedMedia.author"></textarea>
         </mat-form-field> -->
 
-        <!-- <mat-slide-toggle [(ngModel)]="selectedMedia.premium"> Premium Video</mat-slide-toggle> -->
+        <mat-slide-toggle [(ngModel)]="selectedMedia.premium"> Premium Album</mat-slide-toggle>
       </mat-card-content>
       <!-- <input placeholder="Multiple Audio/Video">
         <app-file-upload (messageEvent)="receiveUpdateVideoMessage($event)"></app-file-upload>
@@ -56,7 +59,6 @@
     </div>
     <ng-template #save>
       <mat-card-content fxLayout="column" fxLayoutAlign="center">
-
         <!-- <mat-form-field>
           <mat-label>Select Category</mat-label>
           <mat-select [(ngModel)]="media.categoryId"  multiple>
@@ -64,33 +66,38 @@
               {{food.categoryName}}
             </mat-option>
           </mat-select>
+        </mat-form-field> -->
+       
+        <mat-form-field>
+          <input matInput placeholder="Name" [(ngModel)]="media.title">
         </mat-form-field>
 
+        <!-- <mat-form-field>
+          <textarea matInput placeholder="Description" [(ngModel)]="media.description"></textarea>
+        </mat-form-field> -->
+        
         <mat-form-field>
-          <mat-label>Select Sub Category</mat-label>
+          <textarea matInput placeholder="Duration" [(ngModel)]="media.duration"></textarea>
+        </mat-form-field>
+
+
+        <mat-form-field>
+          <mat-label>Assign to</mat-label>
           <mat-select [(ngModel)]="media.subCategoryId" multiple>
             <mat-option *ngFor="let food of subCategory" [value]="food.subCategoryId">
               {{food.subCategoryName}}
             </mat-option>
           </mat-select>
-        </mat-form-field> -->
-
-
-        <mat-form-field>
-          <input matInput placeholder="Name" [(ngModel)]="media.title">
-        </mat-form-field>
-        <!-- <mat-form-field>
-          <textarea matInput placeholder="Description" [(ngModel)]="media.description"></textarea>
         </mat-form-field>
 
-        <mat-form-field>
+         <!--  <mat-form-field>
           <input matInput placeholder="Narrator" [(ngModel)]="media.narrator">
         </mat-form-field>
         <mat-form-field>
           <textarea matInput placeholder="Author" [(ngModel)]="media.author"></textarea>
         </mat-form-field> -->
 
-        <!-- <mat-slide-toggle [(ngModel)]="media.premium"> Premium Video</mat-slide-toggle> -->
+        <mat-slide-toggle [(ngModel)]="media.premium"> Premium Album</mat-slide-toggle>
 
       </mat-card-content>
       <!-- <input placeholder="Audio/Video">
@@ -136,7 +143,5 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-    
-
   </mat-card>
 </div>

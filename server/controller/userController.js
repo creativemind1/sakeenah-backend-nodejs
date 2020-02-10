@@ -11,6 +11,7 @@ let UserPlayListModel = require("../model/UserPlayListModel");
 let MediaModel = require("../model/MediaModel");
 let PlayListModel = require("../model/PlayListModel");
 let CategoryModel = require("../model/CategoryModel");
+let Category_NEW_Model = require("../model/SubCategoryModel");
 var randomstring = require("randomstring");
 var async = require("async");
 var bcrypt = require("bcrypt-nodejs");
@@ -21,7 +22,8 @@ var webService = require("../config/webservice");
 var webUrl = webService.webUrl();
 var jwt = require("jsonwebtoken");
 var config = require("../config/config-" + process.env.NODE_ENV + ".js");
-//var config = require("./config/config-" + process.env.NODE_ENV + ".js");
+var Default_Category_Id = 'zTdpUn9H0h';
+
 
 // This method is to resister new customer through APP.
 exports.signUp = function(req, res) {
@@ -460,14 +462,61 @@ exports.resetPswd = function(req, res) {
     });
   };
 };
+
 // This method is to get the media based on catergory ids
 exports.getMedia = function(req, res) {
-  if (req.body.categoryId && req.body.companyId && !req.body.subCategoryId) {
+  console.log(req.body, '===req=body-=-=-')
+  if (Default_Category_Id && req.body.subCategoryId) {
     let aggregatorData = [
       // Stage 1
       {
         $match: {
-          categoryId: req.body.categoryId
+          companyId: "10000",
+          categoryId: Default_Category_Id,
+          subCategoryId: req.body.subCategoryId
+        }
+      }, // Stage 2
+      {
+        $project: {
+          mediaId: 1,
+          title: 1,
+          thumbImageUrl: 1,
+          author: 1,
+          premium: 1,
+          duration:1
+        }
+      }
+    ];
+    MediaModel.aggregate(aggregatorData, function(err, data) {
+      console.log(data, '-==data===')
+      if (err) {
+        res.json({
+          status: "FAILED",
+          message: err
+        });
+      } else {
+        res.json({
+          status: "SUCCESS",
+          message: data
+        });
+      }
+    });
+  } else {
+    res.json({
+      status: "FAILED",
+      message: " Request is not proper"
+    });
+  }
+};
+
+
+exports.OLD___getMedia = function(req, res) {
+  if (Default_Category_Id && req.body.companyId && !req.body.subCategoryId) {
+    let aggregatorData = [
+      // Stage 1
+      {
+        $match: {
+          categoryId: Default_Category_Id
         }
       }, // Stage 2
       {
@@ -507,7 +556,7 @@ exports.getMedia = function(req, res) {
       }
     });
   } else if (
-    req.body.categoryId &&
+    Default_Category_Id &&
     req.body.companyId &&
     req.body.subCategoryId
   ) {
@@ -515,7 +564,7 @@ exports.getMedia = function(req, res) {
       // Stage 1
       {
         $match: {
-          categoryId: req.body.categoryId,
+          categoryId: Default_Category_Id,
           subCategoryId: req.body.subCategoryId
         }
       }, // Stage 2
@@ -561,14 +610,14 @@ exports.getCategories = function(req, res) {
           active: true
         }
       },
-      // // Stage 3
+      // Stage 2
       {
         $project: {
           _id: 0,
           categoryId: 1,
-          categoryName: 1,
-          description: 1,
-          companyId: 1
+          //categoryName: 1,
+          //description: 1,
+          //companyId: 1
         }
       }
     ];
@@ -593,6 +642,49 @@ exports.getCategories = function(req, res) {
     });
   }
 };
+
+// This method is to get the list of new_categories
+exports.getCategories_NEW = (req, res) => {
+  if (Default_Category_Id) {
+    let aggregatorData = [
+      // Stage 1
+      {
+        $match: {
+          categoryId: Default_Category_Id,
+          active: true
+        }
+      },
+      // Stage 2
+      {
+        $project: {
+          _id: 0,
+          subCategoryId: 1,
+          subCategoryName: 1,
+          description: 1
+        }
+      }
+    ];
+    Category_NEW_Model.aggregate(aggregatorData, function(err, data) {
+      console.log(data, '====DATA====')      
+      if (err) {
+        res.json({
+          status: "FAILED",
+          message: err
+        });
+      } else {
+        res.json({
+          status: "SUCCESS",
+          message: data
+        });
+      }
+    });
+  } else {
+    res.json({
+      status: "FAILED",
+      message: " Request is not proper"
+    });
+  }
+}
 
 // This method is to reset Password
 exports.verifyResetPassword = function(req, res) {
@@ -646,6 +738,7 @@ exports.verifyResetPassword = function(req, res) {
     });
   }
 };
+
 //This method is to validate the Email from the activate link
 exports.verifyEmail = function(req, res) {
   var reqParams = req.query;

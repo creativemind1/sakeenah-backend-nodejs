@@ -22,6 +22,7 @@ var mediaSchema = mongoose.Schema({
   narrator: String,
   author: String,
   premium: Boolean,
+  duration: String,
   createdBy: String,
   modifiedBy: String,
   create_date: {

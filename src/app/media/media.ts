@@ -18,4 +18,5 @@ export class Media {
   create_date: String;
   modify_date: String;
   enableUpdate: boolean;
+  duration: String;
 }

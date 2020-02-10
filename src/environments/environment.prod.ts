@@ -1,4 +1,5 @@
-const serverUrl = 'https://cms.sakeenah.io/';
+//const serverUrl = 'https://cms.sakeenah.io/';
+const serverUrl = 'http://192.168.43.102:8080/'
 const loginUrl = serverUrl + 'auth';
 const baseUrl = serverUrl + 'cms';
 const uploadUrl = serverUrl + 'upload';

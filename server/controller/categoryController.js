@@ -11,12 +11,7 @@ let SubCategoryModel = require("../model/SubCategoryModel");
 let MediaModel = require("../model/MediaModel");
 let PlayListModel = require("../model/PlayListModel");
 var randomstring = require("randomstring");
-var async = require("async");
-var bcrypt = require("bcrypt-nodejs");
-var webService = require("../config/webservice");
-var webUrl = webService.webUrl();
-var jwt = require("jsonwebtoken");
-var config = require("../config/config-" + process.env.NODE_ENV + ".js");
+var Default_Category_Id = 'zTdpUn9H0h';
 
 // This method is to perform operations for categories.
 
@@ -25,10 +20,10 @@ exports.category = function(req, res) {
   switch (type) {
     case "SAVE":
       {
-        if (req.body.categoryId) {
+        if (Default_Category_Id) {
           var modify_date = new Date();
           CategoryModel.findOneAndUpdate(
-            { categoryId: req.body.categoryId },
+            { categoryId: Default_Category_Id },
             {
               categoryName: req.body.categoryName,
               modifiedBy: req.body.userId,
@@ -78,8 +73,8 @@ exports.category = function(req, res) {
       break;
     case "DELETE":
       {
-        if (req.body.categoryId) {
-          CategoryModel.deleteOne({ categoryId: req.body.categoryId }, function(
+        if (Default_Category_Id) {
+          CategoryModel.deleteOne({ categoryId: Default_Category_Id }, function(
             err,
             doc
           ) {
@@ -165,7 +160,6 @@ exports.category = function(req, res) {
 };
 
 // This method is to perform operations for subCategories.
-
 exports.subCategory = function(req, res) {
   var type = req.body.type;
   switch (type) {
@@ -180,7 +174,7 @@ exports.subCategory = function(req, res) {
               modifiedBy: req.body.userId,
               modify_date: modify_date,
               description: req.body.description,
-              categoryId: req.body.categoryId,
+              categoryId: Default_Category_Id,
               active: req.body.active
             },
             { upsert: false },
@@ -200,7 +194,7 @@ exports.subCategory = function(req, res) {
           );
         } else {
           var subCategoryModel = new SubCategoryModel();
-          subCategoryModel.categoryId = req.body.categoryId;
+          subCategoryModel.categoryId = Default_Category_Id;
           subCategoryModel.subCategoryId = randomstring.generate(10);
           subCategoryModel.createdBy = req.body.userId;
           subCategoryModel.subCategoryName = req.body.subCategoryName;
@@ -280,11 +274,11 @@ exports.subCategory = function(req, res) {
       break;
     case "GET_SUB_CATEGORY":
       {
-        if (req.body.companyId && req.body.categoryId) {
+        if (req.body.companyId && Default_Category_Id) {
           SubCategoryModel.find(
             {
               companyId: req.body.companyId,
-              categoryId: { $in: req.body.categoryId }
+              categoryId: { $in: Default_Category_Id }
             },
             function(err, doc) {
               if (doc) {
@@ -317,18 +311,20 @@ exports.subCategory = function(req, res) {
 
 exports.media = function(req, res) {
   var type = req.body.type;
+  console.log(req.body, '=----ReqBody====')
   switch (type) {
     case "SAVE":
       {
         if (req.body.mediaId) {
           var modify_date = new Date();
+          
           MediaModel.findOneAndUpdate(
             { mediaId: req.body.mediaId },
             {
               title: req.body.title,
               modifiedBy: req.body.userId,
               modify_date: modify_date,
-              categoryId: req.body.categoryId,
+              categoryId: Default_Category_Id,
               subCategoryId: req.body.subCategoryId,
               description: req.body.description,
               thumbImageUrl: req.body.thumbImageUrl,
@@ -337,7 +333,8 @@ exports.media = function(req, res) {
               author: req.body.author,
               videoUrl: req.body.videoUrl,
               premium: req.body.premium,
-              active: req.body.active
+              active: req.body.active,
+              duration: req.body.duration
             },
             { upsert: false },
             function(err, doc) {
@@ -356,7 +353,7 @@ exports.media = function(req, res) {
           );
         } else {
           var mediaModel = new MediaModel();
-          mediaModel.categoryId = req.body.categoryId;
+          mediaModel.categoryId = Default_Category_Id;
           mediaModel.subCategoryId = req.body.subCategoryId;
           mediaModel.mediaId = randomstring.generate(10);
           mediaModel.createdBy = req.body.userId;
@@ -372,6 +369,7 @@ exports.media = function(req, res) {
           mediaModel.create_date = new Date();
           mediaModel.premium = req.body.premium;
           mediaModel.active = req.body.active;
+          mediaModel.duration = req.body.duration;
           mediaModel.save(function(error) {
             if (error) {
               res.json({
@@ -570,11 +568,11 @@ exports.playlist = function(req, res) {
       break;
     case "GET_SUB_CATEGORY":
       {
-        if (req.body.companyId && req.body.categoryId) {
+        if (req.body.companyId && Default_Category_Id) {
           SubCategoryModel.find(
             {
               companyId: req.body.companyId,
-              categoryId: { $in: req.body.categoryId }
+              categoryId: { $in: Default_Category_Id }
             },
             function(err, doc) {
               if (doc) {

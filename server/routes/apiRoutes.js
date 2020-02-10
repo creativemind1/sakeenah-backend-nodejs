@@ -15,15 +15,23 @@ router.get("/", function(req, res) {
 
 // getMedia
 router.route("/getMedia").post(userController.getMedia);
-// getCategories
+
+// getCategories (DEFAULT)
 router.route("/getCategories").post(userController.getCategories);
+
+// getCategories_NEW
+router.route("/getCategories_NEW").post(userController.getCategories_NEW);
+
 // saveUserProfile
 router.route("/saveUserProfile").post(userController.saveUserProfile);
+
 // getUserProfile
 router.route("/getUserProfile").post(userController.getUserProfile);
+
 // getMedia
 router.route("/getPlaylist").post(userController.getPlayList);
 
+// saveUserPlayList
 router.route("/saveUserPlayList").post(userController.saveUserPlayList);
 
 // Export API routes

@@ -3,19 +3,19 @@
 <div>
   <mat-card>
     <mat-card-header fxLayoutAlign="center">
-      <mat-card-title>Sub Category</mat-card-title>
+      <mat-card-title>Categories</mat-card-title>
     </mat-card-header>
     <div *ngIf="selectedSubCategory.enableUpdate; else save">
       <!-- Update UI-->
       <mat-card-content fxLayout="column" fxLayoutAlign="center">
-        <mat-form-field>
+        <!-- <mat-form-field>
           <mat-label>Select Category</mat-label>
           <mat-select [(ngModel)]="selectedSubCategory.categoryId" [formControl]="toppings" multiple>
             <mat-option *ngFor="let food of category" [value]="food.categoryId">
               {{food.categoryName}}
             </mat-option>
           </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
 
         <mat-form-field>
           <input matInput placeholder="Name" [(ngModel)]="selectedSubCategory.subCategoryName">
@@ -35,14 +35,14 @@
       <!--SAVE UI-->
       <mat-card-content fxLayout="column" fxLayoutAlign="center">
 
-        <mat-form-field>
+        <!-- <mat-form-field>
           <mat-label>Select Category</mat-label>
           <mat-select [(ngModel)]="subCategory.categoryId" [formControl]="toppings" multiple>
             <mat-option *ngFor="let food of category" [value]="food.categoryId">
               {{food.categoryName}}
             </mat-option>
           </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
 
         <mat-form-field>
           <input matInput placeholder="Name" [(ngModel)]="subCategory.subCategoryName">
@@ -52,7 +52,7 @@
         <mat-form-field>
           <textarea matInput placeholder="Description" [(ngModel)]="subCategory.description"></textarea>
         </mat-form-field>
-
+        <p style="color: red;">Here comes the upload image button.. Pending....</p>
 
       </mat-card-content>
       <mat-slide-toggle [(ngModel)]="subCategory.active"> Active/Inactive</mat-slide-toggle>
