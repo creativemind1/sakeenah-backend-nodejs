@@ -278,6 +278,7 @@ exports.subCategory = function(req, res) {
           SubCategoryModel.find(
             {
               companyId: req.body.companyId,
+              active: true,
               categoryId: { $in: Default_Category_Id }
             },
             function(err, doc) {
