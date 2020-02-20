@@ -454,10 +454,10 @@ exports.playlist = function(req, res) {
   switch (type) {
     case "SAVE":
       {
-        if (req.body.playListId) {
+        if (req.body.audioID) {
           var modify_date = new Date();
           PlayListModel.findOneAndUpdate(
-            { playListId: req.body.playListId },
+            { audioID: req.body.audioID },
             {
               name: req.body.name,
               modifiedBy: req.body.userId,
@@ -487,7 +487,7 @@ exports.playlist = function(req, res) {
         } else {
           var playListModel = new PlayListModel();
           playListModel.mediaId = req.body.mediaId;
-          playListModel.playListId = randomstring.generate(10);
+          playListModel.audioID = randomstring.generate(10);
           playListModel.createdBy = req.body.userId;
           playListModel.premium = req.body.premium;
           playListModel.name = req.body.name;
@@ -515,8 +515,8 @@ exports.playlist = function(req, res) {
       break;
     case "DELETE":
       {
-        if (req.body.playListId) {
-          PlayListModel.deleteOne({ playListId: req.body.playListId }, function(
+        if (req.body.audioID) {
+          PlayListModel.deleteOne({ audioID: req.body.audioID }, function(
             err,
             doc
           ) {

@@ -117,7 +117,9 @@ export class MediaComponent implements OnInit {
   }
   categoryClick() {
     this.cmsService.getSubCategories(this.media).subscribe(response => {
+      console.log(response, '===Categories====');
       var result = JSON.parse(JSON.stringify(response));
+      console.log(result, '===result===')
       this.subCategory = result.message;
       this.media.subCategoryId = [result.message[0].subCategoryId];
     });

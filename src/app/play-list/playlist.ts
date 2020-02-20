@@ -3,7 +3,7 @@ import { FileUpload } from '../file-upload/fileUpload';
 
 export class PlayList {
   [x: string]: any;
-    playListId: string;
+    plaaudioIDyListId: string;
      mediaId:string
      name: string;
      premium:boolean; 

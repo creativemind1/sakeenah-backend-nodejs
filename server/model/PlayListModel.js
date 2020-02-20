@@ -9,7 +9,7 @@ var mongoose = require("mongoose");
 var playListSchema = mongoose.Schema({
   mediaId: String,
   premium: { type: Boolean },
-  playListId: String,
+  audioID: String,
   name:  String ,
   authorBy: String,
   companyId: String,

@@ -12,6 +12,7 @@ let MediaModel = require("../model/MediaModel");
 let PlayListModel = require("../model/PlayListModel");
 let CategoryModel = require("../model/CategoryModel");
 let Category_NEW_Model = require("../model/SubCategoryModel");
+let UserUnlock = require("../model/UserUnlock");
 var randomstring = require("randomstring");
 var async = require("async");
 var bcrypt = require("bcrypt-nodejs");
@@ -28,9 +29,7 @@ var Default_Category_Id = 'zTdpUn9H0h';
 // This method is to resister new customer through APP.
 exports.signUp = function(req, res) {
   var userProfileModel = new UserProfileModel();
-
   var firstName = req.body.firstName;
-
   userProfileModel.firstName = firstName;
   userProfileModel.emailId = req.body.emailId;
   userProfileModel.type = req.body.type;
@@ -488,7 +487,7 @@ exports.getMedia = function(req, res) {
       }
     ];
     MediaModel.aggregate(aggregatorData, function(err, data) {
-      console.log(data, '-==data===')
+      console.log(data, 'MEDIA ....', '-==data===')
       if (err) {
         res.json({
           status: "FAILED",
@@ -508,7 +507,6 @@ exports.getMedia = function(req, res) {
     });
   }
 };
-
 
 exports.OLD___getMedia = function(req, res) {
   if (Default_Category_Id && req.body.companyId && !req.body.subCategoryId) {
@@ -840,34 +838,7 @@ exports.getUserProfile = function(req, res) {
 };
 
 exports.saveUserProfile = function(req, res) {
-  if (req.body.userId) {
-    console.log(req.body.firstName, "-SSHSHSHSHS");
-    // UserProfileModel.findOneAndUpdate(
-    //   { userId: req.body.userId },
-    //   {
-    //     $set: {
-    //       firstName: req.body.firstName,
-    //       emailId: req.body.emailId,
-    //       age: req.body.age,
-    //       country: req.body.country,
-    //       profileUrl: req.body.profileUrl
-    //     }
-    //   },
-    //   { new: true, upsert: false },
-    //   (err, doc) => {
-    //     if (err) {
-    //       res.json({
-    //         status: "FAILED",
-    //         message: err
-    //       });
-    //     }
-    //     console.log(doc)
-    //     res.json({
-    //       status: "SUCCESS",
-    //       message: doc
-    //     });
-    //   }
-    // );
+  if (req.body.userId) {    
     UserProfileModel.findOneAndUpdate(
       { userId: req.body.userId },
       {
@@ -951,7 +922,7 @@ exports.getPlayList = function(req, res) {
               selectDay: 1,
               premium: 1,
               mediaId: 1,
-              playListId: 1,
+              audioID: 1,
               name: 1,
               description: 1, //using temporarily for author name..
               mediaTitle: { $arrayElemAt: ["$media.title", 0] },
@@ -962,15 +933,6 @@ exports.getPlayList = function(req, res) {
         PlayListModel.aggregate(aggregatorData, function(err, doc) {
           if (doc) {
             doc.forEach(element => {
-              console.log(
-                "== element ===",
-                element.selectDay,
-                " day no ",
-                dayNo,
-                " cond ",
-                element.selectDay <= dayNo
-              );
-
               if (element.selectDay <= dayNo) {
                 element["finish"] = true;
               } else {
@@ -1046,7 +1008,7 @@ exports.saveUserPlayList = function(req, res) {
               } else {
                 res.json({
                   status: "SUCCESS",
-                  message: "Successfully  saveUserPlayList "
+                  message: "Successfully"
                 });
               }
             });
@@ -1057,3 +1019,107 @@ exports.saveUserPlayList = function(req, res) {
   } else {
   }
 };
+
+// Unlock next
+exports.unlock = function(req, res) {
+  console.log('HITITNG UNLOCK API')
+  if (req.body.userId) {
+    //Existing playlist
+    //albumID - G6zafDpw6J
+    //PlaylistID - o0qmTQW8gS
+    //audioID - dHRNW86gZz
+    const categories = []
+    const album = []
+    const playlist = []
+    const audio = []    
+    
+    var audioID = 't123412';
+    audio.push(audioID);
+    
+    var playlist_Obj = {
+      playlistID: 'ggadfasd',
+      audio
+    };    
+    playlist.push(playlist_Obj);
+    
+    var album_Obj = {
+      albumID: 'gadfAssa',
+      playlist_Obj
+    };
+    album.push(album_Obj);
+
+    var categoryObj = {
+      categoryID: 'ggadfasd123123',
+      album
+    }
+    categories.push(categoryObj);
+
+    console.log(JSON.stringify(categories), 'album=====');
+    //return false
+    UserUnlock.findOneAndUpdate(
+      { userId: req.body.userId },
+      { upsert: false },
+      function(err, doc) {
+        if (err) {
+          console.log("----err--- ", err);
+        } else {
+          console.log("---doc--- ", doc);
+          if (doc) {
+            res.json({
+              status: "SUCCESS",
+              message: "Successfully  Updated PlayList "
+            });
+          } else {
+            console.log('LOOOOL')
+            var userUnlock = new UserUnlock();
+            userUnlock.userId = req.body.userId;
+            userUnlock.unlock = album
+            userUnlock.save(function(error) {
+              if (error) {
+                res.json({
+                  status: "FAILED",
+                  message: error
+                });
+              } else {
+                res.json({
+                  status: "SUCCESS",
+                  message: "Successfully  saveUserPlayList "
+                });
+              }
+            });
+          }
+        }
+      }
+    );
+  }
+};
+
+
+// Query to check if Album ID is available
+
+// let checkAlbumUnlock = [
+//   // Stage 1
+//   {
+//     $match: {
+//       userId: req.body.userId
+//     }
+//   },
+//   // Stage 2
+//   {
+//     $match: {
+//       unlock: {
+//         $elemMatch: {
+//           albumID: req.body.albumID
+//         }
+//       }
+//     }
+//   },
+//   // Stage 3
+//   {
+//     $project: {
+//       status: true
+//     }
+//   }
+// ];
+
+//"vjn6HLyqOL"
