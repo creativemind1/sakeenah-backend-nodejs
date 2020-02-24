@@ -1,6 +1,9 @@
 // Filename: api-routes.js
 // Initialize express router
 let router = require("express").Router();
+var category = require("../controller/category");
+var album = require("../controller/album");
+var audio = require("../controller/audio");
 var userController = require("../controller/userController");
 var categoryController = require("../controller/categoryController");
 var jwt = require("jsonwebtoken");
@@ -23,7 +26,7 @@ router.route("/getCategories_NEW").post(userController.getCategories_NEW);
 router.route("/getMedia").post(userController.getMedia);
 
 // Audio Mp3
-router.route("/getPlaylist").post(userController.getPlayList);
+router.route("/getPlaylist").post(userController.userCategories);
 
 // saveUserProfile
 router.route("/saveUserProfile").post(userController.saveUserProfile);
@@ -34,8 +37,19 @@ router.route("/getUserProfile").post(userController.getUserProfile);
 // saveUserPlayList
 router.route("/saveUserPlayList").post(userController.saveUserPlayList);
 
+//getUserCategories 
+router.route("/userCategories").post(userController.userCategories);
+
 // unlockNextAudio
 router.route("/unlock").post(userController.unlock);
+
+
+router.route("/category/list").post(category.list);
+
+router.route("/album/list").post(album.list);
+
+router.route("/audio/list").post(audio.list);
+router.route("/audio/completed").post(audio.completed);
 
 // Export API routes
 module.exports = router;

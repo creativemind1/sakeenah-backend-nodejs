@@ -448,7 +448,6 @@ exports.media = function(req, res) {
 };
 
 // This method is to perform operations for PlayLists.
-
 exports.playlist = function(req, res) {
   var type = req.body.type;
   switch (type) {
