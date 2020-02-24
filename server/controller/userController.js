@@ -5,12 +5,16 @@
  * @since MAR-28-2019
  *
  */
-
+let mongoose = require("mongoose");
 let UserProfileModel = require("../model/UserProfileModel");
 let UserPlayListModel = require("../model/UserPlayListModel");
 let MediaModel = require("../model/MediaModel");
 let PlayListModel = require("../model/PlayListModel");
 let CategoryModel = require("../model/CategoryModel");
+let Category_NEW_Model = require("../model/SubCategoryModel");
+let UserMap = require("../model/UserMap");
+let ttt = require("../model/ttt");
+let UserUnlock = require("../model/UserUnlock");
 var randomstring = require("randomstring");
 var async = require("async");
 var bcrypt = require("bcrypt-nodejs");
@@ -21,14 +25,12 @@ var webService = require("../config/webservice");
 var webUrl = webService.webUrl();
 var jwt = require("jsonwebtoken");
 var config = require("../config/config-" + process.env.NODE_ENV + ".js");
-//var config = require("./config/config-" + process.env.NODE_ENV + ".js");
+var Default_Category_Id = "zTdpUn9H0h";
 
 // This method is to resister new customer through APP.
 exports.signUp = function(req, res) {
   var userProfileModel = new UserProfileModel();
-
   var firstName = req.body.firstName;
-
   userProfileModel.firstName = firstName;
   userProfileModel.emailId = req.body.emailId;
   userProfileModel.type = req.body.type;
@@ -377,10 +379,11 @@ exports.resetPswd = function(req, res) {
   var userId;
   var content;
   var firstName;
-  UserProfileModel.findOne({
-    emailId: req.body.emailId,
-    type: req.body.type
-  },
+  UserProfileModel.findOne(
+    {
+      emailId: req.body.emailId,
+      type: req.body.type
+    },
     function(err, doc) {
       if (doc) {
         userId = doc.userId;
@@ -406,14 +409,14 @@ exports.resetPswd = function(req, res) {
                   message: err
                 });
               } else {
-                console.log(content, '===content==')
+                console.log(content, "===content==");
                 // send email
                 var emailObj = {
                   html: content,
                   recipientEmail: req.body.emailId,
                   subject: "Reset Password Verificaton Email",
                   message: userId,
-                  type: 'RESET_PASSWORD'
+                  type: "RESET_PASSWORD"
                 };
                 email.sendmail(emailObj, function(err, data) {
                   if (err) console.log("----mail not sent-----" + err);
@@ -446,7 +449,7 @@ exports.resetPswd = function(req, res) {
       if (err) {
         return nCallback();
       } else {
-        console.log('reset email hitting.........')
+        console.log("reset email hitting.........");
         var template = handlebars.compile(data);
         var verfiyEmail = webUrl.resetPassword + userId;
         var replacements = {
@@ -460,14 +463,60 @@ exports.resetPswd = function(req, res) {
     });
   };
 };
+
 // This method is to get the media based on catergory ids
 exports.getMedia = function(req, res) {
-  if (req.body.categoryId && req.body.companyId && !req.body.subCategoryId) {
+  console.log(req.body, "===req=body-=-=-");
+  if (Default_Category_Id && req.body.subCategoryId) {
     let aggregatorData = [
       // Stage 1
       {
         $match: {
-          categoryId: req.body.categoryId
+          companyId: "10000",
+          categoryId: Default_Category_Id,
+          subCategoryId: req.body.subCategoryId
+        }
+      }, // Stage 2
+      {
+        $project: {
+          mediaId: 1,
+          title: 1,
+          thumbImageUrl: 1,
+          author: 1,
+          premium: 1,
+          duration: 1
+        }
+      }
+    ];
+    MediaModel.aggregate(aggregatorData, function(err, data) {
+      console.log(data, "MEDIA ....", "-==data===");
+      if (err) {
+        res.json({
+          status: "FAILED",
+          message: err
+        });
+      } else {
+        res.json({
+          status: "SUCCESS",
+          message: data
+        });
+      }
+    });
+  } else {
+    res.json({
+      status: "FAILED",
+      message: " Request is not proper"
+    });
+  }
+};
+
+exports.OLD___getMedia = function(req, res) {
+  if (Default_Category_Id && req.body.companyId && !req.body.subCategoryId) {
+    let aggregatorData = [
+      // Stage 1
+      {
+        $match: {
+          categoryId: Default_Category_Id
         }
       }, // Stage 2
       {
@@ -507,7 +556,7 @@ exports.getMedia = function(req, res) {
       }
     });
   } else if (
-    req.body.categoryId &&
+    Default_Category_Id &&
     req.body.companyId &&
     req.body.subCategoryId
   ) {
@@ -515,7 +564,7 @@ exports.getMedia = function(req, res) {
       // Stage 1
       {
         $match: {
-          categoryId: req.body.categoryId,
+          categoryId: Default_Category_Id,
           subCategoryId: req.body.subCategoryId
         }
       }, // Stage 2
@@ -561,14 +610,14 @@ exports.getCategories = function(req, res) {
           active: true
         }
       },
-      // // Stage 3
+      // Stage 2
       {
         $project: {
           _id: 0,
-          categoryId: 1,
-          categoryName: 1,
-          description: 1,
-          companyId: 1
+          categoryId: 1
+          //categoryName: 1,
+          //description: 1,
+          //companyId: 1
         }
       }
     ];
@@ -592,6 +641,198 @@ exports.getCategories = function(req, res) {
       message: " Request is not proper"
     });
   }
+};
+
+// This method is to get the list of new_categories
+exports.getCategories_NEW = (req, res) => {
+  if (Default_Category_Id) {
+    let aggregatorData = [
+      // Stage 1
+      {
+        $match: {
+          categoryId: Default_Category_Id,
+          active: true
+        }
+      },
+      // Stage 2
+      {
+        $project: {
+          _id: 0,
+          subCategoryId: 1,
+          subCategoryName: 1,
+          description: 1
+        }
+      }
+    ];
+    Category_NEW_Model.aggregate(aggregatorData, function(err, data) {
+      console.log(data, "====DATA====");
+      if (err) {
+        res.json({
+          status: "FAILED",
+          message: err
+        });
+      } else {
+        res.json({
+          status: "SUCCESS",
+          message: data
+        });
+      }
+    });
+  } else {
+    res.json({
+      status: "FAILED",
+      message: " Request is not proper"
+    });
+  }
+};
+
+//Usermapping
+
+exports.userCategories = (req, res) => {
+  let allCategories = null;
+  let getAllCategories = n => {
+    let aggregatorData = [
+      // Stage 1
+      {
+        $match: {}
+      },
+      // Stage 2
+      {
+        $project: {
+          mediaId: 1,
+          title: 1,
+          author: 1,
+          premium: 1,
+          thumbImageUrl: 1,
+          duration: 1
+        }
+      }
+    ];
+    let query = {
+      //categoryId: { $in: [req.body.categoryId] },
+      subCategoryId: { $in: [req.body.subCategoryId] }
+    };
+    console.log(query);
+    MediaModel.find(
+      query,
+      {
+        mediaId: 1,
+        title: 1,
+        author: 1,
+        premium: 1,
+        thumbImageUrl: 1,
+        duration: 1
+      },
+      function(err, data) {
+        console.log(data, "====DATA====");
+        if (data && data.length) {
+          allCategories = data;
+        }
+        return n();
+      }
+    );
+  };
+  let audioId = null;
+  let playLists = null;
+  let getPlayLists = n => {
+    let aggregatorData = [
+      // Stage 1
+      {
+        $match: {}
+      },
+      // Stage 2
+      {
+        $project: {
+          mediaId: 1,
+          title: 1,
+          author: 1,
+          premium: 1,
+          thumbImageUrl: 1,
+          duration: 1
+        }
+      }
+    ];
+    let query = {
+      mediaId: "o0qmTQW8gS"
+    };
+    console.log(query);
+    PlayListModel.find(
+      query,
+      {
+        thumbImageUrl: 1,
+        mediaId: 1,
+        audioID: 1,
+        premium: 1,
+        name: 1,
+        create_date: 1,
+        description: 1,
+        companyId: 1,
+        selectDay: 1
+      },
+      function(err, data) {
+        console.log(data, "====DATA====");
+        let selectDay = parseInt("3") + 1;
+        playLists=data
+        for (let play of playLists) {
+          if (play.selectDay == selectDay) {
+            audioId = play.audioID;
+            play.premium = false;
+          }
+        }
+
+        return n();
+      }
+    );
+  };
+
+  let userCategoryIDs = null;
+  let userAudios = null;
+  let getUserCategoryIDs = n => {
+    let aggregator = [
+      // Stage 1
+      {
+        $match: {
+          userID: "vjn6HLyqOL"
+        }
+      },
+      // Stage 2
+      {
+        $project: {
+          _id: 0,
+          categories: 1
+        }
+      }
+    ];
+    let umap = {
+      userID: "vjn6HLyqOL",
+      categories: ["G6zafDpw6J", "mlfKJivUnP"],
+      albums: ["o0qmTQW8gS", "11"],
+      audios: ["dHRNW86gZz"]
+    };
+    mongoose.models["UMAP"].find({}, function(err, data) {
+      if (data && data.length) {
+        userCategoryIDs = {};
+        /*for (let d of data[0].audios) {
+          userCategoryIDs[d] = d;
+        }*/
+        data[0].audios.push(audioId);
+        data[0].save();
+      }
+      return n();
+    });
+  };
+  async.series([getPlayLists.bind(), getUserCategoryIDs.bind()], err => {
+    
+    /* for (let album of allCategories) {
+      if (userCategoryIDs[album.mediaId]) {
+        album.premium = false;
+      }
+    }*/
+    res.json({
+      status: "SUCCESS",
+      message: {data:playLists}
+    });
+  });
 };
 
 // This method is to reset Password
@@ -646,6 +887,7 @@ exports.verifyResetPassword = function(req, res) {
     });
   }
 };
+
 //This method is to validate the Email from the activate link
 exports.verifyEmail = function(req, res) {
   var reqParams = req.query;
@@ -748,33 +990,6 @@ exports.getUserProfile = function(req, res) {
 
 exports.saveUserProfile = function(req, res) {
   if (req.body.userId) {
-    console.log(req.body.firstName, "-SSHSHSHSHS");
-    // UserProfileModel.findOneAndUpdate(
-    //   { userId: req.body.userId },
-    //   {
-    //     $set: {
-    //       firstName: req.body.firstName,
-    //       emailId: req.body.emailId,
-    //       age: req.body.age,
-    //       country: req.body.country,
-    //       profileUrl: req.body.profileUrl
-    //     }
-    //   },
-    //   { new: true, upsert: false },
-    //   (err, doc) => {
-    //     if (err) {
-    //       res.json({
-    //         status: "FAILED",
-    //         message: err
-    //       });
-    //     }
-    //     console.log(doc)
-    //     res.json({
-    //       status: "SUCCESS",
-    //       message: doc
-    //     });
-    //   }
-    // );
     UserProfileModel.findOneAndUpdate(
       { userId: req.body.userId },
       {
@@ -786,7 +1001,7 @@ exports.saveUserProfile = function(req, res) {
           profileUrl: req.body.profileUrl,
           gender: req.body.gender
         }
-      }, 
+      },
       { new: true, upsert: false },
       function(err, data) {
         if (err) {
@@ -858,7 +1073,7 @@ exports.getPlayList = function(req, res) {
               selectDay: 1,
               premium: 1,
               mediaId: 1,
-              playListId: 1,
+              audioID: 1,
               name: 1,
               description: 1, //using temporarily for author name..
               mediaTitle: { $arrayElemAt: ["$media.title", 0] },
@@ -869,15 +1084,6 @@ exports.getPlayList = function(req, res) {
         PlayListModel.aggregate(aggregatorData, function(err, doc) {
           if (doc) {
             doc.forEach(element => {
-              console.log(
-                "== element ===",
-                element.selectDay,
-                " day no ",
-                dayNo,
-                " cond ",
-                element.selectDay <= dayNo
-              );
-
               if (element.selectDay <= dayNo) {
                 element["finish"] = true;
               } else {
@@ -953,7 +1159,7 @@ exports.saveUserPlayList = function(req, res) {
               } else {
                 res.json({
                   status: "SUCCESS",
-                  message: "Successfully  saveUserPlayList "
+                  message: "Successfully"
                 });
               }
             });
@@ -964,3 +1170,106 @@ exports.saveUserPlayList = function(req, res) {
   } else {
   }
 };
+
+// Unlock next
+exports.unlock = function(req, res) {
+  console.log("HITITNG UNLOCK API");
+  if (req.body.userId) {
+    //Existing playlist
+    //albumID - G6zafDpw6J
+    //PlaylistID - o0qmTQW8gS
+    //audioID - dHRNW86gZz
+    const categories = [];
+    const album = [];
+    const playlist = [];
+    const audio = [];
+
+    var audioID = "t123412";
+    audio.push(audioID);
+
+    var playlist_Obj = {
+      playlistID: "ggadfasd",
+      audio
+    };
+    playlist.push(playlist_Obj);
+
+    var album_Obj = {
+      albumID: "gadfAssa",
+      playlist_Obj
+    };
+    album.push(album_Obj);
+
+    var categoryObj = {
+      categoryID: "ggadfasd123123",
+      album
+    };
+    categories.push(categoryObj);
+
+    console.log(JSON.stringify(categories), "album=====");
+    //return false
+    UserUnlock.findOneAndUpdate(
+      { userId: req.body.userId },
+      { upsert: false },
+      function(err, doc) {
+        if (err) {
+          console.log("----err--- ", err);
+        } else {
+          console.log("---doc--- ", doc);
+          if (doc) {
+            res.json({
+              status: "SUCCESS",
+              message: "Successfully  Updated PlayList "
+            });
+          } else {
+            console.log("LOOOOL");
+            var userUnlock = new UserUnlock();
+            userUnlock.userId = req.body.userId;
+            userUnlock.unlock = album;
+            userUnlock.save(function(error) {
+              if (error) {
+                res.json({
+                  status: "FAILED",
+                  message: error
+                });
+              } else {
+                res.json({
+                  status: "SUCCESS",
+                  message: "Successfully  saveUserPlayList "
+                });
+              }
+            });
+          }
+        }
+      }
+    );
+  }
+};
+
+// Query to check if Album ID is available
+
+// let checkAlbumUnlock = [
+//   // Stage 1
+//   {
+//     $match: {
+//       userId: req.body.userId
+//     }
+//   },
+//   // Stage 2
+//   {
+//     $match: {
+//       unlock: {
+//         $elemMatch: {
+//           albumID: req.body.albumID
+//         }
+//       }
+//     }
+//   },
+//   // Stage 3
+//   {
+//     $project: {
+//       status: true
+//     }
+//   }
+// ];
+
+//"vjn6HLyqOL"

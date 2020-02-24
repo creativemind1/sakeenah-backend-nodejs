@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
       this.auth.loginCMS(this.login).subscribe(response => {
         var result = JSON.parse(JSON.stringify(response));
         if (result.status == 'SUCCESS') {
-          this.router.navigate(['/media']);
+          this.router.navigate(['/subcategory']);
         } else {
           alert('Something is wrong with your credentials')
         }

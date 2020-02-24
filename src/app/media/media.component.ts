@@ -26,6 +26,7 @@ export class MediaComponent implements OnInit {
   selSubCategory: SubCategory[];
   toppings = new FormControl();
   videoUrls: String[];
+  duration: String[];
   selectedMedia: Media = new Media();
   deletedMedia: Media;
   dataSource: Media[];
@@ -56,6 +57,7 @@ export class MediaComponent implements OnInit {
   }
   onSave() {
     if(this.media && this.media.title) {
+      console.log(this.media, '===this.media===')
       this.media['type'] = "SAVE";
       this.cmsService.saveOrupdateMedia(this.media).subscribe(response => {
         var result = JSON.parse(JSON.stringify(response));
@@ -80,6 +82,7 @@ export class MediaComponent implements OnInit {
 
   onUpdate() {
     if(this.selectedMedia && this.selectedMedia.title) {
+      console.log(this.selectedMedia, '===this.selectedMedia===')
       this.selectedMedia['type'] = "SAVE";
       this.cmsService.saveOrupdateMedia(this.selectedMedia).subscribe(response => {
         var result = JSON.parse(JSON.stringify(response));
@@ -114,7 +117,9 @@ export class MediaComponent implements OnInit {
   }
   categoryClick() {
     this.cmsService.getSubCategories(this.media).subscribe(response => {
+      console.log(response, '===Categories====');
       var result = JSON.parse(JSON.stringify(response));
+      console.log(result, '===result===')
       this.subCategory = result.message;
       this.media.subCategoryId = [result.message[0].subCategoryId];
     });

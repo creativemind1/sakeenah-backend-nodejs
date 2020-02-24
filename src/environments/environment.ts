@@ -1,11 +1,14 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
-const serverUrl = 'http://localhost:8080/';
-const loginUrl = serverUrl + 'auth';
-const baseUrl = serverUrl + 'cms';
-const uploadUrl = serverUrl + 'upload';
-const singleUploadUrl = serverUrl + 'singleUpload';
+
+import { domain } from "./../../server/config/domain.js"
+
+const serverUrl = domain();
+const loginUrl = serverUrl + '/auth';
+const baseUrl = serverUrl + '/cms';
+const uploadUrl = serverUrl + '/upload';
+const singleUploadUrl = serverUrl + '/singleUpload';
 
 export const environment = {
   production: false,
