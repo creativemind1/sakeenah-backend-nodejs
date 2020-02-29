@@ -7,8 +7,7 @@ module.exports = {
   list: (req, callback) => {
     let responseObj = {
       status: "FAILED",
-      message: null,
-      category: req.body.subCategoryId
+      message: null
     };
     let albums = null;
     let getAlbums = n => {
@@ -36,9 +35,9 @@ module.exports = {
         return n();
       } else {
         //  get the user map
-        let filter = { userID: "vjn6HLyqOL" };
-        let projection = { _id: 0, albums: 1 };
-        UserMap.findOne(filter, projection, (err, doc) => {
+        let filter = { userID: req.body.userId };
+        //let projection = { _id: 0, albums: 1 };
+        UserMap.findOne(filter, (err, doc) => {
           if (doc) {
             userAlbums = doc.albums;
           }
@@ -53,11 +52,16 @@ module.exports = {
             album.premium = false;
           }
         } else if (userAlbums) {
-          for (let album of albums) {
-            if (userAlbums.indexOf(album.mediaId) != -1) {
-              album.premium = false;
+          for (let index = 0; index < albums.length; index++) {
+            if (userAlbums == albums[index].mediaId) {              
+              albums[index + 1].premium = false;
             }
           }
+          // for (let album of albums) {
+          //   if (userAlbums.indexOf(album.mediaId) != -1) {
+          //     album.premium = false;
+          //   }
+          // }
         }
         responseObj.status = "SUCCESS";
         responseObj.message = albums;

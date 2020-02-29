@@ -71,12 +71,12 @@ module.exports = {
     });
   },
   completed: (req, callback) => {
-    let responseObj = { status: "FAILED", message: null };
-    let audios = null;
-    let selectDay = parseInt(req.body.selectDay);
-    let seq = selectDay + 1;
-    let nextAudio = null;
-    let albumFinished = false;
+    let responseObj = { status: "FAILED", message: null },
+      audios = null,
+      selectDay = parseInt(req.body.selectDay),
+      seq = selectDay + 1,
+      nextAudio = null,
+      albumFinished = false;
     let getAudios = n => {
       const filter = {
         mediaId: req.body.mediaId
