@@ -23,6 +23,9 @@ var schema = mongoose.Schema({
   audios: {
     type: Array,
     required: true
+  },
+  favorites: {
+    type: Array
   }
 });
 // Export Contact model

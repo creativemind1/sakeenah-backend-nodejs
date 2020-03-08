@@ -3,6 +3,7 @@
 let router = require("express").Router();
 var category = require("../controller/category");
 var album = require("../controller/album");
+var favorite = require("../controller/favorite");
 var audio = require("../controller/audio");
 var userController = require("../controller/userController");
 var categoryController = require("../controller/categoryController");
@@ -47,6 +48,9 @@ router.route("/unlock").post(userController.unlock);
 router.route("/category/list").post(category.list);
 
 router.route("/album/list").post(album.list);
+router.route("/album/favorite").post(favorite.favoriteAlbums)
+router.route("/album/addFavorite").post(favorite.addFavorite)
+router.route("/album/removeFavorite").post(favorite.removeFavorite)
 
 router.route("/audio/list").post(audio.list);
 router.route("/audio/completed").post(audio.completed);
