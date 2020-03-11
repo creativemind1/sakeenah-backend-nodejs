@@ -49,6 +49,9 @@ module.exports = {
     });
   },
 
+  /**
+   * @description Add album to favorites
+   */
   addFavorite: (req, callback) => {
     let responseObj = {
       status: "FAILED",
@@ -76,6 +79,9 @@ module.exports = {
     });
   },
 
+  /**
+   * @description Remove album from favorites
+   */
   removeFavorite: (req, callback) => {
     let responseObj = {
       status: "FAILED",
@@ -84,7 +90,7 @@ module.exports = {
     let filter = { userID: req.user.userId };
     UserMap.findOne(filter, (err, doc) => {
       if (doc && doc.favorites) {
-        util.removeFromArray(doc.favorites, req.body.albumId);
+        util.removeFromArray(doc.favorites, req.body.mediaId);
         doc.save((e, s) => {
           if (!e && s) {
             responseObj.status = "SUCCESS";
