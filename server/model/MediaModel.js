@@ -30,7 +30,8 @@ var mediaSchema = mongoose.Schema({
   },
   modify_date: {
     type: Date
-  }
+  },
+  sequence: Number
 });
 
 var media = (module.exports = mongoose.model("media", mediaSchema));

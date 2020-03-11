@@ -18,7 +18,7 @@ const path = require("path");
 var cors = require("cors");
 var jwt = require("jsonwebtoken");
 let fs = require("fs-extra");
-var fsRead = require('fs');
+var fsRead = require("fs");
 var randomstring = require("randomstring");
 // // Create a storage object with a given configuration
 // const storage = require("multer-gridfs-storage")({
@@ -38,30 +38,27 @@ var randomstring = require("randomstring");
 
 var mongoose = require("mongoose");
 mongoose.connect(config.dbUrl(), { useNewUrlParser: true });
-mongoose.set('useFindAndModify', false);
+mongoose.set("useFindAndModify", false);
 var conn = mongoose.connection;
 var multer = require("multer");
 
 const DIR = "./public/";
 
 /*
-* Configuring AWS For Uploading Image and mp3
-*/
-const AWS = require('aws-sdk');
-const ID = 'AKIAITETVYAOCLETVZZA'; //client AWS API sakeenah
-const SECRET = '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'; ////client AWS API sakeenah
-const BUCKET_NAME = 'sakeenah';
+ * Configuring AWS For Uploading Image and mp3
+ */
+const AWS = require("aws-sdk");
+const ID = "AKIAITETVYAOCLETVZZA"; //client AWS API sakeenah
+const SECRET = "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"; ////client AWS API sakeenah
+const BUCKET_NAME = "sakeenah";
 const s3 = new AWS.S3({
   accessKeyId: ID,
   secretAccessKey: SECRET
 });
 
-
-
-
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    var postId = randomstring.generate(3);    
+    var postId = randomstring.generate(3);
     if (file.mimetype === "audio/mp3") {
       let temp = "./upload/audio/" + postId;
       fs.mkdirsSync(temp, { recursive: true }, err => {
@@ -136,7 +133,7 @@ function authChecker(req, res, next) {
             message: "Token is not valid"
           });
         } else {
-          req.decoded = decoded;
+          req.user = decoded;
           next();
         }
       }
@@ -148,7 +145,7 @@ function authChecker(req, res, next) {
 app.use(authChecker);
 // Setup server port
 var port = process.env.PORT || 8080;
-console.log(port, '===port==')
+console.log(port, "===port==");
 app.set("superSecret", config.secret()); // secret variable
 
 app.post("/deleteFile", function(req, res) {
@@ -183,14 +180,13 @@ app.get("/(|login|reset|category|subcategory|media|playlist)", function(
     .sendFile(__dirname + "/public/index.html");
 });
 
-
-
 app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
   const fileType = req.files[0];
   var filestream = fs.createReadStream(fileType.path);
   const makeid = () => {
     var result = "";
-    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (var i = 0; i < 3; i++) {
       result += characters.charAt(Math.floor(Math.random() * 3));
     }
@@ -213,8 +209,8 @@ app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
     s3.upload(params, (err, data) => {
       if (err) throw err;
       var reqFrame = req.files;
-      var audioPath = data.Location.split('/audios/');
-      var newPath = data.Location.split('/images/');
+      var audioPath = data.Location.split("/audios/");
+      var newPath = data.Location.split("/images/");
       var status = newPath === true ? newPath[1] : audioPath[1];
       for (i in reqFrame) {
         reqFrame[i].path = status;
@@ -227,6 +223,7 @@ app.post("/singleUpload", upload1.array("uploads[]", 12), function(req, res) {
     });
   });
 });
+
 app.post("/upload", upload1.array("uploads[]", 12), function(req, res) {
   console.log("---- Video ---", req.files);
   if (!req.files) {

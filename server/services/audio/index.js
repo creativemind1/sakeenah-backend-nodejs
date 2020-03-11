@@ -2,9 +2,14 @@ let AudioModel = require("../../model/PlayListModel"),
   AlbumModel = require("../../model/MediaModel"),
   UserMap = require("../../model/UserMap"),
   async = require("async"),
-  premiumUser = false;
+  premiumUser = false,
+  _ = require("lodash");
 
 module.exports = {
+  /**
+   * Get the list of Audios based on every Album. Also checks if it's in
+   * lock mode or unlock. Also checks bookmarked.
+   **/
   list: (req, callback) => {
     let responseObj = {
       status: "FAILED",
@@ -25,26 +30,31 @@ module.exports = {
         name: 1,
         create_date: 1,
         description: 1,
-        selectDay: 1
+        selectDay: 1,
+        bookmark: 1
       };
       AudioModel.find(filter, projection, (err, docs) => {
         if (docs && docs.length) {
-          audios = docs;
+          audios = JSON.parse(JSON.stringify(docs));
+          audios.sort((a, b) => {
+            return a.selectDay - b.selectDay;
+          });
         }
         return n();
       });
     };
     let userAudios = null;
+    let bookmarks = null;
     let getUser = n => {
       if (premiumUser) {
         return n();
       } else {
-        //  get the user map
-        let filter = { userID: "vjn6HLyqOL" };
-        let projection = { _id: 0, audios: 1 };
+        let filter = { userID: req.user.userId };
+        let projection = { _id: 0, audios: 1, bookmarks: 1 };
         UserMap.findOne(filter, projection, (err, doc) => {
           if (doc) {
             userAudios = doc.audios;
+            bookmarks = doc.bookmarks;
           }
           return n();
         });
@@ -55,21 +65,35 @@ module.exports = {
         if (premiumUser) {
           for (let audio of audios) {
             audio.premium = false;
+            if (bookmarks) {
+              if (bookmarks.indexOf(audio.audioID) != -1) {
+                audio.bookmark = true;
+              }
+            }
           }
         } else if (userAudios) {
           for (let audio of audios) {
             if (userAudios.indexOf(audio.audioID) != -1) {
               audio.premium = false;
+              if (bookmarks) {
+                if (bookmarks.indexOf(audio.audioID) != -1) {
+                  audio.bookmark = true;
+                }
+              }
             }
           }
         }
         responseObj.status = "SUCCESS";
         responseObj.message = audios;
-        responseObj.message = audios;
       }
       callback(responseObj);
     });
   },
+
+  /**
+   * Once a user completed listening to any audio, it will hit to unlock the next one.
+   *
+   */
   completed: (req, callback) => {
     let responseObj = { status: "FAILED", message: null },
       audios = null,
@@ -111,27 +135,28 @@ module.exports = {
     let nextAlbum = null;
     let getAlbums = n => {
       if (albumFinished) {
-        const filter = {
-          subCategoryId: req.body.subCategoryId
-        };
+        let filter = { subCategoryId: { $in: [req.body.subCategoryId] } };
         const projection = {
           mediaId: 1,
           title: 1,
           thumbImageUrl: 1,
           author: 1,
           premium: 1,
-          duration: 1
+          duration: 1,
+          sequence: 1
         };
         AlbumModel.find(
           filter,
           projection,
-          { sort: { _id: -1 } },
+          { sort: { sequence: 1 } },
           (err, albums) => {
             if (albums && albums.length) {
               for (let index = 0; index < albums.length; index++) {
                 if ((albums[index].mediaId = req.body.mediaId)) {
-                  if (albums[index + 1]) {
-                    nextAlbum = albums[index + 1].mediaId;
+                  let seq = albums[index].sequence;
+                  let next = _.find(albums, { sequence: seq + 1 });
+                  if (next) {
+                    nextAlbum = next.mediaId;
                   }
                 }
               }
@@ -148,7 +173,7 @@ module.exports = {
         return n();
       } else {
         //  get the user map
-        let filter = { userID: "vjn6HLyqOL" };
+        let filter = { userID: req.user.userId };
         // let projection = {  audios: 1, albums: 1 };
         UserMap.findOne(filter, (err, doc) => {
           if (doc) {
@@ -156,9 +181,11 @@ module.exports = {
             if (doc.audios.indexOf(req.body.audioID) == -1) {
               doc.audios.push(req.body.audioID);
             }
-            doc.audios.push(nextAudio);
+            if (nextAudio) {
+              doc.audios.push(nextAudio);
+            }
             /* update albums*/
-            if (nextAlbum) {
+            if (nextAlbum && doc.albums.indexOf(nextAlbum) == -1) {
               doc.albums.push(nextAlbum);
             }
             /*save the user map*/

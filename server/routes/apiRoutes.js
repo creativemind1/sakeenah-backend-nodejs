@@ -5,6 +5,7 @@ var category = require("../controller/category");
 var album = require("../controller/album");
 var favorite = require("../controller/favorite");
 var audio = require("../controller/audio");
+var bookmark = require("../controller/bookmark");
 var userController = require("../controller/userController");
 var categoryController = require("../controller/categoryController");
 var jwt = require("jsonwebtoken");
@@ -38,27 +39,28 @@ router.route("/getUserProfile").post(userController.getUserProfile);
 // saveUserPlayList
 router.route("/saveUserPlayList").post(userController.saveUserPlayList);
 
-//getUserCategories 
+//getUserCategories
 router.route("/userCategories").post(userController.userCategories);
 
 // unlockNextAudio
 router.route("/unlock").post(userController.unlock);
-
-
 router.route("/category/list").post(category.list);
 
 router.route("/album/list").post(album.list);
-router.route("/album/favorite").post(favorite.favoriteAlbums)
-router.route("/album/addFavorite").post(favorite.addFavorite)
-router.route("/album/removeFavorite").post(favorite.removeFavorite)
 
+// Favourite Routes
+router.route("/album/favorite").post(favorite.favoriteAlbums);
+router.route("/album/addFavorite").post(favorite.addFavorite);
+router.route("/album/removeFavorite").post(favorite.removeFavorite);
+
+// Audio Routes
 router.route("/audio/list").post(audio.list);
 router.route("/audio/completed").post(audio.completed);
 
+// Bookmark Routes
+router.route("/bookmark/add_bookmark").post(bookmark.add_bookmark);
+router.route("/bookmark/remove_bookmark").post(bookmark.remove_bookmark);
+router.route("/bookmark/user_bookmark").post(bookmark.user_bookmark);
+
 // Export API routes
 module.exports = router;
-
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbElkIjoiYWRtaW5Ac2FrZWVuYWguaW8iLCJpYXQiOjE1ODIwMjczNDUsImV4cCI6MTU4MjM3Mjk0NX0.383MhIa5Z6L_o8ZyVhA2bqMWfSQOk8CBtvlMndJRkbk
-
-//userID: 3V5l3JF4QH
-//dayNo: 2

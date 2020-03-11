@@ -12,8 +12,6 @@ let MediaModel = require("../model/MediaModel");
 let PlayListModel = require("../model/PlayListModel");
 let CategoryModel = require("../model/CategoryModel");
 let Category_NEW_Model = require("../model/SubCategoryModel");
-let UserMap = require("../model/UserMap");
-let ttt = require("../model/ttt");
 let UserUnlock = require("../model/UserUnlock");
 var randomstring = require("randomstring");
 var async = require("async");
@@ -315,7 +313,7 @@ exports.login = function(req, res) {
         if (doc && doc.password) {
           if (bcrypt.compareSync(req.body.password, doc.password)) {
             // Payment is Done .Its a premium User
-            const payload = { emailId: req.body.emailId };
+            const payload = { emailId: req.body.emailId, userId: doc.userId };
             var token = jwt.sign(payload, config.secret(), {
               expiresIn: "4d" // expires in 24 hours
             });
@@ -687,7 +685,6 @@ exports.getCategories_NEW = (req, res) => {
 };
 
 //Usermapping
-
 exports.userCategories = (req, res) => {
   let allCategories = null;
   let getAllCategories = n => {
@@ -792,7 +789,7 @@ exports.userCategories = (req, res) => {
       // Stage 1
       {
         $match: {
-          userID: "vjn6HLyqOL"
+          userID: req.user.userId
         }
       },
       // Stage 2
@@ -804,7 +801,7 @@ exports.userCategories = (req, res) => {
       }
     ];
     let umap = {
-      userID: "vjn6HLyqOL",
+      userID: req.user.userId,
       categories: ["G6zafDpw6J", "mlfKJivUnP"],
       albums: ["o0qmTQW8gS", "11"],
       audios: ["dHRNW86gZz"]
@@ -942,12 +939,12 @@ exports.verifyEmail = function(req, res) {
 };
 
 exports.getUserProfile = function(req, res) {
-  if (req.body.userId) {
+  if (req.user.userId) {
     let aggregatorData = [
       // Stage 1
       {
         $match: {
-          userId: req.body.userId
+          userId: req.user.userId
         }
       },
 
@@ -989,9 +986,9 @@ exports.getUserProfile = function(req, res) {
 };
 
 exports.saveUserProfile = function(req, res) {
-  if (req.body.userId) {
+  if (req.user.userId) {
     UserProfileModel.findOneAndUpdate(
-      { userId: req.body.userId },
+      { userId: req.user.userId },
       {
         $set: {
           firstName: req.body.firstName,
@@ -1022,13 +1019,13 @@ exports.saveUserProfile = function(req, res) {
 
 // This method is to the complete playlists of media
 exports.getPlayList = function(req, res) {
-  if (req.body.mediaId && req.body.userId) {
+  if (req.body.mediaId && req.user.userId) {
     let dayNo = 0;
     let finalRespose = {};
     let validateUserPlaylist = nCallback => {
-      if (req.body.userId) {
+      if (req.user.userId) {
         UserPlayListModel.findOne(
-          { userId: req.body.userId },
+          { userId: req.user.userId },
           "dayNo",
           function(err, doc) {
             if (doc) {
@@ -1127,11 +1124,11 @@ exports.getPlayList = function(req, res) {
 
 // Save User Play List
 exports.saveUserPlayList = function(req, res) {
-  if (req.body.userId && req.body.mediaId) {
+  if (req.user.userId && req.body.mediaId) {
     //Existing playlist
 
     UserPlayListModel.findOneAndUpdate(
-      { userId: req.body.userId },
+      { userId: req.user.userId },
       { dayNo: req.body.dayNo },
       { upsert: false },
       function(err, doc) {
@@ -1146,7 +1143,7 @@ exports.saveUserPlayList = function(req, res) {
             });
           } else {
             var userPlayListModel = new UserPlayListModel();
-            userPlayListModel.userId = req.body.userId;
+            userPlayListModel.userId = req.user.userId;
             userPlayListModel.mediaId = req.body.mediaId;
             userPlayListModel.dayNo = req.body.dayNo;
             userPlayListModel.create_date = new Date();
@@ -1174,7 +1171,7 @@ exports.saveUserPlayList = function(req, res) {
 // Unlock next
 exports.unlock = function(req, res) {
   console.log("HITITNG UNLOCK API");
-  if (req.body.userId) {
+  if (req.user.userId) {
     //Existing playlist
     //albumID - G6zafDpw6J
     //PlaylistID - o0qmTQW8gS
@@ -1208,7 +1205,7 @@ exports.unlock = function(req, res) {
     console.log(JSON.stringify(categories), "album=====");
     //return false
     UserUnlock.findOneAndUpdate(
-      { userId: req.body.userId },
+      { userId: req.user.userId },
       { upsert: false },
       function(err, doc) {
         if (err) {
@@ -1223,7 +1220,7 @@ exports.unlock = function(req, res) {
           } else {
             console.log("LOOOOL");
             var userUnlock = new UserUnlock();
-            userUnlock.userId = req.body.userId;
+            userUnlock.userId = req.user.userId;
             userUnlock.unlock = album;
             userUnlock.save(function(error) {
               if (error) {
@@ -1244,32 +1241,3 @@ exports.unlock = function(req, res) {
     );
   }
 };
-
-// Query to check if Album ID is available
-
-// let checkAlbumUnlock = [
-//   // Stage 1
-//   {
-//     $match: {
-//       userId: req.body.userId
-//     }
-//   },
-//   // Stage 2
-//   {
-//     $match: {
-//       unlock: {
-//         $elemMatch: {
-//           albumID: req.body.albumID
-//         }
-//       }
-//     }
-//   },
-//   // Stage 3
-//   {
-//     $project: {
-//       status: true
-//     }
-//   }
-// ];
-
-//"vjn6HLyqOL"

@@ -24,9 +24,13 @@ var schema = mongoose.Schema({
     type: Array,
     required: true
   },
+  bookmarks: {
+    type: Array,
+    required: true
+  },
   favorites: {
     type: Array
   }
 });
 // Export Contact model
-module.exports = mongoose.model("UMAP", schema,"UMAP");
+module.exports = mongoose.model("UMAP", schema, "UMAP");
