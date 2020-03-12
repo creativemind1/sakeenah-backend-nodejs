@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * @description This Model is used for storing login credentials
  * @author Ahmed
@@ -6,27 +6,22 @@
  *
  */
 
-var mongoose = require("mongoose");
+var mongoose = require('mongoose');
 
 var userPlayListSchema = mongoose.Schema({
-  userId: {
-    type: String,
-    required: true
-  },
-  dayNo: Number,
-  mediaId: String,
-  create_date: {
-    type: Date
-  },
+    userId: {
+        type: String,
+        required: true,
+    },
+    dayNo: Number,
+    mediaId: String,
+    create_date: {
+        type: Date,
+    },
 });
 // Export Contact model
-var UserPlayList = (module.exports = mongoose.model(
-  "userPlayList",
-  userPlayListSchema
-));
-
-
+var UserPlayList = (module.exports = mongoose.model('userPlayList', userPlayListSchema));
 
 module.exports.get = function(callback, limit) {
-  UserPlayList.find(callback).limit(limit);
+    UserPlayList.find(callback).limit(limit);
 };

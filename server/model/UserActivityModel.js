@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * @description This Model is used for saving history of the user.
  * @author Ahmed
@@ -6,27 +6,24 @@
  *
  */
 
-var mongoose = require("mongoose");
+var mongoose = require('mongoose');
 var userActivitySchema = mongoose.Schema({
-  userId: {
-    type: String,
-    required: true
-  },
-  totalMindfulDays: Number,
-  totalongStreak: Number,
-  totalSessions: Number,
-  deviceType: String,
-  version: String,
-  logInTime: {
-    type: Date,
-    default: Date.now
-  }
+    userId: {
+        type: String,
+        required: true,
+    },
+    totalMindfulDays: Number,
+    totalongStreak: Number,
+    totalSessions: Number,
+    deviceType: String,
+    version: String,
+    logInTime: {
+        type: Date,
+        default: Date.now,
+    },
 });
 // Export Contact model
-var UserActivity = (module.exports = mongoose.model(
-  "subCategory",
-  userActivitySchema
-));
+var UserActivity = (module.exports = mongoose.model('subCategory', userActivitySchema));
 module.exports.get = function(callback, limit) {
-  UserActivity.find(callback).limit(limit);
+    UserActivity.find(callback).limit(limit);
 };

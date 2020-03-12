@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * @description This Model is used for storing login credentials
  * @author Ahmed
@@ -6,41 +6,38 @@
  *
  */
 
-var mongoose = require("mongoose");
-var bcrypt = require("bcrypt-nodejs");
+var mongoose = require('mongoose');
+var bcrypt = require('bcrypt-nodejs');
 
 var userProfileSchema = mongoose.Schema({
-  userId: {
+    userId: {
+        type: String,
+        required: true,
+    },
+    firstName: String,
+    emailId: String,
+    password: String,
     type: String,
-    required: true
-  },
-  firstName: String,
-  emailId: String,
-  password: String,
-  type: String,
-  active: { type: Boolean, default: false },
-  socialMedia: { type: Boolean, default: false },
-  premiumUser: { type: Boolean, default: false },
-  freeTrial: { type: Boolean, default: false },
-  create_date: {
-    type: Date
-  },
-  age: String,
-  country: String,
-  gender: String,
-  profileUrl: { key: String, value: String }
+    active: { type: Boolean, default: false },
+    socialMedia: { type: Boolean, default: false },
+    premiumUser: { type: Boolean, default: false },
+    freeTrial: { type: Boolean, default: false },
+    create_date: {
+        type: Date,
+    },
+    age: String,
+    country: String,
+    gender: String,
+    profileUrl: { key: String, value: String },
 });
 // Export Contact model
-var UserProfile = (module.exports = mongoose.model(
-  "userProfile",
-  userProfileSchema
-));
+var UserProfile = (module.exports = mongoose.model('userProfile', userProfileSchema));
 
 // checking if password is valid
 userProfileSchema.methods.validPassword = function(password) {
-  return bcrypt.compareSync(password, this.password);
+    return bcrypt.compareSync(password, this.password);
 };
 
 module.exports.get = function(callback, limit) {
-  UserProfile.find(callback).limit(limit);
+    UserProfile.find(callback).limit(limit);
 };
