@@ -49,9 +49,6 @@ module.exports = {
     });
   },
 
-  /**
-   * @description Add album to favorites
-   */
   addFavorite: (req, callback) => {
     let responseObj = {
       status: "FAILED",
@@ -79,9 +76,6 @@ module.exports = {
     });
   },
 
-  /**
-   * @description Remove album from favorites
-   */
   removeFavorite: (req, callback) => {
     let responseObj = {
       status: "FAILED",
