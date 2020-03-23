@@ -72,8 +72,6 @@ export class CategoryComponent implements OnInit {
       if (result.status == 'SUCCESS') {
         this.loadCategories();
         this.onClear();
-      } else {
-
       }
     });
   }

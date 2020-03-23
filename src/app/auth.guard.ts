@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, CanActivateChild, CanLoad, Route, UrlSegment, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
   constructor(private auth: AuthService,
-    private myRoute: Router){
+    private myRoute: Router) {
   }
   canActivate(
     next: ActivatedRouteSnapshot,
@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
     } else {
       if (this.auth.isLoggedIn()) {
         if (state.url === '/login') {
-          this.myRoute.navigate(["media"]);
+          this.myRoute.navigate(["album"]);
           return false;
         }
         return true;

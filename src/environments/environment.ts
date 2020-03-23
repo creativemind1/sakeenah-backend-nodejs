@@ -5,17 +5,17 @@
 import { domain } from "./../../server/config/domain.js"
 
 const serverUrl = domain();
-const loginUrl = serverUrl + '/auth';
+const loginUrl = serverUrl + '/app/user';
 const baseUrl = serverUrl + '/cms';
 const uploadUrl = serverUrl + '/upload';
 const singleUploadUrl = serverUrl + '/singleUpload';
 
 export const environment = {
   production: false,
-  baseUrl: baseUrl,
-  loginUrl: loginUrl,
-  uploadUrl: uploadUrl,
-  singleUploadUrl: singleUploadUrl,
+  baseUrl,
+  loginUrl,
+  uploadUrl,
+  singleUploadUrl,
   serverBaseUrl: serverUrl,
   companyId:"10000"
 };

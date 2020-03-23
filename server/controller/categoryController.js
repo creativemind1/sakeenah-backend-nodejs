@@ -6,7 +6,7 @@
  *
  */
 
-let CategoryModel = require('../model/CategoryModel');
+let CategoryModel = require('../model/Category');
 let SubCategoryModel = require('../model/SubCategoryModel');
 let MediaModel = require('../model/MediaModel');
 let PlayListModel = require('../model/PlayListModel');

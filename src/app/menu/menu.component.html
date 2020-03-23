@@ -3,17 +3,17 @@
     <a routerLink="/category" mat-menu-item> Category </a>
     <span class="example-item"></span>
     <a routerLink="/subcategory" mat-menu-item> Sub Category </a>
-    <a routerLink="/media" mat-menu-item> Media </a>
+    <a routerLink="/album" mat-menu-item> Media </a>
     <span class="example-spacer"></span>
     <mat-icon class="example-icon" aria-hidden="false" (click)="onLogout()" aria-label="Example heart icon">favorite</mat-icon>
   </mat-toolbar-row>
 </mat-toolbar> -->
-  <button mat-icon-button [matMenuTriggerFor]="menu">
-    <mat-icon>menu</mat-icon> Menu
-  </button>
-  <h1 style="text-align:center;">Welcome to CMS</h1>
-  <mat-menu #menu="matMenu">
-    <!-- <button mat-menu-item routerLink="/category">
+<button mat-icon-button [matMenuTriggerFor]="menu">
+  <mat-icon>menu</mat-icon> Menu
+</button>
+<h1 style="text-align:center;">Welcome to CMS</h1>
+<mat-menu #menu="matMenu">
+  <!-- <button mat-menu-item routerLink="/category">
       <mat-icon>album</mat-icon>
       <span>Category</span>
     </button>
@@ -21,20 +21,20 @@
       <mat-icon>art_track</mat-icon>
       <span>SubCategory</span>
     </button> -->
-    <button mat-menu-item routerLink="/subcategory">
-      <mat-icon>theaters</mat-icon>
-      <span>Categories</span>
-    </button>
-    <button mat-menu-item routerLink="/media">
-      <mat-icon>headset</mat-icon>
-      <span>Albums</span>
-    </button>
-    <button mat-menu-item routerLink="/playlist">
-      <mat-icon>headset</mat-icon>
-      <span>PlayList</span>
-    </button>
-    <button mat-menu-item (click)="onLogout()">
-        <mat-icon>exit_to_app</mat-icon>
-        <span>Logout</span>
-      </button>
-  </mat-menu>
+  <button mat-menu-item routerLink="/category">
+    <mat-icon>theaters</mat-icon>
+    <span>Categories</span>
+  </button>
+  <button mat-menu-item routerLink="/album">
+    <mat-icon>headset</mat-icon>
+    <span>Albums</span>
+  </button>
+  <button mat-menu-item routerLink="/playlist">
+    <mat-icon>headset</mat-icon>
+    <span>PlayList</span>
+  </button>
+  <button mat-menu-item (click)="onLogout()">
+    <mat-icon>exit_to_app</mat-icon>
+    <span>Logout</span>
+  </button>
+</mat-menu>

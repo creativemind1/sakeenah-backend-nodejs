@@ -12,7 +12,7 @@ router.post('/login', (req, res) => {
     });
 });
 
-router.post('/signup', (req, res) => {
+router.post('/login1', (req, res) => {
     user.signup(req, obj => {
         res.json(obj);
     });

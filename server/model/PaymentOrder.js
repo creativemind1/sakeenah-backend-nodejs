@@ -11,9 +11,13 @@ var schema = mongoose.Schema({
         type: String,
         required: true,
     },
-    orderId: {
-        type: String,
-        required: true,
+    // orderId: {
+    //     type: String,
+    //     required: true,
+    // },
+    paymentInfo: {
+        type: Array,
+        required: true
     }
 });
 // Export Contact model

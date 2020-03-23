@@ -1,11 +1,11 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { PlayList } from './playlist';
-import { DayWise } from './daywise';
-import { Media } from '../media/media';
+import { EpisodeWise } from './episodewise';
+import { Album } from '../album/album';
 import { CmsService } from '../cms.service';
 import { FileUpload } from '../file-upload/fileUpload';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Transporter } from '../media/transporter';
+import { Transporter } from '../album/transporter';
 import { MatDialog } from '@angular/material/dialog';
 import { MyDialogComponent } from './../my-dialog/my-dialog.component';
 import * as moment from 'moment';
@@ -19,16 +19,16 @@ import { ReturnStatement } from '@angular/compiler';
 
 export class PlayListComponent implements OnInit {
   constructor(private cmsService: CmsService, public dialog: MatDialog) { }
-  
+
   DialogData: [];
-  media: Media[];
+  album: Album[];
   toppings = new FormControl();
   playList: PlayList = new PlayList();
   selectedPlayList: PlayList = new PlayList();
   deletedPlayList: PlayList;
   dataSource: PlayList[];
   displayedColumns: string[];
-  days: DayWise[];
+  episodes: EpisodeWise[];
   myForm: FormGroup;
   transportMsg: Transporter = new Transporter();
   @Output() parentEvent = new EventEmitter<FileUpload[]>();
@@ -37,12 +37,12 @@ export class PlayListComponent implements OnInit {
 
   ngOnInit() {
     this.playList.premium = false;
-    this.loadMedia();
+    this.loadAlbums();
     this.loadPlaylist();
-    this.loadDayslist();    
+    this.loadDayslist();
     this.myForm = new FormGroup({
-      mediaId: new FormControl({ value: '' }, Validators.compose([Validators.required])),
-      selectDay: new FormControl({ value: '' }, Validators.compose([Validators.required])),
+      albumId: new FormControl({ value: '' }, Validators.compose([Validators.required])),
+      episode: new FormControl({ value: '' }, Validators.compose([Validators.required])),
       playListName: new FormControl({ value: '' }, Validators.compose([Validators.required])),
       description: new FormControl({ value: '' }),
       premium: new FormControl({ value: '' }),
@@ -72,26 +72,26 @@ export class PlayListComponent implements OnInit {
     else {
       alert("Error")!
     }
-  } 
+  }
 
   loadDayslist() {
-    this.days = [];
+    this.episodes = [];
     for (let index = 1; index < 8; index++) {
-      this.days.push({ key: index, value: "Day " + index })
+      this.episodes.push({ key: index, value: "Episode " + index })
     }
   }
 
-  loadMedia() {
+  loadAlbums() {
     this.cmsService.getAllMedia().subscribe(response => {
       var result = JSON.parse(JSON.stringify(response));
-      this.media = [];
-      this.media = result.message;
+      this.album = [];
+      this.album = result.message;
     });
   }
 
   onUpdate() {
     console.log(this.selectedPlayList)
-    this.selectedPlayList['type'] = "SAVE";    
+    this.selectedPlayList['type'] = "SAVE";
     if (this.myForm.status === 'VALID') {
       this.loader = true
       if (this.selectedPlayList && this.selectedPlayList.thumbImageUrl && this.selectedPlayList.thumbImageUrl.length) {
@@ -129,7 +129,7 @@ export class PlayListComponent implements OnInit {
     this.selectedPlayList.enableUpdate = true;
     this.transportMsg.img = this.selectedPlayList.thumbImageUrl;
     this.cmsService.sendMessage(this.transportMsg);
-    this.loadMedia();
+    this.loadAlbums();
     this.loadDayslist();
   }
   receivePlayListSingleFile($event) {
@@ -148,7 +148,7 @@ export class PlayListComponent implements OnInit {
       //   // }
       // });
     }
-    
+
   }
   delete(row) {
     const dialogRef = this.dialog.open(MyDialogComponent, {
@@ -159,7 +159,7 @@ export class PlayListComponent implements OnInit {
 
   loadPlaylist() {
     this.cmsService.getAllPlayLists().subscribe(response => {
-      this.displayedColumns = ['Name', 'active', 'create_date', 'mediaId','day', 'deleteAction', 'updateAction' ];
+      this.displayedColumns = ['Name', 'active', 'create_date', 'albumId', 'episode', 'deleteAction', 'updateAction'];
       var result = JSON.parse(JSON.stringify(response));
       this.dataSource = result.message;
       var myArray = this.dataSource

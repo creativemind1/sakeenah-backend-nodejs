@@ -9,29 +9,32 @@
       <form class="playlistForm" action="" autocomplete="off" method="POST" [formGroup]="myForm">
         <mat-card-content fxLayout="column" fxLayoutAlign="center">
           <mat-form-field>
-            <mat-label>Select Category</mat-label>
-            <mat-select [(ngModel)]="selectedPlayList.mediaId" name="mediaId" required formControlName='mediaId'>
-              <mat-option *ngFor="let food of media" [value]="food.mediaId"> {{food.title}} </mat-option>
+            <mat-label>Select Album</mat-label>
+            <mat-select [(ngModel)]="selectedPlayList.albumId" name="albumId" required formControlName='albumId'>
+              <mat-option *ngFor="let food of album" [value]="food.albumId"> {{food.title}} </mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Select Day</mat-label>
-            <mat-select [(ngModel)]="selectedPlayList.selectDay" name="selectDay" required formControlName='selectDay'>
-              <mat-option *ngFor="let food of days" [value]="food.key"> {{food.value}} </mat-option>
+            <mat-label>Select Episode</mat-label>
+            <mat-select [(ngModel)]="selectedPlayList.episode" name="episode" required formControlName='episode'>
+              <mat-option *ngFor="let food of episodes" [value]="food.key"> {{food.value}} </mat-option>
             </mat-select>
-          </mat-form-field>          
+          </mat-form-field>
           <mat-form-field> <input matInput placeholder="Name" [(ngModel)]="selectedPlayList.name" name="playListName"
               formControlName='playListName'> </mat-form-field>
-          <mat-form-field> 
+          <mat-form-field>
             <textarea matInput placeholder="Author" name="description" formControlName='description'
               [(ngModel)]="selectedPlayList.description"></textarea> </mat-form-field>
-          <mat-slide-toggle [(ngModel)]="selectedPlayList.premium" name="premium" formControlName='premium' >Premium</mat-slide-toggle>
+          <mat-slide-toggle [(ngModel)]="selectedPlayList.premium" name="premium" formControlName='premium'>Premium
+          </mat-slide-toggle>
           <div style="margin-top:20px">
-            <app-single-file-upload (messageEvent)="receiveUpdatePlayListSingleFile($event)" myType="mp3"></app-single-file-upload>
+            <app-single-file-upload (messageEvent)="receiveUpdatePlayListSingleFile($event)" myType="mp3">
+            </app-single-file-upload>
             <small>* File type support <strong>mp3</strong> only and below <strong>3 MB</strong></small>
           </div>
         </mat-card-content>
-        <img *ngIf="loader" src="./../../assets/uploading.gif" width="50" style="position: absolute; left: 50%; transform: translateX(-50%);z-index: 999" />
+        <img *ngIf="loader" src="./../../assets/uploading.gif" width="50"
+          style="position: absolute; left: 50%; transform: translateX(-50%);z-index: 999" />
         <mat-card-actions align="center"> <button mat-raised-button color="primary" (click)="onUpdate()">Update</button>
           <button mat-raised-button color="primary" (click)="onClear()">Clear</button> </mat-card-actions>
       </form>
@@ -41,32 +44,36 @@
       <form class="playlistForm" action="" autocomplete="off" method="POST" [formGroup]="myForm">
         <mat-card-content fxLayout="column" fxLayoutAlign="center">
           <mat-form-field>
-            <mat-label>Select Category</mat-label>
-            <mat-select [(ngModel)]="playList.mediaId" name="mediaId" required formControlName='mediaId'>
-              <mat-option *ngFor="let food of media" [value]="food.mediaId"> {{food.title}} </mat-option>
+            <mat-label>Select Album</mat-label>
+            <mat-select [(ngModel)]="playList.albumId" name="albumId" required formControlName='albumId'>
+              <mat-option *ngFor="let food of album" [value]="food.albumId"> {{food.title}} </mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Select Day</mat-label>
-            <mat-select [(ngModel)]="playList.selectDay" name="selectDay" required formControlName='selectDay'>
-              <mat-option *ngFor="let food of days" [value]="food.key"> {{food.value}} </mat-option>
+            <mat-label>Select Episode</mat-label>
+            <mat-select [(ngModel)]="playList.episode" name="episode" required formControlName='episode'>
+              <mat-option *ngFor="let food of episodes" [value]="food.key"> {{food.value}} </mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
-            <input matInput placeholder="Name" [(ngModel)]="playList.name" name="playListName" formControlName='playListName'>
+            <input matInput placeholder="Name" [(ngModel)]="playList.name" name="playListName"
+              formControlName='playListName'>
           </mat-form-field>
           <mat-form-field>
-            <textarea matInput placeholder="Author" [(ngModel)]="playList.description" name="description" formControlName='description'></textarea>
+            <textarea matInput placeholder="Author" [(ngModel)]="playList.description" name="description"
+              formControlName='description'></textarea>
           </mat-form-field>
-          <mat-slide-toggle [(ngModel)]="playList.premium" name="premium" formControlName='premium'>Premium</mat-slide-toggle>
+          <mat-slide-toggle [(ngModel)]="playList.premium" name="premium" formControlName='premium'>Premium
+          </mat-slide-toggle>
           <div style="margin-top:20px">
-            <app-single-file-upload (messageEvent)="receivePlayListSingleFile($event)" myType="mp3"></app-single-file-upload>
+            <app-single-file-upload (messageEvent)="receivePlayListSingleFile($event)" myType="mp3">
+            </app-single-file-upload>
             <small>* File type support <strong>mp3</strong> only and below <strong>3 MB</strong></small>
           </div>
-        </mat-card-content> 
+        </mat-card-content>
         <img *ngIf="loader" src="./../../assets/uploading.gif" width="50"
           style="position: absolute; left: 50%; transform: translateX(-50%);z-index: 999" />
-      
+
         <mat-card-actions align="center"> <button mat-raised-button color="primary"
             (click)="onSave('save')">Save</button> </mat-card-actions>
       </form>
@@ -85,16 +92,16 @@
         <th mat-header-cell *matHeaderCellDef> Inserted Date </th>
         <td mat-cell *matCellDef="let element"> {{element.create_date}} </td>
       </ng-container>
-      <ng-container matColumnDef="mediaId">
+      <ng-container matColumnDef="albumId">
         <th mat-header-cell *matHeaderCellDef> Category </th>
-        <td mat-cell *matCellDef="let element"> <span *ngFor="let food of media">
-            <!-- {{media | json}} -->
-            <!-- {{food.title}} - {{element.mediaId}} --> <span
-              *ngIf="food.mediaId === element.mediaId">{{food.title}}</span> </span> </td>
+        <td mat-cell *matCellDef="let element"> <span *ngFor="let food of album">
+            <!-- {{album | json}} -->
+            <!-- {{food.title}} - {{element.albumId}} --> <span
+              *ngIf="food.albumId === element.albumId">{{food.title}}</span> </span> </td>
       </ng-container>
-      <ng-container matColumnDef="day">
-        <th mat-header-cell *matHeaderCellDef> Day </th>
-        <td mat-cell *matCellDef="let element">{{element.selectDay}}</td>
+      <ng-container matColumnDef="episode">
+        <th mat-header-cell *matHeaderCellDef> Episode </th>
+        <td mat-cell *matCellDef="let element">{{element.episode}}</td>
       </ng-container>
       <ng-container matColumnDef="deleteAction">
         <th mat-header-cell *matHeaderCellDef> Delete </th>

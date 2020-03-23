@@ -1,9 +1,8 @@
 import { FileUpload } from '../file-upload/fileUpload';
-export class Media {
-  mediaId: String;
+export class Album {
+  albumId: String;
   active: boolean;
   categoryId: [String];
-  subCategoryId: [String];
   videoUrl: FileUpload[] = [];
   companyId: String;
   title: String;
@@ -19,4 +18,5 @@ export class Media {
   modify_date: String;
   enableUpdate: boolean;
   duration: String;
+  sequence: Number;
 }

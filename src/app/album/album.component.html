@@ -5,53 +5,48 @@
     <mat-card-header fxLayoutAlign="center">
       <mat-card-title>Albums</mat-card-title>
     </mat-card-header>
-    <div *ngIf="selectedMedia.enableUpdate; else save">
+    <div *ngIf="selectedAlbum.enableUpdate; else save">
       <!-- Update UI-->
       <mat-card-content fxLayout="column" fxLayoutAlign="center">
-        <!-- <mat-form-field>
+        <mat-form-field>
           <mat-label>Select Category</mat-label>
-          <mat-select [(ngModel)]="selectedMedia.categoryId" (selectionChange)="updatecategoryClick ()" multiple>
+          <mat-select [(ngModel)]="selectedAlbum.categoryId" (selectionChange)="updatecategoryClick ()">
             <mat-option *ngFor="let food of category" [value]="food.categoryId">
               {{food.categoryName}}
             </mat-option>
           </mat-select>
-        </mat-form-field> -->
+        </mat-form-field>
 
 
 
         <mat-form-field>
-          <input matInput placeholder="Name" [(ngModel)]="selectedMedia.title">
+          <input matInput placeholder="Name" [(ngModel)]="selectedAlbum.title">
         </mat-form-field>
         <mat-form-field>
-          <textarea matInput placeholder="Duration" [(ngModel)]="selectedMedia.duration"></textarea>
+          <textarea matInput placeholder="Duration" [(ngModel)]="selectedAlbum.duration"></textarea>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput required type="number" placeholder="Sequence" [(ngModel)]="selectedAlbum.sequence">
         </mat-form-field>
         <!-- <mat-form-field>
-          <textarea matInput placeholder="Description" [(ngModel)]="selectedMedia.description"></textarea>
+          <textarea matInput placeholder="Description" [(ngModel)]="selectedAlbum.description"></textarea>
         </mat-form-field>   -->
-        <mat-form-field>
-          <!-- <p>{{selectedMedia.subCategoryId}}</p> -->
-          <mat-label>Assign to</mat-label>
-          <mat-select [(ngModel)]="selectedMedia.subCategoryId" [(value)]="selected">
-            <mat-option *ngFor="let food of subCategory" [value]="food.subCategoryId">
-              {{food.subCategoryName}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+
         <!-- <mat-form-field>
-          <input matInput placeholder="Narrator" [(ngModel)]="selectedMedia.narrator">
+          <input matInput placeholder="Narrator" [(ngModel)]="selectedAlbum.narrator">
         </mat-form-field>
         <mat-form-field>
-          <textarea matInput placeholder="Author" [(ngModel)]="selectedMedia.author"></textarea>
+          <textarea matInput placeholder="Author" [(ngModel)]="selectedAlbum.author"></textarea>
         </mat-form-field> -->
 
-        <mat-slide-toggle [(ngModel)]="selectedMedia.premium"> Premium Album</mat-slide-toggle>
+        <mat-slide-toggle [(ngModel)]="selectedAlbum.premium"> Premium Album</mat-slide-toggle>
       </mat-card-content>
       <!-- <input placeholder="Multiple Audio/Video">
         <app-file-upload (messageEvent)="receiveUpdateVideoMessage($event)"></app-file-upload>
         <br> -->
       <app-single-file-upload (messageEvent)="receiveUpdateSingleFile($event)"></app-single-file-upload>
       <span></span>
-      <mat-slide-toggle [(ngModel)]="selectedMedia.active"> Active/InActive</mat-slide-toggle>
+      <mat-slide-toggle [(ngModel)]="selectedAlbum.active"> Active/InActive</mat-slide-toggle>
       <mat-card-actions align="center">
         <button mat-raised-button color="primary" (click)="onUpdate()">Update</button>
         <button mat-raised-button color="primary" (click)="onClear()">Cancel</button>
@@ -59,41 +54,36 @@
     </div>
     <ng-template #save>
       <mat-card-content fxLayout="column" fxLayoutAlign="center">
-        <!-- <mat-form-field>
+        <mat-form-field>
           <mat-label>Select Category</mat-label>
-          <mat-select [(ngModel)]="media.categoryId"  multiple>
+          <mat-select [(ngModel)]="album.categoryId">
             <mat-option *ngFor="let food of category" [value]="food.categoryId" selected>
               {{food.categoryName}}
             </mat-option>
           </mat-select>
-        </mat-form-field> -->
+        </mat-form-field>
 
         <mat-form-field>
-          <input matInput placeholder="Name" [(ngModel)]="media.title">
+          <input matInput placeholder="Name" [(ngModel)]="album.title">
         </mat-form-field>
         <!-- <mat-form-field>
-          <textarea matInput placeholder="Description" [(ngModel)]="media.description"></textarea>
+          <textarea matInput placeholder="Description" [(ngModel)]="album.description"></textarea>
         </mat-form-field> -->
         <mat-form-field>
-          <textarea matInput placeholder="Duration" [(ngModel)]="media.duration"></textarea>
+          <textarea matInput placeholder="Duration" [(ngModel)]="album.duration"></textarea>
         </mat-form-field>
         <mat-form-field>
-          <mat-label>Assign to</mat-label>
-          <mat-select [(ngModel)]="media.subCategoryId" multiple>
-            <mat-option *ngFor="let food of subCategory" [value]="food.subCategoryId">
-              {{food.subCategoryName}}
-            </mat-option>
-          </mat-select>
+          <input matInput required type="number" placeholder="Sequence" [(ngModel)]="album.sequence">
         </mat-form-field>
 
         <!--  <mat-form-field>
-          <input matInput placeholder="Narrator" [(ngModel)]="media.narrator">
+          <input matInput placeholder="Narrator" [(ngModel)]="album.narrator">
         </mat-form-field>
         <mat-form-field>
-          <textarea matInput placeholder="Author" [(ngModel)]="media.author"></textarea>
+          <textarea matInput placeholder="Author" [(ngModel)]="album.author"></textarea>
         </mat-form-field> -->
 
-        <mat-slide-toggle [(ngModel)]="media.premium"> Premium Album</mat-slide-toggle>
+        <mat-slide-toggle [(ngModel)]="album.premium"> Premium Album</mat-slide-toggle>
 
       </mat-card-content>
       <!-- <input placeholder="Audio/Video">
@@ -102,7 +92,7 @@
       <app-single-file-upload (messageEvent)="receiveSingleFile($event)"></app-single-file-upload>
 
 
-      <mat-slide-toggle [(ngModel)]="media.active"> Active/Inactive</mat-slide-toggle>
+      <mat-slide-toggle [(ngModel)]="album.active"> Active/Inactive</mat-slide-toggle>
 
       <mat-card-actions align="center">
         <button mat-raised-button color="primary" (click)="onSave()">Save</button>
@@ -139,6 +129,8 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-    <div *ngIf="!dataSource?.length" style="min-height: 100px; position: relative;"> <img src="./../../assets/uploading.gif" width="50" style="position: absolute; left: 50%; transform: translateX(-50%);z-index: 999" /></div>
+    <div *ngIf="!dataSource?.length" style="min-height: 100px; position: relative;"> <img
+        src="./../../assets/uploading.gif" width="50"
+        style="position: absolute; left: 50%; transform: translateX(-50%);z-index: 999" /></div>
   </mat-card>
 </div>

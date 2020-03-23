@@ -1,47 +1,48 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { SubCategory } from '../subcategory/subcategory';
+// import { SubCategory } from '../subcategory/subcategory';
 import { Category } from '../category/category';
 import { CmsService } from '../cms.service';
-import { Media } from './media';
+import { Album } from './album';
 import { FormControl } from '@angular/forms';
 import { FileUpload } from '../file-upload/fileUpload';
 import { Transporter } from './transporter';
-import {MatDialog } from '@angular/material/dialog';
-import { MyDialogComponent } from './../my-dialog/my-dialog.component'
+import { MatDialog } from '@angular/material/dialog';
+import { MyDialogComponent } from '../my-dialog/my-dialog.component'
 import * as moment from 'moment';
 
 @Component({
-  selector: "[app-media],[app-single-file-upload]",
-  templateUrl: './media.component.html',
-  styleUrls: ['./media.component.css'],
+  selector: "[app-album],[app-single-file-upload]",
+  templateUrl: './album.component.html',
+  styleUrls: ['./album.component.css'],
   providers: [CmsService]
 })
-export class MediaComponent implements OnInit {
+export class AlbumComponent implements OnInit {
 
   constructor(private cmsService: CmsService, public dialog: MatDialog) { }
   DialogData: [];
-  media: Media = new Media();
+  album: Album = new Album();
   category: Category[];
-  subCategory: SubCategory[];
-  selSubCategory: SubCategory[];
+  // subCategory: SubCategory[];
+  // selSubCategory: SubCategory[];
   toppings = new FormControl();
   videoUrls: String[];
   duration: String[];
-  selectedMedia: Media = new Media();
-  deletedMedia: Media;
-  dataSource: Media[];
+  selectedAlbum: Album = new Album();
+  deletedMedia: Album;
+  dataSource: Album[];
   displayedColumns: string[];
   filesToUpload: FileUpload[] = [];
   @Output() parentEvent = new EventEmitter<FileUpload[]>();
   @Output() messageEvent = new EventEmitter<FileUpload>();
   transportMsg: Transporter = new Transporter();
+  sequence: Number[];
   ngOnInit() {
-    this.media.active = true;
-    this.media.videoUrl;
+    this.album.active = true;
+    this.album.videoUrl;
     this.loadMedia();
     this.loadCategories();
   }
-  loadPlaylist () {
+  loadPlaylist() {
     this.loadMedia();
   }
   loadMedia() {
@@ -56,10 +57,10 @@ export class MediaComponent implements OnInit {
     });
   }
   onSave() {
-    if(this.media && this.media.title) {
-      console.log(this.media, '===this.media===')
-      this.media['type'] = "SAVE";
-      this.cmsService.saveOrupdateMedia(this.media).subscribe(response => {
+    if (this.album && this.album.title) {
+      console.log(this.album, '===this.album===')
+      this.album['type'] = "SAVE";
+      this.cmsService.saveOrupdateMedia(this.album).subscribe(response => {
         var result = JSON.parse(JSON.stringify(response));
         if (result.status == 'SUCCESS') {
           this.loadMedia();
@@ -75,16 +76,16 @@ export class MediaComponent implements OnInit {
     this.cmsService.getCategories().subscribe(response => {
       var result = JSON.parse(JSON.stringify(response));
       this.category = result.message;
-      this.media.categoryId = [this.category[0].categoryId]
+      this.album.categoryId = [this.category[0].categoryId]
       this.categoryClick();
     });
   }
 
   onUpdate() {
-    if(this.selectedMedia && this.selectedMedia.title) {
-      console.log(this.selectedMedia, '===this.selectedMedia===')
-      this.selectedMedia['type'] = "SAVE";
-      this.cmsService.saveOrupdateMedia(this.selectedMedia).subscribe(response => {
+    if (this.selectedAlbum && this.selectedAlbum.title) {
+      console.log(this.selectedAlbum, '===this.selectedAlbum===')
+      this.selectedAlbum['type'] = "SAVE";
+      this.cmsService.saveOrupdateMedia(this.selectedAlbum).subscribe(response => {
         var result = JSON.parse(JSON.stringify(response));
         if (result.status == 'SUCCESS') {
           this.loadMedia();
@@ -97,66 +98,60 @@ export class MediaComponent implements OnInit {
   }
   edit(row) {
     this.onClear();
-    this.selectedMedia = row;
-    this.selectedMedia.enableUpdate = true;
-    this.transportMsg.img = this.selectedMedia.thumbImageUrl;
-    this.transportMsg.video = this.selectedMedia.videoUrl;
+    this.selectedAlbum = row;
+    this.selectedAlbum.enableUpdate = true;
+    this.transportMsg.img = this.selectedAlbum.thumbImageUrl;
+    this.transportMsg.video = this.selectedAlbum.videoUrl;
     this.cmsService.sendMessage(this.transportMsg);
-    this.cmsService.getSubCategories(this.selectedMedia).subscribe(response => {
-      var result = JSON.parse(JSON.stringify(response));
-      this.subCategory = result.message;
-      this.selectedMedia.enableUpdate = true;
-    });
   }
 
   delete(row) {
     const dialogRef = this.dialog.open(MyDialogComponent, {
       width: '500px',
-      data: [row, this, 'deleteMedia']      
+      data: [row, this, 'deleteMedia']
     });
   }
   categoryClick() {
-    this.cmsService.getSubCategories(this.media).subscribe(response => {
-      console.log(response, '===Categories====');
+    this.cmsService.getCategories().subscribe(response => {
+      console.log(response, '===Categories====````');
       var result = JSON.parse(JSON.stringify(response));
-      console.log(result, '===result===')
-      this.subCategory = result.message;
-      this.media.subCategoryId = [result.message[0].subCategoryId];
+      console.log(result, '===result===`````');
+      this.album.categoryId = [result.message[0].categoryId];
     });
   }
 
   updatecategoryClick() {
-    this.cmsService.getSubCategories(this.selectedMedia).subscribe(response => {
+    this.cmsService.getCategories().subscribe(response => {
       var result = JSON.parse(JSON.stringify(response));
-      this.media.subCategoryId = [result.message[0].subCategoryId]
+      this.album.categoryId = [result.message[0].categoryId]
     });
   }
 
   loadSubCategories() {
-    this.cmsService.getAllSubCategories().subscribe(response => {
+    this.cmsService.getCategories().subscribe(response => {
       var result = JSON.parse(JSON.stringify(response));
-      this.subCategory = result.message;
+
     });
   }
   receiveMessage($event) {
-    this.media.videoUrl = $event;
+    this.album.videoUrl = $event;
   }
   receiveSingleFile($event) {
-    this.media.thumbImageUrl = $event
+    this.album.thumbImageUrl = $event
   }
 
   receiveUpdateVideoMessage($event) {
-    this.selectedMedia.videoUrl = $event;
+    this.selectedAlbum.videoUrl = $event;
   }
   receiveUpdateSingleFile($event) {
-    this.selectedMedia.thumbImageUrl = $event
+    this.selectedAlbum.thumbImageUrl = $event
   }
   onClear() {
-    this.selectedMedia = new Media();
-    this.media = new Media();
-    this.media.active = true;
-    this.transportMsg.img = this.selectedMedia.thumbImageUrl;
-    this.transportMsg.video = this.selectedMedia.videoUrl;
+    this.selectedAlbum = new Album();
+    this.album = new Album();
+    this.album.active = true;
+    this.transportMsg.img = this.selectedAlbum.thumbImageUrl;
+    this.transportMsg.video = this.selectedAlbum.videoUrl;
     this.cmsService.sendMessage(this.transportMsg);
     this.loadCategories();
   }

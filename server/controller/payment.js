@@ -11,7 +11,7 @@ router.get('/orders', (req, res) => {
         res.json(obj);
     });
 });
-router.get('/capture', (req, res) => {
+router.post('/capture', (req, res) => {
     payment.capture(req, obj => {
         res.json(obj);
     });

@@ -1,7 +1,7 @@
 'use strict';
 const appRouter = require('./appRouter'),
     cmsRouter = require('./cmsRouter');
-    //authRouter = require('./authRouter');
+//authRouter = require('./authRouter');
 module.exports.initRoutes = function(app) {
     app.use('/app', appRouter);
     app.use('/cms', cmsRouter);

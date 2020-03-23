@@ -104,7 +104,10 @@ app.use(express.static(path.join(__dirname, 'upload')));
 app.use(bodyParser.json());
 
 function authChecker(req, res, next) {
-    if (req.path.startsWith('/cms') || req.path.startsWith('/app')) {
+    if (
+        req.path.startsWith('/cms') ||
+        (req.path.startsWith('/app') && !req.path.startsWith('/app/user/login'))
+    ) {
         jwt.verify(
             req.body.token,
             config.secret(),
@@ -118,7 +121,7 @@ function authChecker(req, res, next) {
                         message: 'Token is not valid',
                     });
                 } else {
-                    req.user = decoded;
+                    req.decoded = decoded;
                     next();
                 }
             }
@@ -127,6 +130,7 @@ function authChecker(req, res, next) {
         next();
     }
 }
+
 app.use(authChecker);
 // Setup server port
 var port = process.env.PORT || 8080;
@@ -156,7 +160,7 @@ app.post('/deleteFile', function(req, res) {
     }
 });
 
-app.get('/(|login|reset|category|subcategory|media|playlist)', function(req, res) {
+app.get('/(|login|reset|category|album|playlist)', function(req, res) {
     res.set('Content-Type', 'text/html').sendFile(__dirname + '/public/index.html');
 });
 
@@ -215,9 +219,8 @@ app.post('/upload', upload1.array('uploads[]', 12), function(req, res) {
         });
     }
 });
-/*app.use("/api", apiRoutes);
-app.use("/cms", cmsRoutes);
-app.use("/auth", authRoutes);*/
+var scheduler = require ('./server/scheduler');
+scheduler.init();
 app.use('/upload', express.static(path.join(__dirname, '/upload')));
 app.use('/deleteFile', express.static(path.join(__dirname, '/upload')));
 

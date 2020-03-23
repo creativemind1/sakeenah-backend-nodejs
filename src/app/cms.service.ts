@@ -4,9 +4,9 @@ import { environment } from '../environments/environment';
 import { map } from 'rxjs/operators';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { Category } from './category/category';
-import { SubCategory } from './subcategory/subcategory';
+// import { SubCategory } from './subcategory/subcategory';
 import { Login } from './login/login';
-import { Media } from './media/media';
+import { Album } from './album/album';
 import { JwtService } from './jwt.service';
 import { FileUpload } from './file-upload/fileUpload'
 import { PlayList } from './play-list/playlist';
@@ -24,13 +24,13 @@ export class CmsService {
   serverBaseUrl = environment.serverBaseUrl;
   thumbImageUrl: FileUpload;
   updateIBOsNavigationSubject = new BehaviorSubject<any>('');
-  constructor(private http: HttpClient, private jwtService: JwtService, private auth: AuthService) {
-  }
+  constructor(private http: HttpClient, private jwtService: JwtService, private auth: AuthService) {}
 
   // Load all the categories based on the company Id
   getCategories() {
     var token = this.auth.getToken();
-    return this.http.post(this.baseUrl + '/category', {
+    console.log(token, '-===token==')
+    return this.http.post(this.baseUrl + '/category/list', {
       "type": "LOAD",
       "companyId": this.companyId, 'token': token
     }).pipe(map((resp) => {
@@ -43,53 +43,54 @@ export class CmsService {
     var token = this.auth.getToken();
     category['token'] = token;
     category.companyId = this.companyId;
-    return this.http.post(this.baseUrl + '/category', category).pipe(map((resp) => {
+    return this.http.post(this.baseUrl + '/category/save', category).pipe(map((resp) => {
       return resp;
     }));
   };
+
   //Delete Category
   deleteCategory(category: Category) {
     var token = this.auth.getToken();
     category['token'] = token;
-    return this.http.post(this.baseUrl + '/category', category).pipe(map((resp) => {
+    return this.http.post(this.baseUrl + '/category/delete', category).pipe(map((resp) => {
       return resp;
     }));
   };
 
   // Load all the Sub categories based on the company Id
-  getAllSubCategories() {
-    var token = this.auth.getToken();
-    return this.http.post(this.baseUrl + '/subcategory', {
-      "type": "LOAD",
-      "companyId": this.companyId, 'token': token
-    }).pipe(map((resp) => {
-      return resp;
-    }));
-  };
+  // getAllSubCategories() {
+  //   var token = this.auth.getToken();
+  //   return this.http.post(this.baseUrl + '/subcategory', {
+  //     "type": "LOAD",
+  //     "companyId": this.companyId, 'token': token
+  //   }).pipe(map((resp) => {
+  //     return resp;
+  //   }));
+  // };
 
   //Save or Update Sub Category
-  saveOrupdateSubCategory(subCategory: SubCategory) {
-    subCategory.companyId = this.companyId;
-    var token = this.auth.getToken();
-    subCategory['token'] = token;
-    return this.http.post(this.baseUrl + '/subcategory', subCategory).pipe(map((resp) => {
-      return resp;
-    }));
-  };
+  // saveOrupdateSubCategory(subCategory: SubCategory) {
+  //   subCategory.companyId = this.companyId;
+  //   var token = this.auth.getToken();
+  //   subCategory['token'] = token;
+  //   return this.http.post(this.baseUrl + '/subcategory', subCategory).pipe(map((resp) => {
+  //     return resp;
+  //   }));
+  // };
 
   //Delete Sub Category
-  deleteSubCategory(subCategory: SubCategory) {
-    var token = this.auth.getToken();
-    subCategory['token'] = token;
-    return this.http.post(this.baseUrl + '/subcategory', subCategory).pipe(map((resp) => {
-      return resp;
-    }));
-  };
+  // deleteSubCategory(subCategory: SubCategory) {
+  //   var token = this.auth.getToken();
+  //   subCategory['token'] = token;
+  //   return this.http.post(this.baseUrl + '/subcategory', subCategory).pipe(map((resp) => {
+  //     return resp;
+  //   }));
+  // };
 
   // Load all the Media based on the company Id
   getAllMedia() {
     var token = this.auth.getToken();
-    return this.http.post(this.baseUrl + '/media', {
+    return this.http.post(this.baseUrl + '/album/list', {
       "type": "LOAD",
       "companyId": this.companyId, 'token': token
     }).pipe(map((resp) => {
@@ -98,20 +99,20 @@ export class CmsService {
   };
 
   //Save or Update Sub Category
-  saveOrupdateMedia(media: Media) {
-    media.companyId = this.companyId;
+  saveOrupdateMedia(album: Album) {
+    album.companyId = this.companyId;
     var token = this.auth.getToken();
-    media['token'] = token;
-    return this.http.post(this.baseUrl + '/media', media).pipe(map((resp) => {
+    album['token'] = token;
+    return this.http.post(this.baseUrl + '/album/save', album).pipe(map((resp) => {
       return resp;
     }));
   };
 
   //Delete Sub Category
-  deleteMedia(media: Media) {
+  deleteMedia(album: Album) {
     var token = this.auth.getToken();
-    media['token'] = token;
-    return this.http.post(this.baseUrl + '/media', media).pipe(map((resp) => {
+    album['token'] = token;
+    return this.http.post(this.baseUrl + '/album/delete', album).pipe(map((resp) => {
       return resp;
     }));
   };
@@ -126,8 +127,8 @@ export class CmsService {
       return resp;
     }));
   };
- 
-    //Delete Sub Category
+
+  //Delete Sub Category
   upload(formData: FormData) {
     return this.http.post(this.uploadUrl, formData).pipe(map((resp) => {
       return resp;
@@ -135,15 +136,15 @@ export class CmsService {
   };
 
   // Load all the Sub categories based on the company Id
-  getSubCategories(media: Media) {
-    var token = this.auth.getToken();
-    return this.http.post(this.baseUrl + '/subcategory', {
-      "type": "GET_SUB_CATEGORY",
-      "companyId": this.companyId, 'categoryId': media.categoryId, 'token': token
-    }).pipe(map((resp) => {
-      return resp;
-    }));
-  };
+  // getSubCategories(media: Media) {
+  //   var token = this.auth.getToken();
+  //   return this.http.post(this.baseUrl + '/subcategory', {
+  //     "type": "GET_SUB_CATEGORY",
+  //     "companyId": this.companyId, 'categoryId': album.categoryId, 'token': token
+  //   }).pipe(map((resp) => {
+  //     return resp;
+  //   }));
+  // };
 
   //Delete file
   deleteSingleFile(fileurl: String) {
@@ -174,7 +175,7 @@ export class CmsService {
   // Load all the PlayList based on the company Id
   getAllPlayLists() {
     var token = this.auth.getToken();
-    return this.http.post(this.baseUrl + '/playlist', {
+    return this.http.post(this.baseUrl + '/audio/list', {
       "type": "LOAD",
       "companyId": this.companyId, 'token': token
     }).pipe(map((resp) => {
@@ -187,7 +188,7 @@ export class CmsService {
     playList.companyId = this.companyId;
     var token = this.auth.getToken()
     playList['token'] = token;
-    return this.http.post<any>(this.baseUrl + '/playlist', playList).pipe(map((resp) => {
+    return this.http.post<any>(this.baseUrl + '/audio/save', playList).pipe(map((resp) => {
       return resp;
     }));
   }
@@ -196,7 +197,7 @@ export class CmsService {
   deletePlayList(playList: PlayList) {
     var token = this.auth.getToken();
     playList['token'] = token;
-    return this.http.post(this.baseUrl + '/playlist', playList).pipe(map((resp) => {
+    return this.http.post(this.baseUrl + '/audio/delete', playList).pipe(map((resp) => {
       return resp;
     }));
   }
