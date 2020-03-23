@@ -1,4 +1,4 @@
-let AudioModel = require('../../model/PlayListModel'),
+let AudioModel = require('../../model/Audio'),
     UserMap = require('../../model/UserMap'),
     async = require('async');
 
@@ -6,22 +6,22 @@ module.exports = {
     /**
      * Add a bookmark from Audio list and store in My Bookmarks list
      */
-    add_bookmark: (req, callback) => {
+    add: (req, callback) => {
         let responseObj = { status: 'FAILED', message: null };
 
         let getUser = n => {
             //  get the user map
-            let filter = { userID: req.user.userId };
+            let filter = { userId: req.body.userId };
             UserMap.findOne(filter, (err, doc) => {
                 if (doc) {
                     /* updating default bookmarks */
-                    if (doc.bookmarks.length && doc.bookmarks.indexOf(req.body.audioID) == -1) {
-                        doc.bookmarks.push(req.body.audioID);
+                    if (doc.bookmarks.length && doc.bookmarks.indexOf(req.body.audioId) == -1) {
+                        doc.bookmarks.push(req.body.audioId);
                         doc.save((e, s) => {
                             console.log(e, s);
                         });
                     } else if (doc.bookmarks.length == 0) {
-                        doc.bookmarks.push(req.body.audioID);
+                        doc.bookmarks.push(req.body.audioId);
                         doc.save((e, s) => {
                             console.log('EEE', e);
                             console.log('SSS', s);
@@ -29,8 +29,8 @@ module.exports = {
                     }
                 } else {
                     var userMap = new UserMap();
-                    userMap.userID = req.user.userId;
-                    userMap.bookmarks.push(req.body.audioID);
+                    userMap.userId = req.body.userId;
+                    userMap.bookmarks.push(req.body.audioId);
                     userMap.save(err, data => {
                         console.log(data, '==data==.....');
                     });
@@ -47,17 +47,17 @@ module.exports = {
     /**
      * Remove a bookmark from Audio list/My Bookmark list
      */
-    remove_bookmark: (req, callback) => {
+    remove: (req, callback) => {
         let responseObj = { status: 'FAILED', message: null },
             getUser = n => {
                 //  get the user map
-                let filter = { userID: req.user.userId };
+                let filter = { userId: req.body.userId };
                 UserMap.findOne(filter, (err, doc) => {
                     if (doc) {
                         /* updating default bookmarks */
                         if (doc.bookmarks.length) {
                             doc.bookmarks.map((i, j) => {
-                                if (i == req.body.audioID) doc.bookmarks.splice(j, 1);
+                                if (i == req.body.audioId) doc.bookmarks.splice(j, 1);
                             });
                             doc.save((e, s) => {
                                 console.log('EEE', e);
@@ -77,12 +77,12 @@ module.exports = {
     /**
      * List of All Bookmarks of Audios
      * */
-    user_bookmark: (req, callback) => {
+    list: (req, callback) => {
         let responseObj = { status: 'FAILED', data: null };
         let bookmarks = null;
         let getUser = n => {
             //  get the user map
-            let filter = { userID: req.user.userId };
+            let filter = { userId: req.body.userId };
             UserMap.findOne(filter, (err, doc) => {
                 if (doc && doc.bookmarks && doc.bookmarks.length) {
                     bookmarks = doc.bookmarks;
@@ -94,7 +94,7 @@ module.exports = {
         let getAudios = n => {
             if (bookmarks) {
                 let filters = {
-                    audioID: {
+                    audioId: {
                         $in: bookmarks,
                     },
                 };

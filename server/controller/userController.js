@@ -75,7 +75,6 @@ exports.signUp = function(req, res) {
                 var replacements = {
                     firstName: firstName,
                     userlink: verfiyEmail,
-                    //userlink: "http://localhost:8080/api/verifyEmail?userId=" + userId
                 };
                 var htmlToSend = template(replacements);
                 content = htmlToSend;
@@ -165,86 +164,6 @@ exports.signUp = function(req, res) {
                             });
                         }
                     }
-
-                    // if (doc) {
-                    //   console.log("--- Test ---", doc);
-                    //   doc.socialMedia = true;
-                    //   doc.active = true;
-                    //   doc.save(function(error, response) {
-                    //     if (error) {
-                    //       res.json({
-                    //         status: "FAILED",
-                    //         message: error
-                    //       });
-                    //     } else {
-                    //       // This is the use case for logged in .
-                    //       //Generate Token
-                    //       const payload = { emailId: req.body.emailId };
-                    //       var token = jwt.sign(payload, config.secret(), {
-                    //         expiresIn: "24h" // expires in 24 hours
-                    //       });
-                    //       if (doc.premiumUser) {
-                    //         doc.freeTrial = true;
-                    //         res.json({
-                    //           status: "SUCCESS",
-                    //           message: doc,
-                    //           token: token
-                    //         });
-                    //       } else {
-                    //         //validating the free trial period
-                    //         var currentdate = new Date();
-                    //         var logindate = doc.create_date;
-                    //         // time difference
-                    //         var timeDiff = Math.abs(
-                    //           logindate.getTime() - currentdate.getTime()
-                    //         );
-                    //         // days difference
-                    //         var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                    //         doc.freeTrial = true;
-                    //         if (diffDays < 8) {
-                    //           res.json({
-                    //             status: "SUCCESS",
-                    //             message: doc,
-                    //             token: token
-                    //           });
-                    //         } else {
-                    //           doc.freeTrial = false;
-                    //           res.json({
-                    //             status: "FAILED",
-                    //             message: "Expired 7 Day Free Trial"
-                    //           });
-                    //         }
-                    //       }
-                    //     }
-                    //   });
-                    // } else {
-                    //   // Continue to register
-                    //   userProfileModel.userId = userId;
-                    //   userProfileModel.create_date = new Date();
-                    //   userProfileModel.socialMedia = true;
-                    //   userProfileModel.active = true;
-                    //   userProfileModel.save(function(error, response) {
-                    //     if (error) {
-                    //       res.json({
-                    //         status: "FAILED",
-                    //         message: error
-                    //       });
-                    //     } else {
-                    //       //Generate Token
-                    //       const payload = { emailId: req.body.emailId };
-                    //       var token = jwt.sign(payload, config.secret(), {
-                    //         expiresIn: "24h" // expires in 24 hours
-                    //       });
-
-                    //       response.freeTrial = true;
-                    //       res.json({
-                    //         status: "SUCCESS",
-                    //         message: response,
-                    //         token: token
-                    //       });
-                    //     }
-                    //   });
-                    // }
                 }
             );
         } else {
@@ -306,7 +225,7 @@ exports.login = function(req, res) {
                 if (doc && doc.password) {
                     if (bcrypt.compareSync(req.body.password, doc.password)) {
                         // Payment is Done .Its a premium User
-                        const payload = { emailId: req.body.emailId, userId: doc.userId };
+                        const payload = { emailId: req.body.emailId };
                         var token = jwt.sign(payload, config.secret(), {
                             expiresIn: '4d', // expires in 24 hours
                         });
@@ -665,69 +584,9 @@ exports.getCategories_NEW = (req, res) => {
 
 //Usermapping
 exports.userCategories = (req, res) => {
-    // let allCategories = null;
-    // let getAllCategories = n => {
-    //     let aggregatorData = [
-    //         // Stage 1
-    //         {
-    //             $match: {},
-    //         },
-    //         // Stage 2
-    //         {
-    //             $project: {
-    //                 mediaId: 1,
-    //                 title: 1,
-    //                 author: 1,
-    //                 premium: 1,
-    //                 thumbImageUrl: 1,
-    //                 duration: 1,
-    //             },
-    //         },
-    //     ];
-    //     let query = {
-    //         //categoryId: { $in: [req.body.categoryId] },
-    //         subCategoryId: { $in: [req.body.subCategoryId] },
-    //     };
-    //     console.log(query);
-    //     MediaModel.find(
-    //         query,
-    //         {
-    //             mediaId: 1,
-    //             title: 1,
-    //             author: 1,
-    //             premium: 1,
-    //             thumbImageUrl: 1,
-    //             duration: 1,
-    //         },
-    //         function(err, data) {
-    //             console.log(data, '====DATA====');
-    //             if (data && data.length) {
-    //                 allCategories = data;
-    //             }
-    //             return n();
-    //         }
-    //     );
-    // };
     let audioId = null;
     let playLists = null;
     let getPlayLists = n => {
-        // let aggregatorData = [
-        //     // Stage 1
-        //     {
-        //         $match: {},
-        //     },
-        //     // Stage 2
-        //     {
-        //         $project: {
-        //             mediaId: 1,
-        //             title: 1,
-        //             author: 1,
-        //             premium: 1,
-        //             thumbImageUrl: 1,
-        //             duration: 1,
-        //         },
-        //     },
-        // ];
         let query = {
             mediaId: 'o0qmTQW8gS',
         };
@@ -761,36 +620,9 @@ exports.userCategories = (req, res) => {
         );
     };
 
-    // let userCategoryIDs = null;
-    // let userAudios = null;
     let getUserCategoryIDs = n => {
-        // let aggregator = [
-        //     // Stage 1
-        //     {
-        //         $match: {
-        //             userID: req.user.userId,
-        //         },
-        //     },
-        //     // Stage 2
-        //     {
-        //         $project: {
-        //             _id: 0,
-        //             categories: 1,
-        //         },
-        //     },
-        // ];
-        // let umap = {
-        //     userID: req.user.userId,
-        //     categories: ['G6zafDpw6J', 'mlfKJivUnP'],
-        //     albums: ['o0qmTQW8gS', '11'],
-        //     audios: ['dHRNW86gZz'],
-        // };
         mongoose.models['UMAP'].find({}, function(err, data) {
             if (data && data.length) {
-                // userCategoryIDs = {};
-                /*for (let d of data[0].audios) {
-          userCategoryIDs[d] = d;
-        }*/
                 data[0].audios.push(audioId);
                 data[0].save();
             }
@@ -798,11 +630,6 @@ exports.userCategories = (req, res) => {
         });
     };
     async.series([getPlayLists.bind(), getUserCategoryIDs.bind()], () => {
-        /* for (let album of allCategories) {
-      if (userCategoryIDs[album.mediaId]) {
-        album.premium = false;
-      }
-    }*/
         res.json({
             status: 'SUCCESS',
             message: { data: playLists },
@@ -905,12 +732,12 @@ exports.verifyEmail = function(req, res) {
 };
 
 exports.getUserProfile = function(req, res) {
-    if (req.user.userId) {
+    if (req.body.userId) {
         let aggregatorData = [
             // Stage 1
             {
                 $match: {
-                    userId: req.user.userId,
+                    userId: req.body.userId,
                 },
             },
 
@@ -952,9 +779,9 @@ exports.getUserProfile = function(req, res) {
 };
 
 exports.saveUserProfile = function(req, res) {
-    if (req.user.userId) {
+    if (req.body.userId) {
         UserProfileModel.findOneAndUpdate(
-            { userId: req.user.userId },
+            { userId: req.body.userId },
             {
                 $set: {
                     firstName: req.body.firstName,
@@ -985,12 +812,12 @@ exports.saveUserProfile = function(req, res) {
 
 // This method is to the complete playlists of media
 exports.getPlayList = function(req, res) {
-    if (req.body.mediaId && req.user.userId) {
+    if (req.body.mediaId && req.body.userId) {
         let dayNo = 0;
         let finalRespose = {};
         let validateUserPlaylist = nCallback => {
-            if (req.user.userId) {
-                UserPlayListModel.findOne({ userId: req.user.userId }, 'dayNo', function(err, doc) {
+            if (req.body.userId) {
+                UserPlayListModel.findOne({ userId: req.body.userId }, 'dayNo', function(err, doc) {
                     if (doc) {
                         dayNo = doc.dayNo;
                         //   finalRespose["dayNo"] = dayNo;
@@ -1083,11 +910,11 @@ exports.getPlayList = function(req, res) {
 
 // Save User Play List
 exports.saveUserPlayList = function(req, res) {
-    if (req.user.userId && req.body.mediaId) {
+    if (req.body.userId && req.body.mediaId) {
         //Existing playlist
 
         UserPlayListModel.findOneAndUpdate(
-            { userId: req.user.userId },
+            { userId: req.body.userId },
             { dayNo: req.body.dayNo },
             { upsert: false },
             function(err, doc) {
@@ -1102,7 +929,7 @@ exports.saveUserPlayList = function(req, res) {
                         });
                     } else {
                         var userPlayListModel = new UserPlayListModel();
-                        userPlayListModel.userId = req.user.userId;
+                        userPlayListModel.userId = req.body.userId;
                         userPlayListModel.mediaId = req.body.mediaId;
                         userPlayListModel.dayNo = req.body.dayNo;
                         userPlayListModel.create_date = new Date();
@@ -1128,12 +955,7 @@ exports.saveUserPlayList = function(req, res) {
 
 // Unlock next
 exports.unlock = function(req, res) {
-    console.log('HITITNG UNLOCK API');
-    if (req.user.userId) {
-        //Existing playlist
-        //albumID - G6zafDpw6J
-        //PlaylistID - o0qmTQW8gS
-        //audioID - dHRNW86gZz
+    if (req.body.userId) {
         const categories = [];
         const album = [];
         const playlist = [];
@@ -1162,7 +984,7 @@ exports.unlock = function(req, res) {
 
         console.log(JSON.stringify(categories), 'album=====');
         //return false
-        UserUnlock.findOneAndUpdate({ userId: req.user.userId }, { upsert: false }, function(
+        UserUnlock.findOneAndUpdate({ userId: req.body.userId }, { upsert: false }, function(
             err,
             doc
         ) {
@@ -1178,7 +1000,7 @@ exports.unlock = function(req, res) {
                 } else {
                     console.log('LOOOOL');
                     var userUnlock = new UserUnlock();
-                    userUnlock.userId = req.user.userId;
+                    userUnlock.userId = req.body.userId;
                     userUnlock.unlock = album;
                     userUnlock.save(function(error) {
                         if (error) {

@@ -1,12 +1,15 @@
 /**
- *
+ *@description  album route controller
  */
-let album = require('../services/album');
+'use strict';
+const express = require('express'),
+    router = express.Router(),
+    album = require('../services/album');
 
-module.exports = {
-    list: (req, res) => {
-        album.list(req, obj => {
-            res.json(obj);
-        });
-    },
-};
+router.post('/list', (req, res) => {
+    album.list(req, obj => {
+        res.json(obj);
+    });
+});
+
+module.exports = router;

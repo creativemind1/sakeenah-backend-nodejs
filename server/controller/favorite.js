@@ -1,21 +1,28 @@
 /**
- *
+ *@description favourite router
  */
-let favorite = require('../services/favorite');
-module.exports = {
-    favoriteAlbums: (req, res) => {
-        favorite.favorites(req, obj => {
-            res.json(obj);
-        });
-    },
-    addFavorite: (req, res) => {
-        favorite.addFavorite(req, obj => {
-            res.json(obj);
-        });
-    },
-    removeFavorite: (req, res) => {
-        favorite.removeFavorite(req, obj => {
-            res.json(obj);
-        });
-    },
-};
+
+'use strict';
+const express = require('express'),
+    router = express.Router(),
+    favorite = require('../services/favorite');
+
+router.post('/list', (req, res) => {
+    favorite.allFavorites(req, obj => {
+        res.json(obj);
+    });
+});
+
+router.post('/add', (req, res) => {
+    favorite.addFavorite(req, obj => {
+        res.json(obj);
+    });
+});
+
+router.post('/remove', (req, res) => {
+    favorite.removeFavorite(req, obj => {
+        res.json(obj);
+    });
+});
+
+module.exports = router;

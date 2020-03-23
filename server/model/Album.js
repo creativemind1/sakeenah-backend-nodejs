@@ -1,18 +1,13 @@
 'use strict';
 /**
- * @description This Model is used for Media
- * @author Ahmed
- * @since MAR-28-2019
- *
+ * @description This Model is used for Album
  */
 var mongoose = require('mongoose');
-var mediaSchema = mongoose.Schema({
-    mediaId: String,
+var schema = mongoose.Schema({
+    albumId: String,
     active: { type: Boolean, default: true },
-    categoryId: [{ type: String }],
-    subCategoryId: [{ type: String }],
+    categoryId: String,
     videoUrl: [{ key: String, value: String, position: String, mimetype: String }],
-    companyId: String,
     title: String,
     description: String,
     thumbImageUrl: { key: String, value: String },
@@ -21,6 +16,7 @@ var mediaSchema = mongoose.Schema({
     narrator: String,
     author: String,
     premium: Boolean,
+    seq: Number,
     duration: String,
     createdBy: String,
     modifiedBy: String,
@@ -32,7 +28,5 @@ var mediaSchema = mongoose.Schema({
     },
 });
 
-var media = (module.exports = mongoose.model('media', mediaSchema));
-module.exports.get = function(callback, limit) {
-    media.find(callback).limit(limit);
-};
+module.exports = mongoose.model('Album', schema, 'Album');
+

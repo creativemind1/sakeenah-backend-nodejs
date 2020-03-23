@@ -1,44 +1,35 @@
-let AudioModel = require('../../model/PlayListModel'),
-    AlbumModel = require('../../model/MediaModel'),
+let AudioModel = require('../../model/Audio'),
+    AlbumModel = require('../../model/Album'),
     UserMap = require('../../model/UserMap'),
     async = require('async'),
-    premiumUser = false,
-    _ = require('lodash');
+    premiumUser = false;
 
 module.exports = {
-    /**
-     * Get the list of Audios based on every Album. Also checks if it's in
-     * lock mode or unlock. Also checks bookmarked.
-     **/
     list: (req, callback) => {
         let responseObj = {
             status: 'FAILED',
-            message: null,
-            category: req.body.subCategoryId,
-            album: req.body.mediaId,
+            data: null,
+            category: req.body.categoryId, // WILL COME BACK HERE SOON.....
+            album: req.body.albumId,
         };
         let audios = null;
         let getAudios = n => {
             const filter = {
-                mediaId: req.body.mediaId,
+                albumId: req.body.albumId,
             };
             const projection = {
                 thumbImageUrl: 1,
-                mediaId: 1,
-                audioID: 1,
+                albumId: 1,
+                audioId: 1,
                 premium: 1,
                 name: 1,
                 create_date: 1,
                 description: 1,
-                selectDay: 1,
-                bookmark: 1,
+                episode: 1,
             };
             AudioModel.find(filter, projection, (err, docs) => {
                 if (docs && docs.length) {
                     audios = JSON.parse(JSON.stringify(docs));
-                    audios.sort((a, b) => {
-                        return a.selectDay - b.selectDay;
-                    });
                 }
                 return n();
             });
@@ -49,7 +40,8 @@ module.exports = {
             if (premiumUser) {
                 return n();
             } else {
-                let filter = { userID: req.user.userId };
+                //  get the user map
+                let filter = { userId: req.body.userId };
                 let projection = { _id: 0, audios: 1, bookmarks: 1 };
                 UserMap.findOne(filter, projection, (err, doc) => {
                     if (doc) {
@@ -66,17 +58,17 @@ module.exports = {
                     for (let audio of audios) {
                         audio.premium = false;
                         if (bookmarks) {
-                            if (bookmarks.indexOf(audio.audioID) != -1) {
+                            if (bookmarks.indexOf(audio.audioId) != -1) {
                                 audio.bookmark = true;
                             }
                         }
                     }
                 } else if (userAudios) {
                     for (let audio of audios) {
-                        if (userAudios.indexOf(audio.audioID) != -1) {
+                        if (userAudios.indexOf(audio.audioId) != -1) {
                             audio.premium = false;
                             if (bookmarks) {
-                                if (bookmarks.indexOf(audio.audioID) != -1) {
+                                if (bookmarks.indexOf(audio.audioId) != -1) {
                                     audio.bookmark = true;
                                 }
                             }
@@ -84,44 +76,40 @@ module.exports = {
                     }
                 }
                 responseObj.status = 'SUCCESS';
-                responseObj.message = audios;
+                responseObj.data = audios;
             }
             callback(responseObj);
         });
     },
 
-    /**
-     * Once a user completed listening to any audio, it will hit to unlock the next one.
-     *
-     */
     completed: (req, callback) => {
-        let responseObj = { status: 'FAILED', message: null },
+        let responseObj = { status: 'FAILED', data: null },
             audios = null,
-            selectDay = parseInt(req.body.selectDay),
-            seq = selectDay + 1,
+            episode = parseInt(req.body.episode),
+            seq = episode + 1,
             nextAudio = null,
             albumFinished = false;
         let getAudios = n => {
             const filter = {
-                mediaId: req.body.mediaId,
+                albumId: req.body.albumId,
             };
             const projection = {
                 thumbImageUrl: 1,
-                mediaId: 1,
-                audioID: 1,
+                albumId: 1,
+                audioId: 1,
                 premium: 1,
                 name: 1,
                 create_date: 1,
                 description: 1,
-                selectDay: 1,
+                episode: 1,
             };
             AudioModel.find(filter, projection, (err, docs) => {
                 if (docs && docs.length) {
                     audios = docs;
                     for (let audio of audios) {
-                        if (audio.selectDay == seq) {
+                        if (audio.episode == seq) {
                             audio.premium = false;
-                            nextAudio = audio.audioID;
+                            nextAudio = audio.audioId;
                         }
                     }
                     /* check did user finished all the audios of the album */
@@ -135,24 +123,23 @@ module.exports = {
         let nextAlbum = null;
         let getAlbums = n => {
             if (albumFinished) {
-                let filter = { subCategoryId: { $in: [req.body.subCategoryId] } };
+                const filter = {
+                    categoryId: req.body.categoryId,
+                };
                 const projection = {
-                    mediaId: 1,
+                    albumId: 1,
                     title: 1,
                     thumbImageUrl: 1,
                     author: 1,
                     premium: 1,
                     duration: 1,
-                    sequence: 1,
                 };
-                AlbumModel.find(filter, projection, { sort: { sequence: 1 } }, (err, albums) => {
+                AlbumModel.find(filter, projection, { sort: { _id: -1 } }, (err, albums) => {
                     if (albums && albums.length) {
                         for (let index = 0; index < albums.length; index++) {
-                            if ((albums[index].mediaId = req.body.mediaId)) {
-                                let seq = albums[index].sequence;
-                                let next = _.find(albums, { sequence: seq + 1 });
-                                if (next) {
-                                    nextAlbum = next.mediaId;
+                            if ((albums[index].albumId = req.body.albumId)) {
+                                if (albums[index + 1]) {
+                                    nextAlbum = albums[index + 1].albumId;
                                 }
                             }
                         }
@@ -168,20 +155,21 @@ module.exports = {
                 return n();
             } else {
                 //  get the user map
-                let filter = { userID: req.user.userId };
+                let filter = { userId: req.body.userId };
                 // let projection = {  audios: 1, albums: 1 };
                 UserMap.findOne(filter, (err, doc) => {
                     if (doc) {
                         /* updating default audios */
-                        if (doc.audios.indexOf(req.body.audioID) == -1) {
-                            doc.audios.push(req.body.audioID);
-                        }
-                        if (nextAudio) {
+                        if (doc.audios.indexOf(req.body.audioId) == -1 || doc.audios.length == 0) {
                             doc.audios.push(nextAudio);
                         }
                         /* update albums*/
-                        if (nextAlbum && doc.albums.indexOf(nextAlbum) == -1) {
-                            doc.albums.push(nextAlbum);
+                        if (nextAlbum) {
+                            if (doc.albums.indexOf(nextAlbum) == -1) {
+                                doc.albums.push(nextAlbum);
+                            } else if (doc.albums.length == 0) {
+                                doc.albums.push(nextAlbum);
+                            }
                         }
                         /*save the user map*/
                         doc.save((e, s) => {
@@ -195,7 +183,7 @@ module.exports = {
         };
         async.series([getAudios.bind(), getAlbums.bind(), getUser.bind()], () => {
             responseObj.status = 'SUCCESS';
-            responseObj.message = audios;
+            responseObj.data = audios;
             callback(responseObj);
         });
     },

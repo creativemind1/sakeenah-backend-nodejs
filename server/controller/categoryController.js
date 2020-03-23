@@ -26,7 +26,7 @@ exports.category = function(req, res) {
                         { categoryId: Default_Category_Id },
                         {
                             categoryName: req.body.categoryName,
-                            modifiedBy: req.user.userId,
+                            modifiedBy: req.body.userId,
                             description: req.body.description,
                             modify_date: modify_date,
                             active: req.body.active,
@@ -49,7 +49,7 @@ exports.category = function(req, res) {
                 } else {
                     var categoryModel = new CategoryModel();
                     categoryModel.categoryId = randomstring.generate(10);
-                    categoryModel.createdBy = req.user.userId;
+                    categoryModel.createdBy = req.body.userId;
                     categoryModel.active = req.body.active;
                     categoryModel.categoryName = req.body.categoryName;
                     categoryModel.companyId = req.body.companyId;
@@ -168,7 +168,7 @@ exports.subCategory = function(req, res) {
                         { subCategoryId: req.body.subCategoryId },
                         {
                             subCategoryName: req.body.subCategoryName,
-                            modifiedBy: req.user.userId,
+                            modifiedBy: req.body.userId,
                             modify_date: modify_date,
                             description: req.body.description,
                             categoryId: Default_Category_Id,
@@ -193,7 +193,7 @@ exports.subCategory = function(req, res) {
                     var subCategoryModel = new SubCategoryModel();
                     subCategoryModel.categoryId = Default_Category_Id;
                     subCategoryModel.subCategoryId = randomstring.generate(10);
-                    subCategoryModel.createdBy = req.user.userId;
+                    subCategoryModel.createdBy = req.body.userId;
                     subCategoryModel.subCategoryName = req.body.subCategoryName;
                     subCategoryModel.companyId = req.body.companyId;
                     subCategoryModel.create_date = new Date();
@@ -306,7 +306,6 @@ exports.subCategory = function(req, res) {
 
 exports.media = function(req, res) {
     var type = req.body.type;
-    console.log(req.body, '=----ReqBody====');
     switch (type) {
         case 'SAVE':
             {
@@ -317,7 +316,7 @@ exports.media = function(req, res) {
                         { mediaId: req.body.mediaId },
                         {
                             title: req.body.title,
-                            modifiedBy: req.user.userId,
+                            modifiedBy: req.body.userId,
                             modify_date: modify_date,
                             categoryId: Default_Category_Id,
                             subCategoryId: req.body.subCategoryId,
@@ -351,7 +350,7 @@ exports.media = function(req, res) {
                     mediaModel.categoryId = Default_Category_Id;
                     mediaModel.subCategoryId = req.body.subCategoryId;
                     mediaModel.mediaId = randomstring.generate(10);
-                    mediaModel.createdBy = req.user.userId;
+                    mediaModel.createdBy = req.body.userId;
                     mediaModel.companyId = req.body.companyId;
                     mediaModel.videoUrl = req.body.videoUrl;
                     mediaModel.title = req.body.title;
@@ -447,7 +446,7 @@ exports.playlist = function(req, res) {
                         { audioID: req.body.audioID },
                         {
                             name: req.body.name,
-                            modifiedBy: req.user.userId,
+                            modifiedBy: req.body.userId,
                             modify_date: modify_date,
                             description: req.body.description,
                             mediaId: req.body.mediaId,
@@ -475,7 +474,7 @@ exports.playlist = function(req, res) {
                     var playListModel = new PlayListModel();
                     playListModel.mediaId = req.body.mediaId;
                     playListModel.audioID = randomstring.generate(10);
-                    playListModel.createdBy = req.user.userId;
+                    playListModel.createdBy = req.body.userId;
                     playListModel.premium = req.body.premium;
                     playListModel.name = req.body.name;
                     playListModel.authorBy = req.body.authorBy;
@@ -484,7 +483,6 @@ exports.playlist = function(req, res) {
                     playListModel.companyId = req.body.companyId;
                     playListModel.selectDay = req.body.selectDay;
                     playListModel.thumbImageUrl = req.body.thumbImageUrl;
-                    playListModel.bookmark = false;
                     playListModel.save(function(error) {
                         if (error) {
                             res.json({

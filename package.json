@@ -1,6 +1,6 @@
 {
     "name": "frontend",
-    "version": "1.0.1",
+    "version": "0.0.0",
     "description": "Sakeenah CMS && Backend API",
     "scripts": {
         "ng": "ng",
@@ -10,8 +10,7 @@
         "lint": "ng lint",
         "e2e": "ng e2e",
         "debug": "node --inspect server.js",
-        "precommit-lint": "eslint ./",
-        "release": "standard-version"
+        "precommit-lint": "eslint ./"
     },
     "pre-commit": [
         "precommit-lint"
@@ -81,10 +80,6 @@
         "babel-eslint": "^10.0.1",
         "eslint": "^5.6.1",
         "node-adyen-encrypt": "^1.1.0",
-        "pre-commit": "^1.2.2",
-        "standard-version": "^7.1.0"
-    },
-    "env": {
-        "jasmine": true
+        "pre-commit": "^1.2.2"
     }
 }

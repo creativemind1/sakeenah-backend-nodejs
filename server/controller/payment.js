@@ -4,15 +4,15 @@
 
 const express = require('express'),
     router = express.Router(),
-    audio = require('../services/audio');
+    payment = require('../services/payment');
 
-router.post('/list', (req, res) => {
-    audio.list(req, obj => {
+router.get('/orders', (req, res) => {
+    payment.orders(req, obj => {
         res.json(obj);
     });
 });
-router.post('/completed', (req, res) => {
-    audio.completed(req, obj => {
+router.get('/capture', (req, res) => {
+    payment.capture(req, obj => {
         res.json(obj);
     });
 });

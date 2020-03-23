@@ -1,12 +1,15 @@
-/*
- *
+/**
+ *@description category router
  */
-let category = require('../services/category');
+'use strict';
+const express = require('express'),
+    router = express.Router(),
+    category = require('../services/category');
 
-module.exports = {
-    list: (req, res) => {
-        category.list(req, obj => {
-            res.json(obj);
-        });
-    },
-};
+router.post('/list', (req, res) => {
+    category.list(req, obj => {
+        res.json(obj);
+    });
+});
+
+module.exports = router;

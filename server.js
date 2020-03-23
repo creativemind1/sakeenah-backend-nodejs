@@ -3,21 +3,17 @@
 require('dotenv').config();
 let express = require('express');
 var multer = require('multer');
-let apiRoutes = require('./server/routes/apiRoutes');
-let cmsRoutes = require('./server/routes/cmsRoutes');
-let authRoutes = require('./server/routes/authRoutes');
 let bodyParser = require('body-parser');
+let routes = require('./server/routes');
 // Initialize the app
 const app = express();
 // Import Mongoose
 //let mongoose = require("mongoose");
-
 var config = require('./server/config/config-' + process.env.NODE_ENV + '.js');
 const path = require('path');
 var cors = require('cors');
 var jwt = require('jsonwebtoken');
 let fs = require('fs-extra');
-
 var randomstring = require('randomstring');
 // // Create a storage object with a given configuration
 // const storage = require("multer-gridfs-storage")({
@@ -108,7 +104,7 @@ app.use(express.static(path.join(__dirname, 'upload')));
 app.use(bodyParser.json());
 
 function authChecker(req, res, next) {
-    if (req.path.startsWith('/cms') || req.path.startsWith('/api')) {
+    if (req.path.startsWith('/cms') || req.path.startsWith('/app')) {
         jwt.verify(
             req.body.token,
             config.secret(),
@@ -206,7 +202,6 @@ app.post('/singleUpload', upload1.array('uploads[]', 12), function(req, res) {
         });
     });
 });
-
 app.post('/upload', upload1.array('uploads[]', 12), function(req, res) {
     console.log('---- Video ---', req.files);
     if (!req.files) {
@@ -220,11 +215,14 @@ app.post('/upload', upload1.array('uploads[]', 12), function(req, res) {
         });
     }
 });
-app.use('/api', apiRoutes);
-app.use('/cms', cmsRoutes);
-app.use('/auth', authRoutes);
+/*app.use("/api", apiRoutes);
+app.use("/cms", cmsRoutes);
+app.use("/auth", authRoutes);*/
 app.use('/upload', express.static(path.join(__dirname, '/upload')));
 app.use('/deleteFile', express.static(path.join(__dirname, '/upload')));
+
+//Initiallize Route
+routes.initRoutes(app);
 
 // Launch app to listen to specified port
 app.listen(port, function() {

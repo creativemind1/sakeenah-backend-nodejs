@@ -1,4 +1,4 @@
-let AlbumModel = require('../../model/MediaModel'),
+let AlbumModel = require('../../model/Album'),
     UserMap = require('../../model/UserMap'),
     async = require('async'),
     premiumUser = false;
@@ -7,15 +7,15 @@ module.exports = {
     list: (req, callback) => {
         let responseObj = {
             status: 'FAILED',
-            message: null,
+            data: null,
         };
         let albums = null;
         let getAlbums = n => {
             const filter = {
-                subCategoryId: req.body.subCategoryId,
+                categoryId: req.body.categoryId,
             };
             const projection = {
-                mediaId: 1,
+                albumId: 1,
                 title: 1,
                 thumbImageUrl: 1,
                 author: 1,
@@ -36,7 +36,7 @@ module.exports = {
                 return n();
             } else {
                 //  get the user map
-                let filter = { userID: req.user.userId };
+                let filter = { userId: req.body.userId };
                 UserMap.findOne(filter, (err, doc) => {
                     if (doc) {
                         userAlbums = doc.albums ? doc.albums : null;
@@ -51,27 +51,22 @@ module.exports = {
                 if (premiumUser) {
                     for (let album of albums) {
                         album.premium = false;
-                        if (favorites.indexOf(album.mediaId) != -1) {
+                        if (favorites.indexOf(album.albumId) != -1) {
                             album.favorite = true;
                         }
                     }
                 } else if (userAlbums) {
-                    /*for (let index = 0; index < albums.length; index++) {
-            if (userAlbums[index] == albums[index].mediaId) {
-              albums[index + 1].premium = false;
-            }
-          }*/
                     for (let album of albums) {
-                        if (userAlbums.indexOf(album.mediaId) != -1) {
+                        if (userAlbums.indexOf(album.albumId) != -1) {
                             album.premium = false;
                         }
-                        if (favorites.indexOf(album.mediaId) != -1) {
+                        if (favorites.indexOf(album.albumId) != -1) {
                             album.favorite = true;
                         }
                     }
                 }
                 responseObj.status = 'SUCCESS';
-                responseObj.message = albums;
+                responseObj.data = albums;
             }
             callback(responseObj);
         });

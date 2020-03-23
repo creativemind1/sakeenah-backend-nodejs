@@ -8,7 +8,7 @@
 
 var mongoose = require('mongoose');
 var schema = mongoose.Schema({
-    userID: {
+    userId: {
         type: String,
         required: true,
     },
@@ -24,13 +24,12 @@ var schema = mongoose.Schema({
         type: Array,
         required: true,
     },
-    bookmarks: {
-        type: Array,
-        required: true,
-    },
     favorites: {
         type: Array,
     },
+    bookmarks: {
+        type: Array
+    }
 });
 // Export Contact model
 module.exports = mongoose.model('UMAP', schema, 'UMAP');
