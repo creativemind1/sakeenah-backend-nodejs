@@ -69,6 +69,14 @@ module.exports = {
                     });
                 }
                 responseObj.status = 'SUCCESS';
+            } else {
+                var userMap = new UserMap();
+                userMap.userId = req.body.userId;
+                userMap.favorites.push(req.body.albumId);
+                userMap.save(err, data => {
+                    console.log(data, '==data==.....');
+                });
+                responseObj.status = 'SUCCESS';
             }
             callback(responseObj);
         });

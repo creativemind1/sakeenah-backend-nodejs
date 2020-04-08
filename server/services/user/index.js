@@ -3,12 +3,6 @@
  */
 'use strict';
 const UserProfileModel = require('../../model/UserProfileModel'),
-    // UserPlayListModel = require('../model/UserPlayListModel'),
-    // MediaModel = require('../model/MediaModel'),
-    // PlayListModel = require('../model/PlayListModel'),
-    // CategoryModel = require('../model/CategoryModel'),
-    // Category_NEW_Model = require('../model/SubCategoryModel'),
-    // UserUnlock = require('../model/UserUnlock'),
     randomstring = require('randomstring'),
     async = require('async'),
     bcrypt = require('bcrypt-nodejs'),
@@ -19,20 +13,24 @@ const UserProfileModel = require('../../model/UserProfileModel'),
     webUrl = webService.webUrl(),
     jwt = require('jsonwebtoken'),
     config = require('../../config/config-' + process.env.NODE_ENV + '.js');
-//Default_Category_Id = 'zTdpUn9H0h';
 
 module.exports = {
     login: (req, callback) => {
+        console.log(
+            '=============== This is',
+            process.env.NODE_ENV,
+            'Branch ================================='
+        );
         if (req.body.emailId && req.body.password) {
             UserProfileModel.findOne(
                 { emailId: req.body.emailId, type: req.body.type, active: true },
-                function(err, doc) {
+                function (err, doc) {
                     if (doc && doc.password) {
                         if (bcrypt.compareSync(req.body.password, doc.password)) {
                             // Payment is Done .Its a premium User
                             const payload = { emailId: req.body.emailId };
                             var token = jwt.sign(payload, config.secret(), {
-                                expiresIn: '4d', // expires in 24 hours
+                                expiresIn: '10d', // expires in 4 days
                             });
                             if (doc.premiumUser) {
                                 doc.freeTrial = true;
@@ -96,12 +94,16 @@ module.exports = {
         userProfileModel.type = req.body.type;
         var userId = randomstring.generate(10);
         var content;
-
+        console.log(
+            '=============== This is',
+            process.env.NODE_ENV,
+            'Branch ================================='
+        );
         let validateLoginData = nCallback => {
             if (req.body.emailId) {
                 UserProfileModel.findOne(
                     { emailId: req.body.emailId, type: req.body.type },
-                    function(err, doc) {
+                    function (err, doc) {
                         if (doc) {
                             // Already same email id exists
                             callback({
@@ -131,8 +133,9 @@ module.exports = {
                 return nCallback();
             }
         };
+
         let readContent = nCallback => {
-            fs.readFile('./server/template/verifyEmail.html', 'utf8', function(err, data) {
+            fs.readFile('./server/template/verifyEmail.html', 'utf8', function (err, data) {
                 if (err) {
                     return nCallback();
                 } else {
@@ -148,6 +151,7 @@ module.exports = {
                 }
             });
         };
+
         if (req.body.socialMedia) {
             // validate the social media use cases
             if (req.body.emailId) {
@@ -155,7 +159,7 @@ module.exports = {
                     { emailId: req.body.emailId, type: 'B2C' },
                     { socialMedia: true, active: true },
                     { upsert: false },
-                    function(err, doc) {
+                    function (err, doc) {
                         if (err) {
                             callback({
                                 status: 'FAILED',
@@ -167,7 +171,7 @@ module.exports = {
                                 //Generate Token
                                 const payload = { emailId: req.body.emailId };
                                 var token = jwt.sign(payload, config.secret(), {
-                                    expiresIn: '4d', // expires in 24 hours
+                                    expiresIn: '10d', // expires in 24 hours
                                 });
                                 if (doc.premiumUser) {
                                     doc.freeTrial = true;
@@ -207,7 +211,7 @@ module.exports = {
                                 userProfileModel.create_date = new Date();
                                 userProfileModel.socialMedia = true;
                                 userProfileModel.active = true;
-                                userProfileModel.save(function(error, callback) {
+                                userProfileModel.save(error => {
                                     if (error) {
                                         callback({
                                             status: 'FAILED',
@@ -217,7 +221,7 @@ module.exports = {
                                         //Generate Token
                                         const payload = { emailId: req.body.emailId };
                                         var token = jwt.sign(payload, config.secret(), {
-                                            expiresIn: '4d', // expires in 24 hours
+                                            expiresIn: '10d', // expires in 24 hours
                                         });
 
                                         //response.freeTrial = true;
@@ -241,7 +245,7 @@ module.exports = {
         } else {
             async.series(
                 [validateLoginData.bind(), createHashPassword.bind(), readContent.bind()],
-                function(err) {
+                function (err) {
                     if (err) {
                         callback({
                             status: 'FAILED',
@@ -250,7 +254,7 @@ module.exports = {
                     } else {
                         userProfileModel.userId = userId;
                         userProfileModel.create_date = new Date();
-                        userProfileModel.save(function(error) {
+                        userProfileModel.save(function (error) {
                             if (error) {
                                 callback({
                                     status: 'FAILED',
@@ -264,7 +268,7 @@ module.exports = {
                                     subject: 'Verification Email for Sakeenah /tranquility/ app',
                                     message: userId,
                                 };
-                                email.sendmail(emailObj, function(err, data) {
+                                email.sendmail(emailObj, function (err, data) {
                                     if (err) console.log('----mail not sent-----' + err);
                                     else {
                                         console.log('----mail sent-----' + data);
@@ -291,28 +295,27 @@ module.exports = {
                 emailId: req.body.emailId,
                 type: req.body.type,
             },
-            function(err, doc) {
+            function (err, doc) {
                 if (doc) {
                     userId = doc.userId;
                     firstName = doc.firstName;
                     doc.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(8), null);
                     //Again the customer needs to activate the link from email
                     //doc.active = false;
-                    doc.save(function(error) {
+                    doc.save(function (error) {
                         if (error) {
                             callback({
                                 status: 'FAILED',
                                 message: error,
                             });
                         } else {
-                            async.series([readContent.bind()], function(err) {
+                            async.series([readContent.bind()], function (err) {
                                 if (err) {
                                     callback({
                                         status: 'FAILED',
                                         message: err,
                                     });
                                 } else {
-                                    console.log(content, '===content==');
                                     // send email
                                     var emailObj = {
                                         html: content,
@@ -321,7 +324,7 @@ module.exports = {
                                         message: userId,
                                         type: 'RESET_PASSWORD',
                                     };
-                                    email.sendmail(emailObj, function(err, data) {
+                                    email.sendmail(emailObj, function (err, data) {
                                         if (err) console.log('----mail not sent-----' + err);
                                         else {
                                             console.log('----mail sent-----' + data);
@@ -345,7 +348,7 @@ module.exports = {
         );
 
         let readContent = nCallback => {
-            fs.readFile('./server/template/resetPassword.html', 'utf8', function(err, data) {
+            fs.readFile('./server/template/resetPassword.html', 'utf8', function (err, data) {
                 if (err) {
                     return nCallback();
                 } else {
@@ -372,35 +375,19 @@ module.exports = {
                 { userId: reqParams.userId },
                 { active: true },
                 { upsert: false },
-                // function(err, doc) {
-                //     if (doc) {
-                //         res.writeHead(200, {
-                //             'Content-Type': 'text/html',
-                //         });
-                //         fs.readFile('./server/template/thanks.html', null, function(error, data) {
-                //             if (error) {
-                //                 res.writeHead(404);
-                //                 res.write('Whoops! File not found!');
-                //             } else {
-                //                 res.write(data);
-                //             }
-                //             res.end();
-                //         });
-                //     } else {
-                //         res.writeHead(200, {
-                //             'Content-Type': 'text/html',
-                //         });
-                //         fs.readFile('./server/template/error.html', null, function(error, data) {
-                //             if (error) {
-                //                 res.writeHead(404);
-                //                 res.write('Whoops! File not found!');
-                //             } else {
-                //                 res.write(data);
-                //             }
-                //             res.end();
-                //         });
-                //     }
-                // }
+                function (err, doc) {
+                    if (doc) {
+                        callback({
+                            status: 'SUCCESS',
+                            doc,
+                        });
+                    } else {
+                        callback({
+                            status: 'ERROR',
+                            doc,
+                        });
+                    }
+                }
             );
         } else {
             callback({
@@ -418,38 +405,19 @@ module.exports = {
                 { userId: reqParams.userId },
                 { active: true },
                 { upsert: false },
-                // function(err, doc) {
-                //     if (doc) {
-                //         res.writeHead(200, {
-                //             'Content-Type': 'text/html',
-                //         });
-                //         fs.readFile('./server/template/thanks-reset.html', null, function(
-                //             error,
-                //             data
-                //         ) {
-                //             if (error) {
-                //                 res.writeHead(404);
-                //                 res.write('Whoops! File not found!');
-                //             } else {
-                //                 res.write(data);
-                //             }
-                //             res.end();
-                //         });
-                //     } else {
-                //         res.writeHead(200, {
-                //             'Content-Type': 'text/html',
-                //         });
-                //         fs.readFile('./server/template/error.html', null, function(error, data) {
-                //             if (error) {
-                //                 res.writeHead(404);
-                //                 res.write('Whoops! File not found!');
-                //             } else {
-                //                 res.write(data);
-                //             }
-                //             res.end();
-                //         });
-                //     }
-                // }
+                function (err, doc) {
+                    if (doc) {
+                        callback({
+                            status: 'SUCCESS',
+                            doc,
+                        });
+                    } else {
+                        callback({
+                            status: 'ERROR',
+                            doc,
+                        });
+                    }
+                }
             );
         } else {
             callback({
@@ -485,7 +453,7 @@ module.exports = {
                 },
             ];
 
-            UserProfileModel.aggregate(aggregatorData, function(err, data) {
+            UserProfileModel.aggregate(aggregatorData, function (err, data) {
                 if (err) {
                     callback({
                         status: 'FAILED',
@@ -521,7 +489,7 @@ module.exports = {
                     },
                 },
                 { new: true, upsert: false },
-                function(err, data) {
+                function (err, data) {
                     if (err) {
                         callback({
                             status: 'FAILED',

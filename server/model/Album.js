@@ -16,7 +16,7 @@ var schema = mongoose.Schema({
     narrator: String,
     author: String,
     premium: Boolean,
-    seq: Number,
+    sequence: Number,
     duration: String,
     createdBy: String,
     modifiedBy: String,

@@ -1,6 +1,7 @@
 let AudioModel = require('../../model/Audio'),
     AlbumModel = require('../../model/Album'),
     UserMap = require('../../model/UserMap'),
+    UserProfile = require('../../model/UserProfileModel'),
     async = require('async'),
     premiumUser = false;
 
@@ -11,6 +12,15 @@ module.exports = {
             data: null,
             category: req.body.categoryId, // WILL COME BACK HERE SOON.....
             album: req.body.albumId,
+        };
+        let premiumStatus = n => {
+            let filter = { userId: req.body.userId };
+            UserProfile.findOne(filter, (err, profile) => {
+                if (profile && profile.premiumUser) {
+                    premiumUser = true;
+                }
+                return n();
+            });
         };
         let audios = null;
         let getAudios = n => {
@@ -30,6 +40,7 @@ module.exports = {
             AudioModel.find(filter, projection, (err, docs) => {
                 if (docs && docs.length) {
                     audios = JSON.parse(JSON.stringify(docs));
+                    audios.sort((a, b) => a.episode - b.episode);
                 }
                 return n();
             });
@@ -37,42 +48,26 @@ module.exports = {
         let userAudios = null;
         let bookmarks = null;
         let getUser = n => {
-            if (premiumUser) {
-                return n();
-            } else {
-                //  get the user map
-                let filter = { userId: req.body.userId };
-                let projection = { _id: 0, audios: 1, bookmarks: 1 };
-                UserMap.findOne(filter, projection, (err, doc) => {
-                    if (doc) {
+            let filter = { userId: req.body.userId };
+            let projection = { _id: 0, audios: 1, bookmarks: 1 };
+            UserMap.findOne(filter, projection, (err, doc) => {
+                if (doc) {
+                    bookmarks = doc.bookmarks;
+                    if (!premiumUser) {
                         userAudios = doc.audios;
-                        bookmarks = doc.bookmarks;
                     }
-                    return n();
-                });
-            }
+                }
+                return n();
+            });
         };
-        async.parallel([getAudios.bind(), getUser.bind()], () => {
+        async.parallel([premiumStatus.bind(), getAudios.bind(), getUser.bind()], () => {
             if (audios) {
-                if (premiumUser) {
-                    for (let audio of audios) {
+                for (let audio of audios) {
+                    if (premiumUser || (userAudios && userAudios.indexOf(audio.audioId) != -1)) {
                         audio.premium = false;
-                        if (bookmarks) {
-                            if (bookmarks.indexOf(audio.audioId) != -1) {
-                                audio.bookmark = true;
-                            }
-                        }
                     }
-                } else if (userAudios) {
-                    for (let audio of audios) {
-                        if (userAudios.indexOf(audio.audioId) != -1) {
-                            audio.premium = false;
-                            if (bookmarks) {
-                                if (bookmarks.indexOf(audio.audioId) != -1) {
-                                    audio.bookmark = true;
-                                }
-                            }
-                        }
+                    if (bookmarks && bookmarks.indexOf(audio.audioId) != -1) {
+                        audio.bookmark = true;
                     }
                 }
                 responseObj.status = 'SUCCESS';
@@ -89,6 +84,17 @@ module.exports = {
             seq = episode + 1,
             nextAudio = null,
             albumFinished = false;
+
+        let premiumStatus = n => {
+            let filter = { userId: req.body.userId };
+            UserProfile.findOne(filter, (err, profile) => {
+                if (profile && profile.premiumUser) {
+                    premiumUser = true;
+                }
+                return n();
+            });
+        };
+
         let getAudios = n => {
             const filter = {
                 albumId: req.body.albumId,
@@ -106,6 +112,7 @@ module.exports = {
             AudioModel.find(filter, projection, (err, docs) => {
                 if (docs && docs.length) {
                     audios = docs;
+                    audios.sort((a, b) => a.episode - b.episode);
                     for (let audio of audios) {
                         if (audio.episode == seq) {
                             audio.premium = false;
@@ -120,6 +127,7 @@ module.exports = {
                 return n();
             });
         };
+
         let nextAlbum = null;
         let getAlbums = n => {
             if (albumFinished) {
@@ -133,14 +141,15 @@ module.exports = {
                     author: 1,
                     premium: 1,
                     duration: 1,
+                    sequence: 1,
                 };
-                AlbumModel.find(filter, projection, { sort: { _id: -1 } }, (err, albums) => {
+
+                AlbumModel.find(filter, projection, (err, albums) => {
                     if (albums && albums.length) {
+                        albums.sort((a, b) => a.sequence - b.sequence);
                         for (let index = 0; index < albums.length; index++) {
-                            if ((albums[index].albumId = req.body.albumId)) {
-                                if (albums[index + 1]) {
-                                    nextAlbum = albums[index + 1].albumId;
-                                }
+                            if ((albums[index].albumId = req.body.albumId) && albums[index + 1]) {
+                                nextAlbum = albums[index + 1].albumId;
                             }
                         }
                     }
@@ -150,41 +159,48 @@ module.exports = {
                 return n();
             }
         };
+
         let getUser = n => {
-            if (premiumUser) {
-                return n();
-            } else {
-                //  get the user map
-                let filter = { userId: req.body.userId };
-                // let projection = {  audios: 1, albums: 1 };
-                UserMap.findOne(filter, (err, doc) => {
-                    if (doc) {
-                        /* updating default audios */
-                        if (doc.audios.indexOf(req.body.audioId) == -1 || doc.audios.length == 0) {
-                            doc.audios.push(nextAudio);
-                        }
-                        /* update albums*/
-                        if (nextAlbum) {
-                            if (doc.albums.indexOf(nextAlbum) == -1) {
-                                doc.albums.push(nextAlbum);
-                            } else if (doc.albums.length == 0) {
-                                doc.albums.push(nextAlbum);
-                            }
-                        }
-                        /*save the user map*/
-                        doc.save((e, s) => {
-                            console.log('EEE', e);
-                            console.log('SSS', s);
-                        });
+            //  get the user map
+            let filter = { userId: req.body.userId };
+            // let projection = {  audios: 1, albums: 1 };
+            if (premiumUser) return n();
+            UserMap.findOne(filter, (err, doc) => {
+                if (doc) {
+                    /* updating default audios */
+                    if (doc.audios.indexOf(nextAudio) == -1 || doc.audios.length == 0) {
+                        doc.audios.push(nextAudio);
                     }
-                    return n();
-                });
-            }
+                    /* update albums*/
+                    if (
+                        nextAlbum &&
+                        (doc.albums.indexOf(nextAlbum) == -1 || doc.albums.length == 0)
+                    ) {
+                        doc.albums.push(nextAlbum);
+                    }
+                    /*save the user map*/
+                    doc.save((e, s) => {
+                        console.log('EEE', e);
+                        console.log('SSS', s);
+                    });
+                } else {
+                    var userMap = UserMap();
+                    userMap.userId = req.body.userId;
+                    userMap.audios.push(req.body.audioId);
+                    userMap.save(err, data => {
+                        console.log(data, '==data==.....');
+                    });
+                }
+                return n();
+            });
         };
-        async.series([getAudios.bind(), getAlbums.bind(), getUser.bind()], () => {
-            responseObj.status = 'SUCCESS';
-            responseObj.data = audios;
-            callback(responseObj);
-        });
+        async.series(
+            [premiumStatus.bind(), getAudios.bind(), getAlbums.bind(), getUser.bind()],
+            () => {
+                responseObj.status = 'SUCCESS';
+                responseObj.data = audios;
+                callback(responseObj);
+            }
+        );
     },
 };

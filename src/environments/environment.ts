@@ -4,7 +4,7 @@
 
 import { domain } from "./../../server/config/domain.js"
 
-const serverUrl = domain();
+const serverUrl = domain();//domain();
 const loginUrl = serverUrl + '/app/user';
 const baseUrl = serverUrl + '/cms';
 const uploadUrl = serverUrl + '/upload';

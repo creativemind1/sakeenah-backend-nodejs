@@ -1,12 +1,12 @@
-'use strict'
-var payment = require('../services/payment')
+'use strict';
+var apple = require('../services/apple')
 var CronJob = require('cron').CronJob;
 
 module.exports = {
     everyDayAt1030: () => {
-        var job = new CronJob('27 11 * * *', () => {
-            console.log('scheduler runs  at 10:30 am every day');
-            payment.monitor()
+        var job = new CronJob('0 0 * * *', () => {
+            console.log(new Date(), '************** scheduler runs ******************');
+            apple.monitor();
         }, null, true);
         job.start();
     }

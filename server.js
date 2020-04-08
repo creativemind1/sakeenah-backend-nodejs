@@ -86,7 +86,7 @@ let upload1 = multer({ storage: storage });
 
 // Configure bodyparser to handle post requests
 app.use(cors());
-app.all('/*', function(req, res, next) {
+app.all('/*', function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type, Accept');
     res.header('Access-Control-Allow-Methods');
@@ -106,13 +106,17 @@ app.use(bodyParser.json());
 function authChecker(req, res, next) {
     if (
         req.path.startsWith('/cms') ||
-        (req.path.startsWith('/app') && !req.path.startsWith('/app/user/login'))
+        (req.path.startsWith('/app') &&
+            !req.path.startsWith('/app/user/login') &&
+            !req.path.startsWith('/app/user/resetpswd') &&
+            !req.path.startsWith('/app/user/resetPassword') &&
+            !req.path.startsWith('/app/user/verifyEmail'))
     ) {
         jwt.verify(
             req.body.token,
             config.secret(),
             {
-                expiresIn: '4d', // expires in 24 hours
+                expiresIn: '10d', // expires in 24 hours
             },
             (err, decoded) => {
                 if (err) {
@@ -137,7 +141,7 @@ var port = process.env.PORT || 8080;
 console.log(port, '===port==');
 app.set('superSecret', config.secret()); // secret variable
 
-app.post('/deleteFile', function(req, res) {
+app.post('/deleteFile', function (req, res) {
     console.log('File Url', req.body.filePath);
     if (req.body.filePath) {
         fs.unlink(req.body.filePath, err => {
@@ -160,11 +164,11 @@ app.post('/deleteFile', function(req, res) {
     }
 });
 
-app.get('/(|login|reset|category|album|playlist)', function(req, res) {
+app.get('/(|login|reset|category|album|playlist)', function (req, res) {
     res.set('Content-Type', 'text/html').sendFile(__dirname + '/public/index.html');
 });
 
-app.post('/singleUpload', upload1.array('uploads[]', 12), function(req, res) {
+app.post('/singleUpload', upload1.array('uploads[]', 12), function (req, res) {
     const fileType = req.files[0];
     var filestream = fs.createReadStream(fileType.path);
     const makeid = () => {
@@ -175,7 +179,7 @@ app.post('/singleUpload', upload1.array('uploads[]', 12), function(req, res) {
         }
         return result;
     };
-    filestream.on('open', function() {
+    filestream.on('open', function () {
         const randomNumber = Math.random() * 10000;
 
         const randomChar = makeid() + randomNumber.toFixed(0);
@@ -206,7 +210,7 @@ app.post('/singleUpload', upload1.array('uploads[]', 12), function(req, res) {
         });
     });
 });
-app.post('/upload', upload1.array('uploads[]', 12), function(req, res) {
+app.post('/upload', upload1.array('uploads[]', 12), function (req, res) {
     console.log('---- Video ---', req.files);
     if (!req.files) {
         return res.send({
@@ -219,7 +223,7 @@ app.post('/upload', upload1.array('uploads[]', 12), function(req, res) {
         });
     }
 });
-var scheduler = require ('./server/scheduler');
+var scheduler = require('./server/scheduler');
 scheduler.init();
 app.use('/upload', express.static(path.join(__dirname, '/upload')));
 app.use('/deleteFile', express.static(path.join(__dirname, '/upload')));
@@ -228,6 +232,6 @@ app.use('/deleteFile', express.static(path.join(__dirname, '/upload')));
 routes.initRoutes(app);
 
 // Launch app to listen to specified port
-app.listen(port, function() {
+app.listen(port, function () {
     console.log('Running RestHub on port ' + port);
 });

@@ -1,4 +1,10 @@
-let PaymentOrder = require('../../model/PaymentOrder');
+let PaymentOrder = require('../../model/PaymentOrder'),
+    UserProfile = require('../../model/UserProfileModel'),
+    ApplePayReceipts = require('../../model/ApplePayReceipts'),
+    apple = require('../apple'),
+    moment = require('moment'),
+    async = require('async');
+
 module.exports = {
     orders: (req, callback) => {
         let responseObj = { status: 'FAILED', message: null };
@@ -11,41 +17,77 @@ module.exports = {
             callback(responseObj);
         });
     },
+
     capture: (req, callback) => {
         let responseObj = { status: 'FAILED', data: null };
-        let filter = { userId: req.body.userId };
-        PaymentOrder.findOne(filter, (err, docs) => {
-            if (docs && docs.length) {
-                if (req.body.transaction) {
-                    docs.paymentInfo.push(req.body.transaction);
+        //  let filter = { userId: req.body.userId };
+        /* let paymentOrder = n => {
+             PaymentOrder.findOne(filter, (err, doc) => {
+                 if (!err && doc) {
+                     doc.paymentInfo.push(req.body.transaction)
+                     doc.save((e, s) => {
+                         console.log(e, s)
+                         return n();
+                     })
+ 
+                 }
+             });
+         };*/
+        let verifyTransaction = n => {
+            apple.verify(
+                { userId: req.body.userId, receipt_key: req.body.transaction.transactionReceipt },
+                obj => {
+                    if (obj.status == 'FAILED') {
+                        var doc = {
+                            userId: req.body.userId,
+                            transaction_id: req.body.transactionId,
+                            original_transaction_id: req.body.transactionId,
+                            purchase_date_ms: req.body.transactionDate,
+                            original_purchase_date_ms: req.body.transactionDate,
+                            expires_date_ms: moment().add(30, 'days').format('x'),
+                            web_order_line_item_id: null,
+                            receipt_key: req.body.transactionReceipt,
+                            // subscription_expiry: Number(
+                            //     moment().add(30, 'days').format('YYYYMMDD')
+                            // ),
+                            active: true,
+                            trial_period: null,
+                            intro_offer_period: null,
+                            receiptLog: JSON.stringify(req.body.transaction),
+                        };
+                        ApplePayReceipts(doc).save(() => {
+                            return n();
+                        });
+                    } else {
+                        return n();
+                    }
                 }
-                docs.save((e, s) => {
-                    console.log('EEE', e);
-                    console.log('SSS', s);
-                });
-            } else {
-                var payment = new PaymentOrder();
-                payment.userId = req.body.userId;
-                payment.paymentInfo = [];
-                payment.paymentInfo.push(req.body.transaction);
-                payment.save(err, data => {
-                    console.log(data, '==data==.....');
-                    responseObj.status = 'SUCCESS';
-                    responseObj.data = null;
-                });
-            }
+            );
+        };
+
+        let premiumStatus = n => {
+            /*UserProfile.findOne({ userId: req.body.userId }, (err, doc) => {
+                if (doc) {
+                    doc.premiumUser = true;
+                    doc.save((e, s) => {
+                        console.log(e, s);
+                    });
+                }
+                return n();
+            });*/
+            UserProfile.updateOne(
+                { userId: req.body.userId },
+                { $set: { premiumUser: true } },
+                () => {
+                    return n();
+                }
+            );
+        };
+
+        async.series([verifyTransaction.bind(), premiumStatus.bind()], () => {
+            responseObj.status = 'SUCCESS';
+            responseObj.data = null;
             callback(responseObj);
         });
-        // PaymentOrder({ userId: req.body.userId, paymentInfo }).save((e, s) => {
-        //     if (!e && s) {
-        //         responseObj.status = 'SUCCESS';
-        //         responseObj.data = s;
-        //     }
-        //     callback(responseObj);
-        // });
-    },
-    monitor: () => {
-        console.log('monitor payments');
-        //todo
     },
 };

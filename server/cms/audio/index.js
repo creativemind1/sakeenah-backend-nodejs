@@ -24,7 +24,7 @@ router.post('/save', (req, res) => {
                 thumbImageUrl: req.body.thumbImageUrl,
             },
             { upsert: false },
-            function(err, doc) {
+            function (err, doc) {
                 if (doc) {
                     res.json({
                         status: 'SUCCESS',
@@ -51,7 +51,7 @@ router.post('/save', (req, res) => {
         playListModel.companyId = req.body.companyId;
         playListModel.sequence = req.body.sequence;
         playListModel.thumbImageUrl = req.body.thumbImageUrl;
-        playListModel.save(function(error) {
+        playListModel.save(function (error) {
             if (error) {
                 res.json({
                     status: 'FAILED',
@@ -68,7 +68,7 @@ router.post('/save', (req, res) => {
 });
 
 router.post('/list', (req, res) => {
-    AudioModel.find(null, function(err, doc) {
+    AudioModel.find(null, function (err, doc) {
         if (doc) {
             res.json({
                 status: 'SUCCESS',

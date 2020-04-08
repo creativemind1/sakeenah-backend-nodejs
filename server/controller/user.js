@@ -4,7 +4,8 @@
 'use strict';
 const express = require('express'),
     router = express.Router(),
-    user = require('../services/user');
+    user = require('../services/user'),
+    fs = require('fs');
 
 router.post('/login', (req, res) => {
     user.login(req, obj => {
@@ -24,14 +25,74 @@ router.post('/resetpswd', (req, res) => {
     });
 });
 
-router.post('/verifyEmail', (req, res) => {
+router.get('/verifyEmail', (req, res) => {
     user.verifyEmail(req, obj => {
-        res.json(obj);
+        if (obj.status == 'SUCCESS') {
+            res.writeHead(200, {
+                'Content-Type': 'text/html',
+            });
+            fs.readFile('./server/template/thanks.html', null, function (error, data) {
+                if (error) {
+                    res.writeHead(404);
+                    res.write('Whoops! File not found!');
+                } else {
+                    res.write(data);
+                }
+                res.end();
+            });
+        } else {
+            res.writeHead(200, {
+                'Content-Type': 'text/html',
+            });
+            fs.readFile('./server/template/error.html', null, function (error, data) {
+                if (error) {
+                    res.writeHead(404);
+                    res.write('Whoops! File not found!');
+                } else {
+                    res.write(data);
+                }
+                res.end();
+            });
+        }
+        //res.json(obj);
     });
 });
 
-router.post('/resetPassword', (req, res) => {
+router.get('/resetPassword', (req, res) => {
     user.resetPassword(req, obj => {
+        if (obj.status == 'SUCCESS') {
+            res.writeHead(200, {
+                'Content-Type': 'text/html',
+            });
+            fs.readFile('./server/template/thanks-reset.html', null, function (error, data) {
+                if (error) {
+                    res.writeHead(404);
+                    res.write('Whoops! File not found!');
+                } else {
+                    res.write(data);
+                }
+                res.end();
+            });
+        } else {
+            res.writeHead(200, {
+                'Content-Type': 'text/html',
+            });
+            fs.readFile('./server/template/error.html', null, function (error, data) {
+                if (error) {
+                    res.writeHead(404);
+                    res.write('Whoops! File not found!');
+                } else {
+                    res.write(data);
+                }
+                res.end();
+            });
+        }
+        //res.json(obj);
+    });
+});
+
+router.post('/updateProfile', (req, res) => {
+    user.saveUserProfile(req, obj => {
         res.json(obj);
     });
 });
