@@ -19,6 +19,7 @@ router.post('/save', (req, res) => {
                 description: req.body.description,
                 modify_date: modify_date,
                 active: req.body.active,
+                sequence: req.body.sequence,
             },
             { upsert: false },
             (err, doc) => {
@@ -43,8 +44,9 @@ router.post('/save', (req, res) => {
         categoryModel.categoryName = req.body.categoryName;
         categoryModel.companyId = req.body.companyId;
         categoryModel.description = req.body.description;
+        categoryModel.sequence = req.body.sequence;
         categoryModel.create_date = new Date();
-        categoryModel.save(function(error) {
+        categoryModel.save(function (error) {
             if (error) {
                 res.json({
                     status: 'FAILED',
@@ -61,7 +63,7 @@ router.post('/save', (req, res) => {
 });
 
 router.post('/list', (req, res) => {
-    Category.find(null, function(err, doc) {
+    Category.find(null, function (err, doc) {
         if (doc) {
             doc.sort((a, b) => a.sequence - b.sequence);
             res.json({
@@ -79,7 +81,7 @@ router.post('/list', (req, res) => {
 
 router.post('/delete', (req, res) => {
     if (req.body.categoryId) {
-        Category.deleteOne({ categoryId: req.body.categoryId }, function(err, doc) {
+        Category.deleteOne({ categoryId: req.body.categoryId }, function (err, doc) {
             if (doc && doc.deletedCount == 1) {
                 res.json({
                     status: 'SUCCESS',
