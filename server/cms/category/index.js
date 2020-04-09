@@ -63,6 +63,7 @@ router.post('/save', (req, res) => {
 router.post('/list', (req, res) => {
     Category.find(null, function(err, doc) {
         if (doc) {
+            doc.sort((a, b) => a.sequence - b.sequence);
             res.json({
                 status: 'SUCCESS',
                 message: doc,

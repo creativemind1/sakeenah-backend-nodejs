@@ -13,7 +13,7 @@ var schema = mongoose.Schema(
         categoryName: String,
         thumbImageUrl: { key: String, value: String },
         description: String,
-        seq: Number,
+        sequence: Number,
         active: { type: Boolean, default: true },
     },
     { createdAt: 'created_at', updatedAt: 'updated_at' }

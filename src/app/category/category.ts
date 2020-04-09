@@ -9,5 +9,6 @@ export class Category {
   createdBy: string;
   companyId: string;
   enableUpdate: boolean;
+  sequence: Number;
 }
 

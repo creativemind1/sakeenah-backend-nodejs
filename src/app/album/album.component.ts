@@ -36,6 +36,8 @@ export class AlbumComponent implements OnInit {
   @Output() messageEvent = new EventEmitter<FileUpload>();
   transportMsg: Transporter = new Transporter();
   sequence: Number[];
+  mappingIds: any = {};
+
   ngOnInit() {
     this.album.active = true;
     this.album.videoUrl;
@@ -45,17 +47,19 @@ export class AlbumComponent implements OnInit {
   loadPlaylist() {
     this.loadMedia();
   }
+
   loadMedia() {
     this.cmsService.getAllMedia().subscribe(response => {
       var result = JSON.parse(JSON.stringify(response));
       this.dataSource = result.message;
-      var myArray = this.dataSource
+      var myArray = this.dataSource;
       for (var i in myArray) {
-        myArray[i].create_date = moment(String(myArray[i].create_date)).format('DD-MMM-YYYY')
+        myArray[i].create_date = moment(String(myArray[i].create_date)).format('DD-MMM-YYYY');
       }
-      this.displayedColumns = ['name', 'active', 'create_date', 'deleteAction', 'updateAction'];
+      this.displayedColumns = ['name', 'active', 'create_date', 'category', 'sequence1', 'deleteAction', 'updateAction'];
     });
   }
+
   onSave() {
     if (this.album && this.album.title) {
       console.log(this.album, '===this.album===')
@@ -76,7 +80,14 @@ export class AlbumComponent implements OnInit {
     this.cmsService.getCategories().subscribe(response => {
       var result = JSON.parse(JSON.stringify(response));
       this.category = result.message;
-      this.album.categoryId = [this.category[0].categoryId]
+      this.album.categoryId = [this.category[0].categoryId];
+      var obj = {}
+      this.category.map((user, j) => {
+        var categoryID = user.categoryId;
+        var categoryName = user.categoryName;
+        obj[categoryID] = categoryName;
+      });
+      this.mappingIds = obj;
       this.categoryClick();
     });
   }
@@ -96,6 +107,7 @@ export class AlbumComponent implements OnInit {
       alert('Write any name')
     }
   }
+
   edit(row) {
     this.onClear();
     this.selectedAlbum = row;
@@ -111,6 +123,7 @@ export class AlbumComponent implements OnInit {
       data: [row, this, 'deleteMedia']
     });
   }
+
   categoryClick() {
     this.cmsService.getCategories().subscribe(response => {
       console.log(response, '===Categories====````');
@@ -133,9 +146,11 @@ export class AlbumComponent implements OnInit {
 
     });
   }
+
   receiveMessage($event) {
     this.album.videoUrl = $event;
   }
+
   receiveSingleFile($event) {
     this.album.thumbImageUrl = $event
   }
@@ -143,9 +158,11 @@ export class AlbumComponent implements OnInit {
   receiveUpdateVideoMessage($event) {
     this.selectedAlbum.videoUrl = $event;
   }
+
   receiveUpdateSingleFile($event) {
     this.selectedAlbum.thumbImageUrl = $event
   }
+
   onClear() {
     this.selectedAlbum = new Album();
     this.album = new Album();
