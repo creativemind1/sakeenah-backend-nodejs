@@ -30,7 +30,7 @@ router.post('/save', (req, res) => {
                 sequence: req.body.sequence,
             },
             { upsert: false },
-            function(err, doc) {
+            function (err, doc) {
                 if (doc) {
                     res.json({
                         status: 'SUCCESS',
@@ -63,7 +63,7 @@ router.post('/save', (req, res) => {
         albumModel.active = req.body.active;
         albumModel.duration = req.body.duration;
         albumModel.sequence = req.body.sequence;
-        albumModel.save(function(error) {
+        albumModel.save(function (error) {
             if (error) {
                 res.json({
                     status: 'FAILED',
@@ -80,7 +80,7 @@ router.post('/save', (req, res) => {
 });
 
 router.post('/list', (req, res) => {
-    AlbumModel.find(null, function(err, doc) {
+    AlbumModel.find(null, function (err, doc) {
         if (doc) {
             res.json({
                 status: 'SUCCESS',
@@ -97,7 +97,7 @@ router.post('/list', (req, res) => {
 
 router.post('/delete', (req, res) => {
     if (req.body.albumId) {
-        AlbumModel.deleteOne({ albumId: req.body.albumId }, function(err, doc) {
+        AlbumModel.deleteOne({ albumId: req.body.albumId }, function (err, doc) {
             if (doc && doc.deletedCount == 1) {
                 res.json({
                     status: 'SUCCESS',

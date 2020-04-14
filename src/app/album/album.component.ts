@@ -37,6 +37,8 @@ export class AlbumComponent implements OnInit {
   transportMsg: Transporter = new Transporter();
   sequence: Number[];
   mappingIds: any = {};
+  loader: Boolean;
+
 
   ngOnInit() {
     this.album.active = true;
@@ -52,6 +54,7 @@ export class AlbumComponent implements OnInit {
     this.cmsService.getAllMedia().subscribe(response => {
       var result = JSON.parse(JSON.stringify(response));
       this.dataSource = result.message;
+      console.log(this.dataSource, '===Data Source===');
       var myArray = this.dataSource;
       for (var i in myArray) {
         myArray[i].create_date = moment(String(myArray[i].create_date)).format('DD-MMM-YYYY');
@@ -94,15 +97,30 @@ export class AlbumComponent implements OnInit {
 
   onUpdate() {
     if (this.selectedAlbum && this.selectedAlbum.title) {
-      console.log(this.selectedAlbum, '===this.selectedAlbum===')
       this.selectedAlbum['type'] = "SAVE";
-      this.cmsService.saveOrupdateMedia(this.selectedAlbum).subscribe(response => {
-        var result = JSON.parse(JSON.stringify(response));
-        if (result.status == 'SUCCESS') {
-          this.loadMedia();
-          this.onClear()
-        }
-      });
+      if (this.selectedAlbum && this.selectedAlbum.thumbImageUrl && this.selectedAlbum.thumbImageUrl.length) {
+        this.cmsService.singleFileupload(this.selectedAlbum).subscribe(response => {
+          this.loader = true;
+          this.selectedAlbum.thumbImageUrl['value'] = '';
+          this.selectedAlbum.thumbImageUrl['value'] = response.files[0].path;
+          this.cmsService.saveOrupdateMedia(this.selectedAlbum).subscribe(response => {
+            var result = JSON.parse(JSON.stringify(response));
+            if (result.status == 'SUCCESS') {
+              this.onClear();
+              this.loader = false;
+            }
+          });
+        })
+      } else if (this.selectedAlbum) {
+        this.cmsService.saveOrupdateMedia(this.selectedAlbum).subscribe(response => {
+          var result = JSON.parse(JSON.stringify(response));
+          if (result.status == 'SUCCESS') {
+            this.loadMedia();
+            this.onClear();
+            this.loader = false;
+          }
+        });
+      }
     } else {
       alert('Write any name')
     }

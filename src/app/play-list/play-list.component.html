@@ -30,7 +30,7 @@
           <div style="margin-top:20px">
             <app-single-file-upload (messageEvent)="receiveUpdatePlayListSingleFile($event)" myType="mp3">
             </app-single-file-upload>
-            <small>* File type support <strong>mp3</strong> only and below <strong>3 MB</strong></small>
+            <small>* File type support <strong>mp3</strong> only and below <strong>7 MB</strong></small>
           </div>
         </mat-card-content>
         <img *ngIf="loader" src="./../../assets/uploading.gif" width="50"
@@ -68,7 +68,7 @@
           <div style="margin-top:20px">
             <app-single-file-upload (messageEvent)="receivePlayListSingleFile($event)" myType="mp3">
             </app-single-file-upload>
-            <small>* File type support <strong>mp3</strong> only and below <strong>3 MB</strong></small>
+            <small>* File type support <strong>mp3</strong> only and below <strong>7 MB</strong></small>
           </div>
         </mat-card-content>
         <img *ngIf="loader" src="./../../assets/uploading.gif" width="50"
@@ -78,6 +78,14 @@
             (click)="onSave('save')">Save</button> </mat-card-actions>
       </form>
     </ng-template>
+
+    <mat-form-field>
+      <mat-label>Select Album</mat-label>
+      <mat-select [(ngModel)]="albumId" name="albumId" (ngModelChange)="triggerUpdate($event)">
+        <mat-option *ngFor="let food of album" [value]="food.albumId"> {{food.title}} </mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <table *ngIf="dataSource?.length" mat-table [dataSource]="dataSource" class="mat-elevation-z8">
       <!-- Name Column -->
       <ng-container matColumnDef="Name">
@@ -93,7 +101,7 @@
         <td mat-cell *matCellDef="let element"> {{element.create_date}} </td>
       </ng-container>
       <ng-container matColumnDef="albumId">
-        <th mat-header-cell *matHeaderCellDef> Category </th>
+        <th mat-header-cell *matHeaderCellDef> Album </th>
         <td mat-cell *matCellDef="let element"> <span *ngFor="let food of album">
             <!-- {{album | json}} -->
             <!-- {{food.title}} - {{element.albumId}} --> <span
