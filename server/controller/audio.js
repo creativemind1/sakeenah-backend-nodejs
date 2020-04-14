@@ -17,4 +17,10 @@ router.post('/completed', (req, res) => {
     });
 });
 
+router.post('/cms_audio_list', (req, res) => {
+    audio.cms_audio_list(req, obj => {
+        res.json(obj);
+    });
+});
+
 module.exports = router;

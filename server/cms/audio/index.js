@@ -20,7 +20,7 @@ router.post('/save', (req, res) => {
                 description: req.body.description,
                 albumId: req.body.albumId,
                 premium: req.body.premium,
-                sequence: req.body.sequence,
+                episode: req.body.episode,
                 thumbImageUrl: req.body.thumbImageUrl,
             },
             { upsert: false },
@@ -49,7 +49,7 @@ router.post('/save', (req, res) => {
         playListModel.create_date = new Date();
         playListModel.description = req.body.description;
         playListModel.companyId = req.body.companyId;
-        playListModel.sequence = req.body.sequence;
+        playListModel.episode = req.body.episode;
         playListModel.thumbImageUrl = req.body.thumbImageUrl;
         playListModel.save(function (error) {
             if (error) {
@@ -78,6 +78,25 @@ router.post('/list', (req, res) => {
             res.json({
                 status: 'FAILED',
                 message: 'No Data Available',
+            });
+        }
+    });
+});
+
+router.post('/cms_audio_list', (req, res) => {
+    //req.body.albumId
+    let filter = { albumId: req.body.albumId };
+    AudioModel.find(filter, function (err, doc) {
+        doc.sort((a, b) => a.episode - b.episode);
+        if (doc) {
+            res.json({
+                status: 'SUCCESS',
+                data: doc,
+            });
+        } else {
+            res.json({
+                status: 'FAILED',
+                data: 'No Data Available',
             });
         }
     });

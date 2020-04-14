@@ -183,6 +183,16 @@ export class CmsService {
     }));
   }
 
+  getAudioBasedOnAlbum(albumId){
+    var token = this.auth.getToken();
+    return this.http.post(this.baseUrl + '/audio/cms_audio_list', {
+      albumId,
+      token
+    }).pipe(map((resp) => {
+      return resp;
+    }));
+  }
+
   //Save or Update Sub Category
   saveOrupdatePlayList(playList: PlayList) {
     playList.companyId = this.companyId;
