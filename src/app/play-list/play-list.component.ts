@@ -37,7 +37,7 @@ export class PlayListComponent implements OnInit {
   loader: Boolean;
 
   ngOnInit() {
-    this.playList.premium = false;
+    this.playList.premium = true;
     this.loadAlbums();
     //this.loadPlaylist();
     this.loadDayslist();
@@ -188,7 +188,7 @@ export class PlayListComponent implements OnInit {
   onClear() {
     this.selectedPlayList = new PlayList();
     this.playList = new PlayList();
-    this.playList.premium = false;
+    this.playList.premium = true;
     this.transportMsg.img = this.selectedPlayList.thumbImageUrl;
     this.cmsService.sendMessage(this.transportMsg);
   }

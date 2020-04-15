@@ -48,7 +48,7 @@ module.exports = {
                             data: {
                                 'receipt-data': receipt.receipt_key,
                                 password: config.webUrl().applePassword,
-                                'exclude-old-transactions': false,
+                                'exclude-old-transactions': true,
                             },
                         })
                             .then(function (response) {
@@ -57,11 +57,8 @@ module.exports = {
                                     response.data.latest_receipt_info &&
                                     response.data.latest_receipt_info.length
                                 ) {
-                                    let latestReciptInfo =
-                                        response.data.latest_receipt_info[
-                                            response.data.latest_receipt_info.length - 1
-                                        ];
-                                        
+                                    let latestReciptInfo = response.data.latest_receipt_info[0];
+
                                     // let purchaseNumber = Number(moment(latestReciptInfo.purchase_date_ms, 'x').format('YYYYMMDD'))
                                     // let oldReceiptPurchaseNumber = Number(moment(receipt.purchase_date_ms, 'x').format('YYYYMMDD'))
                                     let purchaseNumber = Number(latestReciptInfo.purchase_date_ms);
@@ -101,9 +98,26 @@ module.exports = {
                                             next();
                                         });
                                     } else {
-                                        UserProfile.updateOne(
-                                            { userId: receipt.userId },
-                                            { $set: { premiumUser: false } },
+                                        let updateUser = n => {
+                                            UserProfile.updateOne(
+                                                { userId: receipt.userId },
+                                                { $set: { premiumUser: false } },
+                                                () => {
+                                                    return n();
+                                                }
+                                            );
+                                        };
+                                        let updateReceipt = n => {
+                                            ApplePayReceipts.updateOne(
+                                                { transaction_id: receipt.transaction_id },
+                                                { $set: { active: false } },
+                                                () => {
+                                                    return n();
+                                                }
+                                            );
+                                        };
+                                        async.parallel(
+                                            [updateUser.bind(), updateReceipt.bind()],
                                             () => {
                                                 next();
                                             }
@@ -134,6 +148,143 @@ module.exports = {
                     console.log(' ERROR --- applay pay receipts verified at: ', err);
                 }
                 console.log('applay pay receipts verified at: ', Date.now());
+            }
+        );
+    },
+
+    verifyUser: (req, callback) => {
+        let responseObj = { status: 'FAILED', message: null };
+        let today = Number(moment().format('x'));
+        var activeReceipt = null;
+        /** get the active receipts which expires today */
+        let getActiveReceipts = n => {
+            ApplePayReceipts.findOne(
+                {
+                    userId: req.body.userId,
+                    active: true,
+                },
+                (e, receipt) => {
+                    if (receipt) {
+                        activeReceipt = JSON.parse(receipt.receiptLog);
+                        return n();
+                    }
+                }
+            );
+        };
+        let receiptStatus = false;
+        let newReceipt = false;
+        let veriyReceipts = n => {
+            if (activeReceipt) {
+                let args = {
+                    receipt_key: activeReceipt.transactionReceipt,
+                    userId: req.body.userId,
+                };
+                axios({
+                    method: 'post',
+                    url: config.webUrl().appleURL,
+                    data: {
+                        'receipt-data': args.receipt_key,
+                        password: config.webUrl().applePassword,
+                        'exclude-old-transactions': true,
+                    },
+                })
+                    .then(function (response) {
+                        if (
+                            response.data &&
+                            response.data.latest_receipt_info &&
+                            response.data.latest_receipt_info.length
+                        ) {
+                            let latestReciptInfo = response.data.latest_receipt_info[0];
+                            if (latestReciptInfo.transaction_id == activeReceipt.transactionId) {
+                                // If Same receipt
+                                if (Number(latestReciptInfo.expires_date_ms) > today) {
+                                    // If Receipt is still valid
+                                    receiptStatus = true;
+                                    return n();
+                                } else {
+                                    // If Receipt got expired or cancelled or not renewed
+                                    let filter = { userId: req.body.userId };
+                                    UserProfile.updateOne(
+                                        filter,
+                                        { $set: { premiumUser: false } },
+                                        () => {
+                                            return n();
+                                        }
+                                    );
+                                }
+                            } else {
+                                if (Number(latestReciptInfo.expires_date_ms) > today) {
+                                    // New Receipt generated
+                                    receiptStatus = true;
+                                    let doc = {
+                                        userId: args.userId,
+                                        transaction_id: latestReciptInfo.transaction_id,
+                                        original_transaction_id:
+                                            latestReciptInfo.original_transaction_id,
+                                        purchase_date_ms: latestReciptInfo.purchase_date_ms,
+                                        original_purchase_date_ms:
+                                            latestReciptInfo.original_purchase_date_ms,
+                                        expires_date_ms: latestReciptInfo.expires_date_ms,
+                                        web_order_line_item_id:
+                                            latestReciptInfo.web_order_line_item_id,
+                                        receipt_key: response.data.latest_receipt,
+                                        active: true,
+                                        receiptLog: JSON.stringify(latestReciptInfo),
+                                    };
+                                    ApplePayReceipts(doc).save(() => {
+                                        responseObj.status = 'SUCCESS';
+                                        newReceipt = true;
+                                        return n();
+                                    });
+                                } else {
+                                    // Last checked receipt is expired and the user has not renewed
+                                    let filter = { userId: req.body.userId };
+                                    UserProfile.updateOne(
+                                        filter,
+                                        { $set: { premiumUser: false } },
+                                        () => {
+                                            return n();
+                                        }
+                                    );
+                                }
+                            }
+                            //todo
+                            //cancellation check
+                        } else {
+                            return n();
+                        }
+                    })
+                    .catch(function (err) {
+                        if (err) {
+                            console.log('catch error', err);
+                        }
+                        return n();
+                    });
+            } else {
+                callback(responseObj);
+            }
+        };
+        let updateReceipts = n => {
+            if (newReceipt) {
+                ApplePayReceipts.updateOne(
+                    { transaction_id: activeReceipt.transactionId },
+                    { $set: { active: false } },
+                    () => {
+                        return n();
+                    }
+                );
+            } else {
+                return n();
+            }
+        };
+        async.series(
+            [getActiveReceipts.bind(), veriyReceipts.bind(), updateReceipts.bind()],
+            err => {
+                console.log(err);
+                if (receiptStatus) {
+                    responseObj.status = 'SUCCESS';
+                }
+                callback(responseObj);
             }
         );
     },

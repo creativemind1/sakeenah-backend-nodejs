@@ -122,7 +122,7 @@ export class AlbumComponent implements OnInit {
         });
       }
     } else {
-      alert('Write any name')
+      alert('Write any name');
     }
   }
 
@@ -144,9 +144,7 @@ export class AlbumComponent implements OnInit {
 
   categoryClick() {
     this.cmsService.getCategories().subscribe(response => {
-      console.log(response, '===Categories====````');
       var result = JSON.parse(JSON.stringify(response));
-      console.log(result, '===result===`````');
       this.album.categoryId = [result.message[0].categoryId];
     });
   }
