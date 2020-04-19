@@ -116,13 +116,14 @@ function authChecker(req, res, next) {
             req.body.token,
             config.secret(),
             {
-                expiresIn: '10d', // expires in 24 hours
+                expiresIn: '365d', // expires in 1 year
             },
             (err, decoded) => {
                 if (err) {
                     return res.json({
                         success: false,
                         message: 'Token is not valid',
+                        code: 101
                     });
                 } else {
                     req.decoded = decoded;

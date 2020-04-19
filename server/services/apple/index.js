@@ -165,18 +165,23 @@ module.exports = {
                 },
                 (e, receipt) => {
                     if (receipt) {
-                        activeReceipt = JSON.parse(receipt.receiptLog);
-                        return n();
+                        activeReceipt = receipt;
                     }
+                    return n();
                 }
             );
         };
         let receiptStatus = false;
         let newReceipt = false;
+        let unknownReceipt = false;
+        var transaction_receipt = null;
         let veriyReceipts = n => {
             if (activeReceipt) {
+                // JSON.parse(receipt.receiptLog)
+                transaction_receipt = JSON.parse(activeReceipt.receiptLog);
                 let args = {
-                    receipt_key: activeReceipt.transactionReceipt,
+                    receipt_key:
+                        transaction_receipt.transactionReceipt || activeReceipt.receipt_key,
                     userId: req.body.userId,
                 };
                 axios({
@@ -195,14 +200,18 @@ module.exports = {
                             response.data.latest_receipt_info.length
                         ) {
                             let latestReciptInfo = response.data.latest_receipt_info[0];
-                            if (latestReciptInfo.transaction_id == activeReceipt.transactionId) {
+                            if (
+                                latestReciptInfo.transaction_id ==
+                                (transaction_receipt.transactionId || activeReceipt.transaction_id)
+                            ) {
                                 // If Same receipt
                                 if (Number(latestReciptInfo.expires_date_ms) > today) {
                                     // If Receipt is still valid
                                     receiptStatus = true;
                                     return n();
                                 } else {
-                                    // If Receipt got expired or cancelled or not renewed
+                                    // If Receipt got expired or cancelled or not renewed;
+                                    unknownReceipt = true;
                                     let filter = { userId: req.body.userId };
                                     UserProfile.updateOne(
                                         filter,
@@ -238,6 +247,7 @@ module.exports = {
                                     });
                                 } else {
                                     // Last checked receipt is expired and the user has not renewed
+                                    unknownReceipt = true;
                                     let filter = { userId: req.body.userId };
                                     UserProfile.updateOne(
                                         filter,
@@ -265,9 +275,12 @@ module.exports = {
             }
         };
         let updateReceipts = n => {
-            if (newReceipt) {
+            if (newReceipt || unknownReceipt) {
                 ApplePayReceipts.updateOne(
-                    { transaction_id: activeReceipt.transactionId },
+                    {
+                        transaction_id:
+                            transaction_receipt.transactionId || activeReceipt.transaction_id,
+                    },
                     { $set: { active: false } },
                     () => {
                         return n();
