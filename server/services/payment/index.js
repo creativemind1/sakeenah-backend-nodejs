@@ -1,7 +1,6 @@
 let PaymentOrder = require('../../model/PaymentOrder'),
     UserProfile = require('../../model/UserProfileModel'),
     ApplePayReceipts = require('../../model/ApplePayReceipts'),
-    apple = require('../apple'),
     moment = require('moment'),
     async = require('async');
 
@@ -34,35 +33,26 @@ module.exports = {
              });
          };*/
         let verifyTransaction = n => {
-            apple.verify(
-                { userId: req.body.userId, receipt_key: req.body.transaction.transactionReceipt },
-                obj => {
-                    if (obj.status == 'FAILED') {
-                        var doc = {
-                            userId: req.body.userId,
-                            transaction_id: req.body.transactionId,
-                            original_transaction_id: req.body.transactionId,
-                            purchase_date_ms: req.body.transactionDate,
-                            original_purchase_date_ms: req.body.transactionDate,
-                            expires_date_ms: moment().add(30, 'days').format('x'),
-                            web_order_line_item_id: null,
-                            receipt_key: req.body.transactionReceipt,
-                            // subscription_expiry: Number(
-                            //     moment().add(30, 'days').format('YYYYMMDD')
-                            // ),
-                            active: true,
-                            trial_period: null,
-                            intro_offer_period: null,
-                            receiptLog: JSON.stringify(req.body.transaction),
-                        };
-                        ApplePayReceipts(doc).save(() => {
-                            return n();
-                        });
-                    } else {
-                        return n();
-                    }
-                }
-            );
+            var doc = {
+                userId: req.body.userId,
+                transaction_id: req.body.transaction.transactionId,
+                original_transaction_id: req.body.transaction.transactionId,
+                purchase_date_ms: req.body.transaction.transactionDate,
+                original_purchase_date_ms: req.body.transaction.transactionDate,
+                expires_date_ms: moment().add(7, 'days').format('x'),
+                web_order_line_item_id: null,
+                receipt_key: req.body.transaction.transactionReceipt,
+                // subscription_expiry: Number(
+                //     moment().add(30, 'days').format('YYYYMMDD')
+                // ),
+                active: true,
+                trial_period: null,
+                intro_offer_period: null,
+                receiptLog: JSON.stringify(req.body.transaction),
+            };
+            ApplePayReceipts(doc).save(() => {
+                return n();
+            });
         };
 
         let premiumStatus = n => {
@@ -87,6 +77,17 @@ module.exports = {
         async.series([verifyTransaction.bind(), premiumStatus.bind()], () => {
             responseObj.status = 'SUCCESS';
             responseObj.data = null;
+            callback(responseObj);
+        });
+    },
+
+    recentPurchase: (req, callback) => {
+        let responseObj = { status: 'FAILED', data: null };
+        let filter = { userId: req.body.userId };
+        ApplePayReceipts.findOne(filter, {}, (err, docs) => {
+            if (docs) {
+                responseObj.status = 'SUCCESS';
+            }
             callback(responseObj);
         });
     },

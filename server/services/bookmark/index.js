@@ -1,5 +1,6 @@
 let AudioModel = require('../../model/Audio'),
     UserMap = require('../../model/UserMap'),
+    UserProfile = require('../../model/UserProfileModel'),
     async = require('async');
 
 module.exports = {
@@ -106,7 +107,22 @@ module.exports = {
                 return n();
             }
         };
-        async.series([getUser.bind(), getAudios.bind()], () => {
+        let premiumStatus = n => {
+            if (audios) {
+                let filter = { userId: req.body.userId };
+                UserProfile.findOne(filter, (e, docs) => {
+                    if (docs && docs.premiumUser) {
+                        for (var i = 0; i < audios.length; i++) {
+                            audios[i].premium = false;
+                        }
+                    }
+                    return n();
+                });
+            } else {
+                return n();
+            }
+        };
+        async.series([getUser.bind(), getAudios.bind(), premiumStatus.bind()], () => {
             if (audios) {
                 responseObj.status = 'SUCCESS';
                 responseObj.data = audios;

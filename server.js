@@ -116,13 +116,14 @@ function authChecker(req, res, next) {
             req.body.token,
             config.secret(),
             {
-                expiresIn: '10d', // expires in 24 hours
+                expiresIn: '365d', // expires in 1 year
             },
             (err, decoded) => {
                 if (err) {
                     return res.json({
                         success: false,
                         message: 'Token is not valid',
+                        code: 101
                     });
                 } else {
                     req.decoded = decoded;
@@ -196,9 +197,9 @@ app.post('/singleUpload', upload1.array('uploads[]', 12), function (req, res) {
         s3.upload(params, (err, data) => {
             if (err) throw err;
             var reqFrame = req.files;
-            var audioPath = data.Location.split('/audios/');
-            var newPath = data.Location.split('/images/');
-            var status = newPath === true ? newPath[1] : audioPath[1];
+            var audioPath = data.Location.includes('/audios/') && data.Location.split('/audios/');
+            var newPath = data.Location.includes('/images/') && data.Location.split('/images/');
+            var status = newPath ? newPath[1] : audioPath[1];
             for (var i in reqFrame) {
                 reqFrame[i].path = status;
             }

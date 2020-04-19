@@ -16,5 +16,10 @@ router.post('/capture', (req, res) => {
         res.json(obj);
     });
 });
+router.post('/recentPurchase', (req, res) => {
+    payment.recentPurchase(req, obj => {
+        res.json(obj);
+    });
+});
 
 module.exports = router;

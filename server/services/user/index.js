@@ -30,7 +30,7 @@ module.exports = {
                             // Payment is Done .Its a premium User
                             const payload = { emailId: req.body.emailId };
                             var token = jwt.sign(payload, config.secret(), {
-                                expiresIn: '10d', // expires in 4 days
+                                expiresIn: '365d', // expires in 4 days
                             });
                             if (doc.premiumUser) {
                                 doc.freeTrial = true;
@@ -171,7 +171,7 @@ module.exports = {
                                 //Generate Token
                                 const payload = { emailId: req.body.emailId };
                                 var token = jwt.sign(payload, config.secret(), {
-                                    expiresIn: '10d', // expires in 24 hours
+                                    expiresIn: '365d', // expires in 24 hours
                                 });
                                 if (doc.premiumUser) {
                                     doc.freeTrial = true;
@@ -221,7 +221,7 @@ module.exports = {
                                         //Generate Token
                                         const payload = { emailId: req.body.emailId };
                                         var token = jwt.sign(payload, config.secret(), {
-                                            expiresIn: '10d', // expires in 24 hours
+                                            expiresIn: '365d', // expires in 24 hours
                                         });
 
                                         //response.freeTrial = true;

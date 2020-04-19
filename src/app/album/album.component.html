@@ -30,12 +30,12 @@
           <textarea matInput placeholder="Description" [(ngModel)]="selectedAlbum.description"></textarea>
         </mat-form-field>   -->
 
-        <!-- <mat-form-field>
+        <mat-form-field>
           <input matInput placeholder="Narrator" [(ngModel)]="selectedAlbum.narrator">
         </mat-form-field>
         <mat-form-field>
           <textarea matInput placeholder="Author" [(ngModel)]="selectedAlbum.author"></textarea>
-        </mat-form-field> -->
+        </mat-form-field>
 
         <mat-slide-toggle [(ngModel)]="selectedAlbum.premium"> Premium Album</mat-slide-toggle>
       </mat-card-content>
@@ -45,6 +45,9 @@
       <app-single-file-upload (messageEvent)="receiveUpdateSingleFile($event)"></app-single-file-upload>
       <span></span>
       <mat-slide-toggle [(ngModel)]="selectedAlbum.active"> Active/InActive</mat-slide-toggle>
+
+      <img *ngIf="loader" src="./../../assets/uploading.gif" width="50"
+        style="position: absolute; left: 50%; transform: translateX(-50%);z-index: 999" />
       <mat-card-actions align="center">
         <button mat-raised-button color="primary" (click)="onUpdate()">Update</button>
         <button mat-raised-button color="primary" (click)="onClear()">Cancel</button>
@@ -74,12 +77,12 @@
           <input matInput required type="number" placeholder="Sequence" [(ngModel)]="album.sequence">
         </mat-form-field>
 
-        <!--  <mat-form-field>
+         <mat-form-field>
           <input matInput placeholder="Narrator" [(ngModel)]="album.narrator">
         </mat-form-field>
         <mat-form-field>
           <textarea matInput placeholder="Author" [(ngModel)]="album.author"></textarea>
-        </mat-form-field> -->
+        </mat-form-field>
 
         <mat-slide-toggle [(ngModel)]="album.premium"> Premium Album</mat-slide-toggle>
 
@@ -91,6 +94,9 @@
 
 
       <mat-slide-toggle [(ngModel)]="album.active"> Active/Inactive</mat-slide-toggle>
+
+      <img *ngIf="loader" src="./../../assets/uploading.gif" width="50"
+        style="position: absolute; left: 50%; transform: translateX(-50%);z-index: 999" />
 
       <mat-card-actions align="center">
         <button mat-raised-button color="primary" (click)="onSave()">Save</button>
@@ -119,7 +125,7 @@
         <th mat-header-cell *matHeaderCellDef> Sequence </th>
         <td mat-cell *matCellDef="let element"> {{element.sequence}} </td>
       </ng-container>
-      
+
 
       <!-- Symbol Column -->
       <ng-container matColumnDef="create_date">
@@ -138,8 +144,9 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-    <div *ngIf="!dataSource?.length" style="min-height: 100px; position: relative;"> <img
-        src="./../../assets/uploading.gif" width="50"
-        style="position: absolute; left: 50%; transform: translateX(-50%);z-index: 999" /></div>
+    <div *ngIf="!dataSource?.length" style="min-height: 100px; position: relative;">
+      <img src="./../../assets/uploading.gif" width="50"
+        style="position: absolute; left: 50%; transform: translateX(-50%);z-index: 999" />
+    </div>
   </mat-card>
 </div>

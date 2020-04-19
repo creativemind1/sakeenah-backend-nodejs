@@ -42,3 +42,7 @@ package-lock.json
 # System Files
 .DS_Store
 Thumbs.db
+
+#Upload mp3 local
+/upload/audio
+upload/img

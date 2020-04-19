@@ -7,7 +7,7 @@ export class Album {
   companyId: String;
   title: String;
   description: String;
-  thumbImageUrl: FileUpload = new FileUpload();
+  thumbImageUrl: [{}];
   authorImageUrl: String;
   mediaType: String;
   narrator: String;
