@@ -54,7 +54,6 @@ export class AlbumComponent implements OnInit {
     this.cmsService.getAllMedia().subscribe(response => {
       var result = JSON.parse(JSON.stringify(response));
       this.dataSource = result.message;
-      console.log(this.dataSource, '===Data Source===');
       var myArray = this.dataSource;
       for (var i in myArray) {
         myArray[i].create_date = moment(String(myArray[i].create_date)).format('DD-MMM-YYYY');
