@@ -1,4 +1,4 @@
-const serverUrl = 'http://test.sakeenah.io';
+const serverUrl = 'https://cms-v2.sakeenah.io';
 const loginUrl = serverUrl + '/app/user';
 const baseUrl = serverUrl + '/cms';
 const uploadUrl = serverUrl + '/upload';

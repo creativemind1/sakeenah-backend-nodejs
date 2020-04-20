@@ -13,11 +13,12 @@ module.exports = {
             category: req.body.categoryId, // WILL COME BACK HERE SOON.....
             album: req.body.albumId,
         };
+        let premium_user = false;
         let premiumStatus = n => {
             let filter = { userId: req.body.userId };
             UserProfile.findOne(filter, (err, profile) => {
                 if (profile && profile.premiumUser) {
-                    premiumUser = true;
+                    premium_user = true;
                 }
                 return n();
             });
@@ -53,7 +54,7 @@ module.exports = {
             UserMap.findOne(filter, projection, (err, doc) => {
                 if (doc) {
                     bookmarks = doc.bookmarks;
-                    if (!premiumUser) {
+                    if (!premium_user) {
                         userAudios = doc.audios;
                     }
                 }
@@ -63,7 +64,7 @@ module.exports = {
         async.series([premiumStatus.bind(), getAudios.bind(), getUser.bind()], () => {
             if (audios) {
                 for (let audio of audios) {
-                    if (premiumUser || (userAudios && userAudios.indexOf(audio.audioId) != -1)) {
+                    if (premium_user || (userAudios && userAudios.indexOf(audio.audioId) != -1)) {
                         audio.premium = false;
                     }
                     if (bookmarks && bookmarks.indexOf(audio.audioId) != -1) {

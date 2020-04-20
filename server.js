@@ -74,7 +74,6 @@ let storage = multer.diskStorage({
             // fs.mkdirsSync(temp);
             cb(null, temp);
         } else {
-            console.log(file.mimetype);
             cb({ error: 'Mime type not supported' });
         }
     },
@@ -143,7 +142,6 @@ console.log(port, '===port==');
 app.set('superSecret', config.secret()); // secret variable
 
 app.post('/deleteFile', function (req, res) {
-    console.log('File Url', req.body.filePath);
     if (req.body.filePath) {
         fs.unlink(req.body.filePath, err => {
             if (err) {
@@ -152,7 +150,6 @@ app.post('/deleteFile', function (req, res) {
                     success: false,
                 });
             } else {
-                console.log('File was deleted');
                 return res.send({
                     success: true,
                 });
