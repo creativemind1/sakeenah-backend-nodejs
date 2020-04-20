@@ -60,7 +60,7 @@ module.exports = {
                 return n();
             });
         };
-        async.parallel([premiumStatus.bind(), getAudios.bind(), getUser.bind()], () => {
+        async.series([premiumStatus.bind(), getAudios.bind(), getUser.bind()], () => {
             if (audios) {
                 for (let audio of audios) {
                     if (premiumUser || (userAudios && userAudios.indexOf(audio.audioId) != -1)) {

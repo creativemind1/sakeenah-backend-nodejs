@@ -224,8 +224,8 @@ app.post('/upload', upload1.array('uploads[]', 12), function (req, res) {
         });
     }
 });
-var scheduler = require('./server/scheduler');
-scheduler.init();
+// var scheduler = require('./server/scheduler');
+// scheduler.init();
 app.use('/upload', express.static(path.join(__dirname, '/upload')));
 app.use('/deleteFile', express.static(path.join(__dirname, '/upload')));
 
