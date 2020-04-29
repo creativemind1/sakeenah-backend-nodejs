@@ -207,10 +207,23 @@ module.exports = {
                                 }
                             } else {
                                 // Continue to register
+                                let response = {};
                                 userProfileModel.userId = userId;
                                 userProfileModel.create_date = new Date();
                                 userProfileModel.socialMedia = true;
                                 userProfileModel.active = true;
+                                userProfileModel.firstName = req.body.firstName;
+                                userProfileModel.socialMedia = true;
+                                userProfileModel.type = 'B2C';
+
+                                userProfileModel.password = bcrypt.hashSync(
+                                    userId,
+                                    bcrypt.genSaltSync(8),
+                                    null
+                                );
+
+                                response = userProfileModel;
+
                                 userProfileModel.save(error => {
                                     if (error) {
                                         callback({
@@ -223,12 +236,10 @@ module.exports = {
                                         var token = jwt.sign(payload, config.secret(), {
                                             expiresIn: '365d', // expires in 24 hours
                                         });
-
-                                        //response.freeTrial = true;
                                         callback({
                                             status: 'SUCCESS',
-                                            //message: response,
-                                            token: token,
+                                            message: response,
+                                            token,
                                         });
                                     }
                                 });
