@@ -1,6 +1,7 @@
 let PaymentOrder = require('../../model/PaymentOrder'),
     UserProfile = require('../../model/UserProfileModel'),
     ApplePayReceipts = require('../../model/ApplePayReceipts'),
+    AndroidPayReceipts = require('../../model/AndroidPayReceipts'),
     moment = require('moment'),
     async = require('async');
 
@@ -18,67 +19,135 @@ module.exports = {
     },
 
     capture: (req, callback) => {
-        let responseObj = { status: 'FAILED', data: null };
-        //  let filter = { userId: req.body.userId };
-        /* let paymentOrder = n => {
-             PaymentOrder.findOne(filter, (err, doc) => {
-                 if (!err && doc) {
-                     doc.paymentInfo.push(req.body.transaction)
-                     doc.save((e, s) => {
-                         console.log(e, s)
-                         return n();
-                     })
- 
-                 }
-             });
-         };*/
-        let verifyTransaction = n => {
-            var doc = {
-                userId: req.body.userId,
-                transaction_id: req.body.transaction.transactionId,
-                original_transaction_id: req.body.transaction.transactionId,
-                purchase_date_ms: req.body.transaction.transactionDate,
-                original_purchase_date_ms: req.body.transaction.transactionDate,
-                expires_date_ms: moment().add(7, 'days').format('x'),
-                web_order_line_item_id: null,
-                receipt_key: req.body.transaction.transactionReceipt,
-                // subscription_expiry: Number(
-                //     moment().add(30, 'days').format('YYYYMMDD')
-                // ),
-                active: true,
-                trial_period: null,
-                intro_offer_period: null,
-                receiptLog: JSON.stringify(req.body.transaction),
-            };
-            ApplePayReceipts(doc).save(() => {
-                return n();
-            });
-        };
+        let responseObj = { status: 'FAILED', data: null },
+            subscription = false;
 
-        let premiumStatus = n => {
-            /*UserProfile.findOne({ userId: req.body.userId }, (err, doc) => {
-                if (doc) {
-                    doc.premiumUser = true;
-                    doc.save((e, s) => {
-                        console.log(e, s);
-                    });
-                }
-                return n();
-            });*/
-            UserProfile.updateOne(
-                { userId: req.body.userId },
-                { $set: { premiumUser: true } },
-                () => {
+        let getSubscription = n => {
+            let { transactionId } = req.body.transaction;
+
+            ApplePayReceipts.findOne(
+                {
+                    transactionId,
+                },
+                (e, receipt) => {
+                    if (!receipt) {
+                        subscription = true;
+                    }
                     return n();
                 }
             );
         };
+        let verifyTransaction = n => {
+            if (subscription) {
+                var doc = {
+                    userId: req.body.userId,
+                    transaction_id: req.body.transaction.transactionId,
+                    original_transaction_id: req.body.transaction.transactionId,
+                    purchase_date_ms: req.body.transaction.transactionDate,
+                    original_purchase_date_ms: req.body.transaction.transactionDate,
+                    expires_date_ms: moment().add(7, 'days').format('x'),
+                    web_order_line_item_id: null,
+                    receipt_key: req.body.transaction.transactionReceipt,
+                    // subscription_expiry: Number(
+                    //     moment().add(30, 'days').format('YYYYMMDD')
+                    // ),
+                    active: true,
+                    trial_period: null,
+                    intro_offer_period: null,
+                    receiptLog: JSON.stringify(req.body.transaction),
+                };
+                ApplePayReceipts(doc).save(() => {
+                    return n();
+                });
+            } else {
+                return n();
+            }
+        };
 
-        async.series([verifyTransaction.bind(), premiumStatus.bind()], () => {
-            responseObj.status = 'SUCCESS';
-            responseObj.data = null;
-            callback(responseObj);
-        });
+        let premiumStatus = n => {
+            if (subscription) {
+                UserProfile.updateOne(
+                    { userId: req.body.userId },
+                    { $set: { premiumUser: true } },
+                    () => {
+                        return n();
+                    }
+                );
+            } else {
+                return n();
+            }
+        };
+
+        async.series(
+            [getSubscription.bind(), verifyTransaction.bind(), premiumStatus.bind()],
+            () => {
+                responseObj.status = 'SUCCESS';
+                responseObj.data = null;
+                callback(responseObj);
+            }
+        );
+    },
+
+    android_capture: (req, callback) => {
+        let responseObj = { status: 'FAILED', data: null },
+            subscription = false;
+
+        let getSubscription = n => {
+            let { transactionId } = req.body.transaction;
+
+            AndroidPayReceipts.findOne(
+                {
+                    transactionId,
+                },
+                (e, receipt) => {
+                    if (!receipt) {
+                        subscription = true;
+                    }
+                    return n();
+                }
+            );
+        };
+        let verifyTransaction = n => {
+            if (subscription) {
+                var doc = {
+                    userId: req.body.userId,
+                    transaction_id: req.body.transaction.transactionId,
+                    purchase_date_ms: req.body.transaction.transactionDate,
+                    expires_date_ms: moment().add(7, 'days').format('x'),
+                    receipt_key: req.body.transaction.purchaseToken,
+                    active: true,
+                    receiptLog: JSON.stringify(req.body.transaction),
+                };
+                AndroidPayReceipts(doc).save(() => {
+                    return n();
+                });
+            } else {
+                return n();
+            }
+        };
+
+        let premiumStatus = n => {
+            if (subscription) {
+                UserProfile.updateOne(
+                    { userId: req.body.userId },
+                    { $set: { premiumUser: true } },
+                    () => {
+                        return n();
+                    }
+                );
+            } else {
+                return n();
+            }
+        };
+
+        async.series(
+            [getSubscription.bind(), verifyTransaction.bind(), premiumStatus.bind()],
+            () => {
+                responseObj.status = 'SUCCESS';
+                responseObj.data = null;
+                callback(responseObj);
+            }
+        );
     },
 
     recentPurchase: (req, callback) => {
