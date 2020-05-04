@@ -172,10 +172,9 @@ module.exports = {
         //Deactivation the previous receipt if user got new receipt or cancelled the previous
         let updateReceipts = n => {
             if (newReceipt || unknownReceipt) {
-                AndroidPayReceipts.updateOne(
+                AndroidPayReceipts.updateMany(
                     {
-                        transaction_id:
-                            transaction_receipt.orderId || activeReceipt.transaction_id,
+                        transaction_id: transaction_receipt.orderId || activeReceipt.transaction_id,
                     },
                     { $set: { active: false } },
                     () => {

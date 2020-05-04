@@ -93,11 +93,11 @@ module.exports = {
             subscription = false;
 
         let getSubscription = n => {
-            let { transactionId } = req.body.transaction;
+            const { transactionId } = req.body.transaction;
 
             AndroidPayReceipts.findOne(
                 {
-                    transactionId,
+                    transaction_id: transactionId,
                 },
                 (e, receipt) => {
                     if (!receipt) {
