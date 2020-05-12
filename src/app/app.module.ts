@@ -1,17 +1,18 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule ,ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { CategoryComponent } from './category/category.component';
-import { SubcategoryComponent } from './subcategory/subcategory.component';
-import { MediaComponent } from './media/media.component';
+import { AlbumComponent } from './album/album.component';
 import { LoginComponent } from './login/login.component';
-import { MatDialogModule, MatFormFieldModule,MatInputModule,MatCardModule,MatButtonModule,MatSlideToggleModule,MatIconModule,
-  MatTableModule,MatMenuModule,MatSelectModule,MatListModule,MatPaginatorModule,MatSortModule,MatToolbarModule} from '@angular/material';
+import {
+  MatDialogModule, MatFormFieldModule, MatInputModule, MatCardModule, MatButtonModule, MatSlideToggleModule, MatIconModule,
+  MatTableModule, MatMenuModule, MatSelectModule, MatListModule, MatPaginatorModule, MatSortModule, MatToolbarModule
+} from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule } from '@angular/common/http';
 import { MenuComponent } from './menu/menu.component';
@@ -31,12 +32,11 @@ import { MyDialogComponentComponent } from './my-dialog-component/my-dialog-comp
   declarations: [
     AppComponent,
     CategoryComponent,
-    SubcategoryComponent,
-    MediaComponent,
+    AlbumComponent,
     LoginComponent,
     MenuComponent,
     FileUploadComponent,
-    
+
     SingleFileUploadComponent,
     ResetPswdComponent,
     PlayListComponent,
@@ -49,22 +49,22 @@ import { MyDialogComponentComponent } from './my-dialog-component/my-dialog-comp
     FileUploadModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
-    MatFormFieldModule,MatInputModule,MatCardModule,MatButtonModule,MatSlideToggleModule,MatIconModule,MatTableModule,MatMenuModule,
-    MatSelectModule,FormsModule,MatFileUploadModule,MatListModule,MatPaginatorModule,MatSortModule,MatToolbarModule,
+    MatFormFieldModule, MatInputModule, MatCardModule, MatButtonModule, MatSlideToggleModule, MatIconModule, MatTableModule, MatMenuModule,
+    MatSelectModule, FormsModule, MatFileUploadModule, MatListModule, MatPaginatorModule, MatSortModule, MatToolbarModule,
     MatDialogModule,
     HttpClientModule,
     ReactiveFormsModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: jwtTokenGetter,
-        whitelistedDomains: ['/subcategory', 'l/category', '/media'],
+        whitelistedDomains: ['l/category', '/album'],
         blacklistedRoutes: ['/login']
       }
     })
   ],
   providers: [],
   bootstrap: [AppComponent],
-  
+
 })
 export class AppModule { }
 export function jwtTokenGetter() {

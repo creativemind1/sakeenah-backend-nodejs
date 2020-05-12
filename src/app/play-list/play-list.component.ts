@@ -1,11 +1,11 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { PlayList } from './playlist';
-import { DayWise } from './daywise';
-import { Media } from '../media/media';
+import { EpisodeWise } from './episodewise';
+import { Album } from '../album/album';
 import { CmsService } from '../cms.service';
 import { FileUpload } from '../file-upload/fileUpload';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Transporter } from '../media/transporter';
+import { Transporter } from '../album/transporter';
 import { MatDialog } from '@angular/material/dialog';
 import { MyDialogComponent } from './../my-dialog/my-dialog.component';
 import * as moment from 'moment';
@@ -19,16 +19,17 @@ import { ReturnStatement } from '@angular/compiler';
 
 export class PlayListComponent implements OnInit {
   constructor(private cmsService: CmsService, public dialog: MatDialog) { }
-  
+
   DialogData: [];
-  media: Media[];
+  album: Album[];
   toppings = new FormControl();
   playList: PlayList = new PlayList();
+  albumId: string[];
   selectedPlayList: PlayList = new PlayList();
   deletedPlayList: PlayList;
   dataSource: PlayList[];
   displayedColumns: string[];
-  days: DayWise[];
+  episodes: EpisodeWise[];
   myForm: FormGroup;
   transportMsg: Transporter = new Transporter();
   @Output() parentEvent = new EventEmitter<FileUpload[]>();
@@ -36,13 +37,13 @@ export class PlayListComponent implements OnInit {
   loader: Boolean;
 
   ngOnInit() {
-    this.playList.premium = false;
-    this.loadMedia();
-    this.loadPlaylist();
-    this.loadDayslist();    
+    this.playList.premium = true;
+    this.loadAlbums();
+    //this.loadPlaylist();
+    this.loadDayslist();
     this.myForm = new FormGroup({
-      mediaId: new FormControl({ value: '' }, Validators.compose([Validators.required])),
-      selectDay: new FormControl({ value: '' }, Validators.compose([Validators.required])),
+      albumId: new FormControl({ value: '' }, Validators.compose([Validators.required])),
+      episode: new FormControl({ value: '' }, Validators.compose([Validators.required])),
       playListName: new FormControl({ value: '' }, Validators.compose([Validators.required])),
       description: new FormControl({ value: '' }),
       premium: new FormControl({ value: '' }),
@@ -50,6 +51,19 @@ export class PlayListComponent implements OnInit {
     });
   }
 
+  triggerUpdate(event) {
+    let albumID = this.albumId
+    this.cmsService.getAudioBasedOnAlbum(albumID).subscribe(response => {
+      this.displayedColumns = ['Name', 'active', 'create_date', 'albumId', 'episode', 'deleteAction', 'updateAction'];
+      var result = JSON.parse(JSON.stringify(response));
+      this.dataSource = result.data;
+      var myArray = this.dataSource
+      for (var i in myArray) {
+        myArray[i].create_date = moment(myArray[i].create_date).format('DD-MMM-YYYY')
+      }
+    });
+  }
+  
   onSave() {
     this.playList['type'] = "SAVE";
     if (this.myForm.status === 'VALID') {
@@ -60,7 +74,7 @@ export class PlayListComponent implements OnInit {
           this.cmsService.saveOrupdatePlayList(this.playList).subscribe(result => {
             if (result.status == 'SUCCESS') {
               this.loader = false;
-              this.loadPlaylist();
+              //this.loadPlaylist();
               this.onClear();
             }
           })
@@ -72,28 +86,28 @@ export class PlayListComponent implements OnInit {
     else {
       alert("Error")!
     }
-  } 
+  }
 
   loadDayslist() {
-    this.days = [];
-    for (let index = 1; index < 8; index++) {
-      this.days.push({ key: index, value: "Day " + index })
+    this.episodes = [];
+    for (let index = 1; index < 20; index++) {
+      this.episodes.push({ key: index, value: "Episode " + index })
     }
   }
 
-  loadMedia() {
+  loadAlbums() {
     this.cmsService.getAllMedia().subscribe(response => {
       var result = JSON.parse(JSON.stringify(response));
-      this.media = [];
-      this.media = result.message;
+      this.album = [];
+      this.album = result.message;
     });
   }
 
   onUpdate() {
-    console.log(this.selectedPlayList)
-    this.selectedPlayList['type'] = "SAVE";    
+    this.selectedPlayList['type'] = "SAVE";
     if (this.myForm.status === 'VALID') {
-      this.loader = true
+      this.loader = true;
+      console.log(this.selectedPlayList)
       if (this.selectedPlayList && this.selectedPlayList.thumbImageUrl && this.selectedPlayList.thumbImageUrl.length) {
         this.cmsService.singleFileupload(this.selectedPlayList).subscribe(response => {
           this.selectedPlayList.thumbImageUrl['value'] = ''
@@ -101,7 +115,7 @@ export class PlayListComponent implements OnInit {
           this.cmsService.saveOrupdatePlayList(this.selectedPlayList).subscribe(result => {
             if (result.status == 'SUCCESS') {
               this.loader = false;
-              this.loadPlaylist();
+              //this.loadPlaylist();
               this.onClear();
             }
           })
@@ -110,7 +124,7 @@ export class PlayListComponent implements OnInit {
         this.cmsService.saveOrupdatePlayList(this.selectedPlayList).subscribe(result => {
           if (result.status == 'SUCCESS') {
             this.loader = false;
-            this.loadPlaylist();
+            //this.loadPlaylist();
             this.onClear();
           }
         })
@@ -129,9 +143,10 @@ export class PlayListComponent implements OnInit {
     this.selectedPlayList.enableUpdate = true;
     this.transportMsg.img = this.selectedPlayList.thumbImageUrl;
     this.cmsService.sendMessage(this.transportMsg);
-    this.loadMedia();
+    this.loadAlbums();
     this.loadDayslist();
   }
+  
   receivePlayListSingleFile($event) {
     const files = $event;
     if (files.length) {
@@ -148,8 +163,9 @@ export class PlayListComponent implements OnInit {
       //   // }
       // });
     }
-    
+
   }
+
   delete(row) {
     const dialogRef = this.dialog.open(MyDialogComponent, {
       width: '500px',
@@ -159,7 +175,7 @@ export class PlayListComponent implements OnInit {
 
   loadPlaylist() {
     this.cmsService.getAllPlayLists().subscribe(response => {
-      this.displayedColumns = ['Name', 'active', 'create_date', 'mediaId','day', 'deleteAction', 'updateAction' ];
+      this.displayedColumns = ['Name', 'active', 'create_date', 'albumId', 'episode', 'deleteAction', 'updateAction'];
       var result = JSON.parse(JSON.stringify(response));
       this.dataSource = result.message;
       var myArray = this.dataSource
@@ -172,7 +188,7 @@ export class PlayListComponent implements OnInit {
   onClear() {
     this.selectedPlayList = new PlayList();
     this.playList = new PlayList();
-    this.playList.premium = false;
+    this.playList.premium = true;
     this.transportMsg.img = this.selectedPlayList.thumbImageUrl;
     this.cmsService.sendMessage(this.transportMsg);
   }

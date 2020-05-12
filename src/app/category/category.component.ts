@@ -72,8 +72,6 @@ export class CategoryComponent implements OnInit {
       if (result.status == 'SUCCESS') {
         this.loadCategories();
         this.onClear();
-      } else {
-
       }
     });
   }
@@ -81,7 +79,7 @@ export class CategoryComponent implements OnInit {
 
   loadCategories() {
     this.cmsService.getCategories().subscribe(response => {
-      this.displayedColumns = ['categoryName', 'active', 'create_date', 'updateAction'];
+      this.displayedColumns = ['categoryName', 'sequence', 'active', 'updateAction'];
       var result = JSON.parse(JSON.stringify(response));
       this.dataSource = result.message;
       this.dataSource.paginator = this.paginator;

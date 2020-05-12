@@ -1,8 +1,8 @@
-const serverUrl = 'https://cms.sakeenah.io/';
-const loginUrl = serverUrl + 'auth';
-const baseUrl = serverUrl + 'cms';
-const uploadUrl = serverUrl + 'upload';
-const singleUploadUrl = serverUrl + 'singleUpload';
+const serverUrl = 'https://cms-v2.sakeenah.io';
+const loginUrl = serverUrl + '/app/user';
+const baseUrl = serverUrl + '/cms';
+const uploadUrl = serverUrl + '/upload';
+const singleUploadUrl = serverUrl + '/singleUpload';
 
 export const environment = {
   production: false,
