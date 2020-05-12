@@ -16,6 +16,13 @@ router.post('/capture', (req, res) => {
         res.json(obj);
     });
 });
+
+router.post('/android_capture', (req, res) => {
+    payment.android_capture(req, obj => {
+        res.json(obj);
+    });
+});
+
 router.post('/recentPurchase', (req, res) => {
     payment.recentPurchase(req, obj => {
         res.json(obj);
