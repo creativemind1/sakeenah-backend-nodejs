@@ -29,6 +29,7 @@ module.exports = {
                 },
                 (e, receipt) => {
                     if (receipt) {
+                        console.log(req.body.userId + ' don`t Active Receipts');
                         activeReceipt = receipt;
                     }
                     return n();
@@ -39,6 +40,7 @@ module.exports = {
         /** Generating access token from refresh_token */
         let activateToken = n => {
             if (activeReceipt) {
+                console.log('REQUESTING FOR ACCESS TOKEN FOR GOOGLE RECEIPT');
                 axios({
                     method: 'post',
                     url: config.webUrl().googleAPI.token_url,
@@ -51,21 +53,25 @@ module.exports = {
                 })
                     .then(function (response) {
                         if (response && response.data.access_token) {
+                            console.log('New Access_token generated!!!');
                             access_token = response.data.access_token;
                             return n();
                         } else {
+                            console.log('Access token response not proper');
                             responseObj.status = 'FAILED';
                             responseObj.message = 'token not generated properly';
                             callback(responseObj);
                         }
                     })
                     .catch(function (err) {
+                        console.log('== Access_token catch error ==');
                         if (err) {
                             console.log('catch error', err);
                         }
                         return n();
                     });
             } else {
+                console.log('No Active Receipt Available!');
                 return n();
             }
         };
@@ -107,7 +113,7 @@ module.exports = {
                                     return n();
                                 } else {
                                     // If Receipt got expired or cancelled or not renewed;
-                                    console.log('..RECEIPT NOT VALID !! EXPIRED !! CANCELLED...');
+                                    console.log('..RECEIPT NOT VALID! EXPIRED (OR) CANCELLED...');
                                     unknownReceipt = true;
                                     let filter = { userId: req.body.userId };
                                     UserProfile.updateOne(
@@ -194,7 +200,7 @@ module.exports = {
                 updateReceipts.bind(),
             ],
             err => {
-                console.log(err);
+                console.log(err, '==VERIFYRECEIPT ANDROID THROWING ERROR IN CATCH(E)');
                 if (receiptStatus) {
                     responseObj.status = 'SUCCESS';
                 }
