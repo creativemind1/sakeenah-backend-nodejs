@@ -152,7 +152,7 @@ module.exports = {
         );
     },
 
-    verifyUser: (req, callback) => {
+    verifyReceipt: (req, callback) => {
         let responseObj = { status: 'FAILED', message: null };
         let today = Number(moment().format('x'));
         var activeReceipt = null;
@@ -276,7 +276,7 @@ module.exports = {
         };
         let updateReceipts = n => {
             if (newReceipt || unknownReceipt) {
-                ApplePayReceipts.updateOne(
+                ApplePayReceipts.updateMany(
                     {
                         transaction_id:
                             transaction_receipt.transactionId || activeReceipt.transaction_id,
