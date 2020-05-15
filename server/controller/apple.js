@@ -3,7 +3,7 @@ const express = require('express'),
     apple = require('../services/apple');
 
 router.post('/verifyReceipt', (req, res) => {
-    apple.verifyUser(req, obj => {
+    apple.verifyReceipt(req, obj => {
         res.json(obj);
     });
 });

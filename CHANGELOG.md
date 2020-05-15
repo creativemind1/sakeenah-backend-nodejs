@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.0...v1.2.1) (2020-05-15)
+
+
+### Bug Fixes
+
+* **category-keeps-loading:** Issue of category keeps loading for some user has been fixed. It was due to new Sakeenah user trying to login with facebook but data has not been send back as response. Now working!! ([044ee21](https://bitbucket.org/creativemind1/sakeenah-backend/commit/044ee21a9c2e10603192276682834ab2e344a3e8))
+* **google-api-changes:** Changes in google API as per new account ([124ff41](https://bitbucket.org/creativemind1/sakeenah-backend/commit/124ff4169bacf282f7b16307333624f5bbcc0362))
+* **production-url-apple-receipt:** Changing URL and password for apple verify receipt ([58f2ae6](https://bitbucket.org/creativemind1/sakeenah-backend/commit/58f2ae60e5c957f01b2800b403eb673d06bad80e))
+
 ## [1.2.0](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v0.0.1...v1.2.0) (2020-04-22)
 
 
