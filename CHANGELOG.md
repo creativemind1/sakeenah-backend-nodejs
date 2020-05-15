@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.1...v1.2.2) (2020-05-15)
+
+
+### Bug Fixes
+
+* **updating-apple-receipt:** Handling for duplicate records for Apple verify receipt ([4dbd26a](https://bitbucket.org/creativemind1/sakeenah-backend/commit/4dbd26aca51aa810b21b35286734ffd9a886e879))
+
 ### [1.2.1](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.0...v1.2.1) (2020-05-15)
 
 
