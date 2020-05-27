@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.4](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.3...v1.2.4) (2020-05-27)
+
+
+### Bug Fixes
+
+* **delete-single-audio:** CMS: Deleting audio fixed ([eb26b4b](https://bitbucket.org/creativemind1/sakeenah-backend/commit/eb26b4bc49a3f311bd7ff6c639d738a104ca908b))
+
 ### [1.2.3](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.2...v1.2.3) (2020-05-27)
 
 
