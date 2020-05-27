@@ -17,7 +17,7 @@ export class SingleFileUploadComponent implements OnInit {
   messages: any[] = [];
   subscription: Subscription;
   @Output() messageEvent = new EventEmitter<File[]>();
-  @Input() myType : String = '';
+  @Input() myType: String = '';
   filesToUpload: Array<File> = [];
   fileNames: Array<String> = [];
   uploadUrl = environment.singleUploadUrl;
@@ -40,7 +40,7 @@ export class SingleFileUploadComponent implements OnInit {
     // unsubscribe to ensure no memory leaks
     this.subscription.unsubscribe();
   }
-  ngOnInit() {    
+  ngOnInit() {
   }
   upload() {
     const formData: any = new FormData();
@@ -49,7 +49,7 @@ export class SingleFileUploadComponent implements OnInit {
       for (let i = 0; i < files.length; i++) {
         formData.append("uploads[]", files[i], files[i]["name"]);
       }
-      console.log(typeof formData,formData, '===formData===')
+      console.log(typeof formData, formData, '===formData===')
       this.loader = true;
       // this.cmsService.singleFileupload(formData).subscribe(response => {
       //   var result = JSON.parse(JSON.stringify(response));
@@ -68,10 +68,11 @@ export class SingleFileUploadComponent implements OnInit {
       var inputValue = (<HTMLInputElement>document.getElementById("cin"));
       var imageVal = ['image/png', 'image/jpg', 'image/jpeg'];
       var typeOfFile = String(this.myType) === 'mp3' ? 'audio/mp3' : typeOfFile2;
-      var typeOfFile2 = String(this.myType) !== 'mp3' && fileInput && fileInput.target.files.length && imageVal.indexOf(fileInput.target.files[0].type) > -1 ? true : false;      
-      if (fileInput.target.files[0].type === typeOfFile || typeOfFile2) {
+      var typeOfFile2 = String(this.myType) !== 'mp3' && fileInput && fileInput.target.files.length && imageVal.indexOf(fileInput.target.files[0].type) > -1 ? true : false;
+      console.log(fileInput.target.files[0].type, typeOfFile)
+      if (fileInput.target.files[0].type === typeOfFile || typeOfFile2 || fileInput.target.files[0].type === 'audio/mpeg') {
         if (!typeOfFile2 && fileInput.target.files[0].size < 7248900) {
-          this.filesToUpload = <Array<File>>fileInput.target.files;          
+          this.filesToUpload = <Array<File>>fileInput.target.files;
         } else {
           if (typeOfFile) {
             inputValue.value = '';

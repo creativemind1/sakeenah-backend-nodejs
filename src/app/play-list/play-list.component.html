@@ -23,7 +23,7 @@
           <mat-form-field> <input matInput placeholder="Name" [(ngModel)]="selectedPlayList.name" name="playListName"
               formControlName='playListName'> </mat-form-field>
           <mat-form-field>
-            <textarea matInput placeholder="Author" name="description" formControlName='description'
+            <textarea matInput placeholder="Narrator" name="description" formControlName='description'
               [(ngModel)]="selectedPlayList.description"></textarea> </mat-form-field>
           <mat-slide-toggle [(ngModel)]="selectedPlayList.premium" name="premium" formControlName='premium'>Premium
           </mat-slide-toggle>
@@ -60,7 +60,7 @@
               formControlName='playListName'>
           </mat-form-field>
           <mat-form-field>
-            <textarea matInput placeholder="Author" [(ngModel)]="playList.description" name="description"
+            <textarea matInput placeholder="Narrator" [(ngModel)]="playList.description" name="description"
               formControlName='description'></textarea>
           </mat-form-field>
           <mat-slide-toggle [(ngModel)]="playList.premium" name="premium" formControlName='premium'>Premium
