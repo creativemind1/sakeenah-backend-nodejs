@@ -102,4 +102,27 @@ router.post('/cms_audio_list', (req, res) => {
     });
 });
 
+router.post('/delete', (req, res) => {
+    if (req.body.audioId) {
+        AudioModel.deleteOne({ audioId: req.body.audioId }, function (err, doc) {
+            if (doc && doc.deletedCount == 1) {
+                res.json({
+                    status: 'SUCCESS',
+                    message: 'Successfully Deleted Audio',
+                });
+            } else {
+                res.json({
+                    status: 'FAILED',
+                    message: 'No Data Available',
+                });
+            }
+        });
+    } else {
+        res.json({
+            status: 'FAILED',
+            message: 'Category Id Missing in Request ',
+        });
+    }
+});
+
 module.exports = router;
