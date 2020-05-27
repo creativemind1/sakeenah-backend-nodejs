@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.3](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.2...v1.2.3) (2020-05-27)
+
+
+### Bug Fixes
+
+* **audio/mpeg-format-mp3:** Another type of mp3 which is audio/mpeg has been added. Author title changed to Narrator in playlist component page in cms page ([8c23f4e](https://bitbucket.org/creativemind1/sakeenah-backend/commit/8c23f4ed8587295113c0cc9b6d7a0f6028da4e00))
+
 ### [1.2.2](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.1...v1.2.2) (2020-05-15)
 
 
