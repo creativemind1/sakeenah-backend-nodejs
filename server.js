@@ -50,7 +50,7 @@ const s3 = new AWS.S3({
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
         var postId = randomstring.generate(3);
-        if (file.mimetype === 'audio/mp3') {
+        if (file.mimetype === 'audio/mp3' || file.mimetype === 'audio/mpeg') {
             let temp = './upload/audio/' + postId;
             fs.mkdirsSync(temp, { recursive: true }, err => {
                 if (err) throw err;
@@ -122,7 +122,7 @@ function authChecker(req, res, next) {
                     return res.json({
                         success: false,
                         message: 'Token is not valid',
-                        code: 101
+                        code: 101,
                     });
                 } else {
                     req.decoded = decoded;
@@ -184,7 +184,7 @@ app.post('/singleUpload', upload1.array('uploads[]', 12), function (req, res) {
 
         const keyMp3 = 'audios/' + randomChar + '.mp3';
         const keyImg = 'images/' + randomChar + '.png';
-        const key = fileType.mimetype == 'audio/mp3' ? keyMp3 : keyImg;
+        const key = fileType.mimetype == 'audio/mp3' || fileType.mimetype == 'audio/mpeg' ? keyMp3 : keyImg;
         const params = {
             Bucket: BUCKET_NAME,
             Key: key,
