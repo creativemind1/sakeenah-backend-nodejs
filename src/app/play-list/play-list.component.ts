@@ -63,7 +63,7 @@ export class PlayListComponent implements OnInit {
       }
     });
   }
-  
+
   onSave() {
     this.playList['type'] = "SAVE";
     if (this.myForm.status === 'VALID') {
@@ -90,7 +90,7 @@ export class PlayListComponent implements OnInit {
 
   loadDayslist() {
     this.episodes = [];
-    for (let index = 1; index < 20; index++) {
+    for (let index = 1; index < 31; index++) {
       this.episodes.push({ key: index, value: "Episode " + index })
     }
   }
@@ -146,7 +146,7 @@ export class PlayListComponent implements OnInit {
     this.loadAlbums();
     this.loadDayslist();
   }
-  
+
   receivePlayListSingleFile($event) {
     const files = $event;
     if (files.length) {
