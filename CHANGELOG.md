@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [1.2.5](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.4...v1.2.5) (2020-05-29)
 
+
+### Bug Fixes
+
+* **audio-episode-limit:** Increase the limit of audio episodes from 19 to 30 ([8d9e9a5](https://bitbucket.org/creativemind1/sakeenah-backend/commit/8d9e9a55ff68e30ae82219d93a00a6b266c5b75b))
+
+### [1.2.5](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.4...v1.2.5) (2020-05-29)
+
 ### [1.2.4](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.3...v1.2.4) (2020-05-27)
 
 
