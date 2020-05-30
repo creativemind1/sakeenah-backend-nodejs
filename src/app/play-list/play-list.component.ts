@@ -107,7 +107,6 @@ export class PlayListComponent implements OnInit {
     this.selectedPlayList['type'] = "SAVE";
     if (this.myForm.status === 'VALID') {
       this.loader = true;
-      console.log(this.selectedPlayList)
       if (this.selectedPlayList && this.selectedPlayList.thumbImageUrl && this.selectedPlayList.thumbImageUrl.length) {
         this.cmsService.singleFileupload(this.selectedPlayList).subscribe(response => {
           this.selectedPlayList.thumbImageUrl['value'] = ''

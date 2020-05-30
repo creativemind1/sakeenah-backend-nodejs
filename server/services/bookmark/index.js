@@ -18,14 +18,13 @@ module.exports = {
                     /* updating default bookmarks */
                     if (doc.bookmarks.length && doc.bookmarks.indexOf(req.body.audioId) == -1) {
                         doc.bookmarks.push(req.body.audioId);
-                        doc.save((e, s) => {
-                            console.log(e, s);
+                        doc.save(e => {
+                            console.log(e);
                         });
                     } else if (doc.bookmarks.length == 0) {
                         doc.bookmarks.push(req.body.audioId);
-                        doc.save((e, s) => {
+                        doc.save(e => {
                             console.log('EEE', e);
-                            console.log('SSS', s);
                         });
                     }
                 } else {
@@ -60,9 +59,8 @@ module.exports = {
                             doc.bookmarks.map((i, j) => {
                                 if (i == req.body.audioId) doc.bookmarks.splice(j, 1);
                             });
-                            doc.save((e, s) => {
+                            doc.save(e => {
                                 console.log('EEE', e);
-                                console.log('SSS', s);
                             });
                         }
                     }

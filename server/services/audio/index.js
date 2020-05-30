@@ -188,8 +188,8 @@ module.exports = {
                     var userMap = UserMap();
                     userMap.userId = req.body.userId;
                     userMap.audios.push(req.body.audioId);
-                    userMap.save(err, data => {
-                        console.log(data, '==data==.....');
+                    userMap.save(err => {
+                        console.log(err, '==error==.....');
                     });
                 }
                 return n();

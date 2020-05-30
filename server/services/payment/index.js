@@ -31,6 +31,7 @@ module.exports = {
                 },
                 (e, receipt) => {
                     if (!receipt) {
+                        console.log('SUBSCRIPTION');
                         subscription = true;
                     }
                     return n();
@@ -94,7 +95,7 @@ module.exports = {
 
         let getSubscription = n => {
             const { transactionId } = req.body.transaction;
-
+            
             AndroidPayReceipts.findOne(
                 {
                     transaction_id: transactionId,
@@ -107,6 +108,7 @@ module.exports = {
                 }
             );
         };
+
         let verifyTransaction = n => {
             if (subscription) {
                 var doc = {
