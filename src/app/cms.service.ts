@@ -24,12 +24,11 @@ export class CmsService {
   serverBaseUrl = environment.serverBaseUrl;
   thumbImageUrl: FileUpload;
   updateIBOsNavigationSubject = new BehaviorSubject<any>('');
-  constructor(private http: HttpClient, private jwtService: JwtService, private auth: AuthService) {}
+  constructor(private http: HttpClient, private jwtService: JwtService, private auth: AuthService) { }
 
   // Load all the categories based on the company Id
   getCategories() {
     var token = this.auth.getToken();
-    console.log(token, '-===token==')
     return this.http.post(this.baseUrl + '/category/list', {
       "type": "LOAD",
       "companyId": this.companyId, 'token': token
@@ -183,7 +182,7 @@ export class CmsService {
     }));
   }
 
-  getAudioBasedOnAlbum(albumId){
+  getAudioBasedOnAlbum(albumId) {
     var token = this.auth.getToken();
     return this.http.post(this.baseUrl + '/audio/cms_audio_list', {
       albumId,

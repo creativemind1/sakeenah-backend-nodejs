@@ -64,7 +64,6 @@ export class AlbumComponent implements OnInit {
 
   onSave() {
     if (this.album && this.album.title) {
-      console.log(this.album, '===this.album===')
       this.album['type'] = "SAVE";
       this.cmsService.saveOrupdateMedia(this.album).subscribe(response => {
         var result = JSON.parse(JSON.stringify(response));

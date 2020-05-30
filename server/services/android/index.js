@@ -98,7 +98,6 @@ module.exports = {
                     .get(url)
                     .then(function (response) {
                         // handle success
-                        console.log(response);
                         if (response && response.data) {
                             let latestReciptInfo = response.data;
                             if (latestReciptInfo.orderId == activeReceipt.transaction_id) {

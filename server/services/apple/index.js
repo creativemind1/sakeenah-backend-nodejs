@@ -94,7 +94,6 @@ module.exports = {
                                             receiptLog: JSON.stringify(latestReciptInfo),
                                         };
                                         ApplePayReceipts(doc).save(() => {
-                                            console.log(doc, '===saving doc===');
                                             next();
                                         });
                                     } else {
@@ -137,7 +136,6 @@ module.exports = {
                     }
                 );
             } else {
-                console.log(today);
                 return n();
             }
         };
@@ -314,7 +312,6 @@ module.exports = {
             },
         })
             .then(function (response) {
-                console.log(response, '===response===Verify==');
                 if (
                     response.data &&
                     response.data.latest_receipt_info &&

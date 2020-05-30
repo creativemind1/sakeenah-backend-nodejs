@@ -16,11 +16,6 @@ const UserProfileModel = require('../../model/UserProfileModel'),
 
 module.exports = {
     login: (req, callback) => {
-        console.log(
-            '=============== This is',
-            process.env.NODE_ENV,
-            'Branch ================================='
-        );
         if (req.body.emailId && req.body.password) {
             UserProfileModel.findOne(
                 { emailId: req.body.emailId, type: req.body.type, active: true },
@@ -380,7 +375,6 @@ module.exports = {
 
     verifyEmail: (req, callback) => {
         var reqParams = req.query;
-        console;
         if (reqParams && reqParams.userId) {
             UserProfileModel.findOneAndUpdate(
                 { userId: reqParams.userId },
@@ -410,7 +404,6 @@ module.exports = {
 
     resetPassword: (req, callback) => {
         var reqParams = req.query;
-        console;
         if (reqParams && reqParams.userId) {
             UserProfileModel.findOneAndUpdate(
                 { userId: reqParams.userId },
