@@ -3,7 +3,9 @@ const express = require('express'),
     android = require('../services/android');
 
 router.post('/verifyReceipt', (req, res) => {
+    console.log('REQ VERIFY RECEIPT');
     android.verifyReceipt(req, obj => {
+        console.log('RESPONSE VERIFY RECEIPT');
         res.json(obj);
     });
 });

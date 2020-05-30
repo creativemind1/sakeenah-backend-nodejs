@@ -41,6 +41,7 @@ module.exports = {
         };
         async.series([getFavorites.bind(), getAlbums], () => {
             if (albums) {
+                console.log('RESPONSE -- ALL FAVORITES--length', albums.length);
                 responseObj.data = albums;
                 responseObj.status = 'SUCCESS';
             }

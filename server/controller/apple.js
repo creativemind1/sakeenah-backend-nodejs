@@ -3,7 +3,9 @@ const express = require('express'),
     apple = require('../services/apple');
 
 router.post('/verifyReceipt', (req, res) => {
+    console.log('REQ VERIFY RECEIPT');
     apple.verifyReceipt(req, obj => {
+        console.log('RESPONSE VERIFY RECEIPT');
         res.json(obj);
     });
 });
