@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.5...v1.3.0) (2020-05-30)
+
+
+### Features
+
+* **adding-logs:** Adding consoles for request and response for checking logs from third-party tools like logentries and papertrailapp ([5fde2d3](https://bitbucket.org/creativemind1/sakeenah-backend/commit/5fde2d35cbc7f6488578547832c3ccdfa35f762d))
+
+
+### Bug Fixes
+
+* **remove-consoles:** Removing unnecessary and unimportant console.logs and some small formattings ([a96b30f](https://bitbucket.org/creativemind1/sakeenah-backend/commit/a96b30fabf9d0cd26fec6adf308800e909dbc776))
+
 ### [1.2.5](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.4...v1.2.5) (2020-05-29)
 
 ### Bug Fixes
