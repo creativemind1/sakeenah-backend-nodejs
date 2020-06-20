@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.3.0...v1.3.1) (2020-06-20)
+
+
+### Bug Fixes
+
+* **audio-size-limit:** Audio mp3 size limit has been increased to 25MB ([fd97766](https://bitbucket.org/creativemind1/sakeenah-backend/commit/fd977663978cef036fa67fdb8641d13507e89bac))
+
 ## [1.3.0](https://bitbucket.org/creativemind1/sakeenah-backend/compare/v1.2.5...v1.3.0) (2020-05-30)
 
 
