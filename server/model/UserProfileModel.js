@@ -29,15 +29,16 @@ var userProfileSchema = mongoose.Schema({
     country: String,
     gender: String,
     profileUrl: { key: String, value: String },
+    appleID: String,
 });
 // Export Contact model
 var UserProfile = (module.exports = mongoose.model('userProfile', userProfileSchema));
 
 // checking if password is valid
-userProfileSchema.methods.validPassword = function(password) {
+userProfileSchema.methods.validPassword = function (password) {
     return bcrypt.compareSync(password, this.password);
 };
 
-module.exports.get = function(callback, limit) {
+module.exports.get = function (callback, limit) {
     UserProfile.find(callback).limit(limit);
 };

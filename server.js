@@ -109,7 +109,9 @@ function authChecker(req, res, next) {
             !req.path.startsWith('/app/user/login') &&
             !req.path.startsWith('/app/user/resetpswd') &&
             !req.path.startsWith('/app/user/resetPassword') &&
-            !req.path.startsWith('/app/user/verifyEmail'))
+            !req.path.startsWith('/app/user/getUserProfile') &&
+            !req.path.startsWith('/app/user/verifyEmail') &&
+            !req.path.startsWith('/app/user/apple_login'))
     ) {
         jwt.verify(
             req.body.token,
@@ -184,7 +186,8 @@ app.post('/singleUpload', upload1.array('uploads[]', 12), function (req, res) {
 
         const keyMp3 = 'audios/' + randomChar + '.mp3';
         const keyImg = 'images/' + randomChar + '.png';
-        const key = fileType.mimetype == 'audio/mp3' || fileType.mimetype == 'audio/mpeg' ? keyMp3 : keyImg;
+        const key =
+            fileType.mimetype == 'audio/mp3' || fileType.mimetype == 'audio/mpeg' ? keyMp3 : keyImg;
         const params = {
             Bucket: BUCKET_NAME,
             Key: key,

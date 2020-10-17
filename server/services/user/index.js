@@ -307,7 +307,7 @@ module.exports = {
                     firstName = doc.firstName;
                     doc.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(8), null);
                     //Again the customer needs to activate the link from email
-                    //doc.active = false;
+                    doc.active = false;
                     doc.save(function (error) {
                         if (error) {
                             callback({
@@ -508,5 +508,122 @@ module.exports = {
                 }
             );
         }
+    },
+
+    appleLogin: (req, callback) => {
+        const { appleID, emailId } = req.body;
+        let responseObj = { status: 'FAILED', data: null },
+            userData = null,
+            appleUserExist = false,
+            appleEmail = false,
+            subString = '.appleid.com',
+            isPrivateEmail = emailId && emailId.includes(subString),
+            accessToken = null;
+
+        let getUserByAppleID = n => {
+            // Checking if apple user already exists
+            UserProfileModel.findOne(
+                {
+                    appleID,
+                },
+                (e, user) => {
+                    if (user) {
+                        appleUserExist = true;
+                        userData = JSON.parse(JSON.stringify(user));
+                        return n();
+                    } else {
+                        return n();
+                    }
+                }
+            );
+        };
+
+        let getUserByAppleEmail = n => {
+            // Checking if apple user already exists
+            UserProfileModel.findOne(
+                {
+                    emailId,
+                },
+                (e, user) => {
+                    if (user && !appleUserExist) {
+                        UserProfileModel.findOneAndUpdate(
+                            { emailId: emailId },
+                            { $set: { appleID } },
+                            (e, doc) => {
+                                appleEmail = true;
+                                userData = JSON.parse(JSON.stringify(doc));
+                                return n();
+                            }
+                        );
+                    } else return n();
+                }
+            );
+        };
+
+        let appleRealEmail = n => {
+            if (appleUserExist && !isPrivateEmail && emailId) {
+                UserProfileModel.findOneAndUpdate({ appleID }, { $set: { emailId } }, (e, doc) => {
+                    userData = JSON.parse(JSON.stringify(doc));
+                    return n();
+                });
+            } else {
+                return n();
+            }
+        };
+
+        let newAppleUser = n => {
+            if (!appleUserExist && emailId && !appleEmail) {
+                let userId = randomstring.generate(10),
+                    firstName = req.body.name,
+                    doc = {
+                        userId,
+                        socialMedia: true,
+                        active: true,
+                        premiumUser: false,
+                        firstName,
+                        type: 'B2C',
+                        password: null,
+                        appleID,
+                        emailId,
+                        create_date: new Date(),
+                    };
+                userData = JSON.parse(JSON.stringify(doc));
+                UserProfileModel(doc).save(() => {
+                    return n();
+                });
+            } else {
+                return n();
+            }
+        };
+
+        let token = n => {
+            if (userData) {
+                const payload = {
+                    emailId: userData.emailId,
+                };
+                accessToken = jwt.sign(payload, config.secret(), {
+                    expiresIn: '365d', // expires in 1 year
+                });
+                return n();
+            } else {
+                return n();
+            }
+        };
+
+        async.series([
+            getUserByAppleID.bind(),
+            getUserByAppleEmail.bind(),
+            appleRealEmail.bind(),
+            newAppleUser.bind(),
+            token.bind(),
+            () => {
+                if (userData) {
+                    userData['token'] = accessToken;
+                    responseObj.status = 'SUCCESS';
+                    responseObj.data = userData;
+                }
+                callback(responseObj);
+            },
+        ]);
     },
 };

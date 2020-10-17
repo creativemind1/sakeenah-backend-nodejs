@@ -109,4 +109,20 @@ router.post('/updateProfile', (req, res) => {
     });
 });
 
+router.post('/getUserProfile', (req, res) => {
+    console.log('Get user profile');
+    user.getUserProfile(req, obj => {
+        console.log('RESPONSE UPDATE PROFILE', obj);
+        res.json(obj);
+    });
+});
+
+router.post('/apple_login', (req, res) => {
+    console.log('APPLE_USER_ REGISTERING......');
+    user.appleLogin(req, obj => {
+        console.log('RESPONSE REGISTERING......');
+        res.json(obj);
+    });
+});
+
 module.exports = router;
