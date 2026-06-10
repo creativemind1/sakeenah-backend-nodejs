@@ -14,6 +14,7 @@ router.post('/save', (req, res) => {
         AlbumModel.findOneAndUpdate(
             { albumId: req.body.albumId },
             {
+                id: req.body.id,
                 title: req.body.title,
                 modifiedBy: req.body.userId,
                 modify_date: modify_date,
